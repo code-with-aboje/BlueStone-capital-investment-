@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crest Point - Smart Investment Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Navigation & Sidebar */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-nav img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .logo-nav span {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #4caf50;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #2e7d32;
+        }
+
+        .sidebar {
+            position: fixed;
+            right: -300px;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+            z-index: 2000;
+            transition: right 0.3s;
+            padding: 80px 30px 30px;
+        }
+
+        .sidebar.active {
+            right: 0;
+        }
+
+        .sidebar-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 32px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 24px;
+        }
+
+        .sidebar-menu a {
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+            font-weight: 500;
+            display: block;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: color 0.3s;
+        }
+
+        .sidebar-menu a:hover {
+            color: #4caf50;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1500;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3);
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 187, 106, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #2e7d32;
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 140px 20px 80px;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(76, 175, 80, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero-content h1 {
+            font-size: 56px;
+            font-weight: 800;
+            color: #1b5e20;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero-content p {
+            font-size: 20px;
+            color: #4caf50;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .hero-image {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-image h3 {
+            color: #2e7d32;
+            margin-bottom: 20px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .stat-row span:last-child {
+            color: #4caf50;
+            font-weight: 600;
+        }
+
+        /* Stats */
+        .stats {
+            background: #4caf50;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat-item h2 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        /* Features */
+        .section {
+            padding: 100px 20px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 42px;
+            font-weight: 800;
+            color: #1b5e20;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+
+        .card {
+            background: #f5f5f5;
+            padding: 40px 32px;
+            border-radius: 16px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(76, 175, 80, 0.2);
+        }
+
+        .card-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3);
+            font-size: 32px;
+            color: white;
+        }
+
+        .card h3 {
+            font-size: 22px;
+            color: #1b5e20;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Steps */
+        .steps {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        }
+
+        .step-card {
+            background: white;
+            padding: 40px 32px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+
+        .step-number {
+            position: absolute;
+            top: -20px;
+            left: 32px;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(102, 187, 106, 0.4);
+        }
+
+        .step-card h3 {
+            color: #1b5e20;
+            margin: 20px 0 12px;
+        }
+
+        /* CTA */
+        .cta {
+            background: #2e7d32;
+            padding: 80px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .cta h2 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .cta p {
+            font-size: 18px;
+            margin-bottom: 32px;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        footer {
+            background: #1b5e20;
+            color: white;
+            padding: 60px 20px 20px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-about h3 {
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .footer-about p {
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .footer-links h4 {
+            margin-bottom: 16px;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .nav-links {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content h1 {
+                font-size: 36px;
+            }
+
+            .section-header h2 {
+                font-size: 32px;
+            }
+        }
+
+        /* Image Placeholders */
+        .img-placeholder {
+            background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo-nav">
+                <img src="/favicon.png" alt="Crest Point">
+                <span>Crest Point</span>
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#tools">Tools</a>
+                <a href="#about">About</a>
+                <a href="#get-started" class="btn-primary">Get Started</a>
+            </div>
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <button class="sidebar-close" onclick="toggleSidebar()">×</button>
+        <ul class="sidebar-menu">
+            <li><a href="#get-started" onclick="toggleSidebar()">Get Started</a></li>
+            <li><a href="#tools" onclick="toggleSidebar()">Investment Tools</a></li>
+            <li><a href="#features" onclick="toggleSidebar()">Features</a></li>
+            <li><a href="#about" onclick="toggleSidebar()">About Us</a></li>
+            <li><a href="#how-it-works" onclick="toggleSidebar()">How It Works</a></li>
+            <li><a href="#" onclick="toggleSidebar()">Help Center</a></li>
+            <li><a href="#" onclick="toggleSidebar()">Contact</a></li>
+        </ul>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero" id="get-started">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <h1>Invest Smart, Grow Wealth</h1>
+                    <p>Build your financial future with secure, high-yield investment opportunities. Start with as little as $100.</p>
+                    <div class="hero-buttons">
+                        <a href="#tools" class="btn-primary">Start Investing</a>
+                        <a href="#about" class="btn-secondary">Learn More</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <h3>Your Portfolio Overview</h3>
+                    <div class="stat-row">
+                        <span>Total Investment</span>
+                        <span>$25,000</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Returns (YTD)</span>
+                        <span>+18.5%</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Active Plans</span>
+                        <span>5</span>
+                    </div>
+                    <div class="img-placeholder" style="height: 150px; margin-top: 20px;">
+                        Add chart/graph image here<br>(portfolio-chart.png)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h2>$2.5B+</h2>
+                    <p>Total Invested</p>
+                </div>
+                <div class="stat-item">
+                    <h2>50K+</h2>
+                    <p>Active Investors</p>
+                </div>
+                <div class="stat-item">
+                    <h2>15%</h2>
+                    <p>Avg. Returns</p>
+                </div>
+                <div class="stat-item">
+                    <h2>24/7</h2>
+                    <p>Support</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Choose Crest Point</h2>
+                <p>Secure, transparent, and profitable investment solutions</p>
+            </div>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-icon">🔒</div>
+                    <h3>Secure Platform</h3>
+                    <p>Bank-level security with SSL encryption and two-factor authentication.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📈</div>
+                    <h3>High Returns</h3>
+                    <p>Competitive rates with average annual returns of 15% across plans.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Quick Withdrawals</h3>
+                    <p>Access funds anytime with instant withdrawal processing.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🎯</div>
+                    <h3>Diversified Plans</h3>
+                    <p>Multiple options tailored to your risk appetite and goals.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    <h3>Real-time Tracking</h3>
+                    <p>Monitor portfolio performance with detailed analytics.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🤝</div>
+                    <h3>Expert Support</h3>
+                    <p>24/7 support from experienced investment advisors.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section class="section" style="background: #f9f9f9;" id="tools">
+        <div class="container">
+            <div class="section-header">
+                <h2>Investment Tools</h2>
+                <p>Powerful tools to maximize your returns</p>
+            </div>
+            <div class="grid">
+                <div class="card">
+                    <div class="img-placeholder" style="height: 180px; margin-bottom: 20px;">
+                        Add calculator icon/image<br>(calculator-tool.png)
+                    </div>
+                    <h3>ROI Calculator</h3>
+                    <p>Calculate potential returns on your investments with our advanced calculator.</p>
+                </div>
+                <div class="card">
+                    <div class="img-placeholder" style="height: 180px; margin-bottom: 20px;">
+                        Add portfolio icon/image<br>(portfolio-tool.png)
+                    </div>
+                    <h3>Portfolio Builder</h3>
+                    <p>Build a diversified portfolio based on your risk profile and goals.</p>
+                </div>
+                <div class="card">
+                    <div class="img-placeholder" style="height: 180px; margin-bottom: 20px;">
+                        Add analytics icon/image<br>(analytics-tool.png)
+                    </div>
+                    <h3>Market Analytics</h3>
+                    <p>Access real-time market data and investment insights.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section steps" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>Start Investing in 3 Simple Steps</h2>
+                <p>Your journey to financial freedom begins here</p>
+            </div>
+            <div class="grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Create Account</h3>
+                    <p>Sign up in minutes with your email and complete verification.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>Choose Plan</h3>
+                    <p>Select an investment plan matching your goals and risk tolerance.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Start Earning</h3>
+                    <p>Fund your account and watch your investment grow.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+        <div class="container">
+            <div class="section-header">
+                <h2>About Crest Point</h2>
+                <p>Empowering investors since 2020</p>
+            </div>
+            <div class="hero-grid">
+                <div>
+                    <div class="img-placeholder" style="height: 300px;">
+                        Add team/office image<br>(about-us.jpg)
+                    </div>
+                </div>
+                <div>
+                    <h3 style="color: #1b5e20; font-size: 28px; margin-bottom: 20px;">Your Trusted Investment Partner</h3>
+                    <p style="line-height: 1.8; color: #666; margin-bottom: 16px;">
+                        Crest Point is a leading investment platform committed to making wealth creation accessible to everyone. With over $2.5 billion in assets under management, we serve 50,000+ investors globally.
+                    </p>
+                    <p style="line-height: 1.8; color: #666; margin-bottom: 16px;">
+                        Our platform combines cutting-edge technology with expert financial guidance to deliver consistent returns while minimizing risk.
+                    </p>
+                    <p style="line-height: 1.8; color: #666;">
+                        Regulated and licensed, we prioritize transparency, security, and customer satisfaction in everything we do.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Start Your Investment Journey?</h2>
+            <p>Join thousands of investors building wealth with Crest Point today</p>
+            <a href="#get-started" class="btn-secondary">Open Free Account</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <h3>Crest Point</h3>
+                    <p>Your trusted partner in building sustainable wealth through smart investments.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Investment Guide</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Risk Disclosure</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Crest Point. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
