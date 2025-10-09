@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .dashboard-card {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                transparent 40%,
+                rgba(255, 255, 255, 0.25) 50%,
+                transparent 60%,
+                transparent
+            );
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .top-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 12px;
+        }
+
+        .user-name {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .invest-button {
+            background: white;
+            color: #10b981;
+            border: none;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+            flex-shrink: 0;
+            width: fit-content;
+        }
+
+        .invest-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .invest-button:active {
+            transform: translateY(0);
+        }
+
+        .balance-section {
+            margin-top: 8px;
+        }
+
+        .balance-label {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .balance-amount {
+            color: white;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .balance-change {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            color: #0f172a;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .stat-trend {
+            color: #10b981;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .stat-trend.down {
+            color: #ef4444;
+        }
+
+        .quick-actions {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .actions-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 14px;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+        }
+
+        .action-icon {
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        .action-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 20px 16px;
+            }
+
+            .dashboard-card {
+                padding: 20px;
+            }
+
+            .balance-amount {
+                font-size: 32px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-card">
+            <div class="card-content">
+                <div class="top-section">
+                    <div class="user-name">John Investor</div>
+                    <button class="invest-button">+ Fund</button>
+                </div>
+
+                <div class="balance-section">
+                    <div class="balance-label">Total Balance</div>
+                    <div class="balance-amount">$124,530</div>
+                    <div class="balance-change">↑ $2,340 (12.5%)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Today's P/L</div>
+                <div class="stat-value">$1,245</div>
+                <div class="stat-trend">↑ 2.4%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Return</div>
+                <div class="stat-value">18.7%</div>
+                <div class="stat-trend">↑ +$23,450</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Invested</div>
+                <div class="stat-value">$105,000</div>
+                <div class="stat-trend">5 assets</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Available</div>
+                <div class="stat-value">$19,530</div>
+                <div class="stat-trend">Ready to use</div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <div class="actions-title">Quick Actions</div>
+            <div class="action-buttons">
+                <div class="action-btn">
+                    <div class="action-icon">📊</div>
+                    <div class="action-label">Portfolio</div>
+                </div>
+                <div class="action-btn">
+                    <div class="action-icon">💸</div>
+                    <div class="action-label">Withdraw</div>
+                </div>
+                <div class="action-btn">
+                    <div class="action-icon">📈</div>
+                    <div class="action-label">Analytics</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+      </html>
