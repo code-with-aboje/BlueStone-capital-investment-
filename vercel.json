@@ -44,12 +44,7 @@
       ]
     }
   ],
-  "rewrites": [
-    {
-      "source": "/:path((?!.*\\.).*)",
-      "destination": "/:path.html"
-    }
-  ],
+  "cleanUrls": true,
   "redirects": [
     {
       "source": "/home",
@@ -60,4 +55,4 @@
   "error": {
     "404": "/404.html"
   }
-    }
+}
