@@ -1,4 +1,22 @@
 {
+  "rewrites": [
+    {
+      "source": "/login",
+      "destination": "/login.html"
+    },
+    {
+      "source": "/maintenance",
+      "destination": "/maintenance.html"
+    },
+    {
+      "source": "/main",
+      "destination": "/maintenance.html"
+    },
+    {
+      "source": "/:page",
+      "destination": "/:page.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -44,15 +62,11 @@
       ]
     }
   ],
-  "cleanUrls": true,
   "redirects": [
     {
       "source": "/home",
       "destination": "/",
       "permanent": true
     }
-  ],
-  "error": {
-    "404": "/404.html"
-  }
+  ]
 }
