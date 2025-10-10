@@ -13,7 +13,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: #4caf50;
+            background: linear-gradient(135deg, #4caf50 0%, #43a047 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -21,64 +21,184 @@
             padding: 20px;
         }
 
-        .login-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+        .main-container {
+            text-align: center;
+            max-width: 500px;
             width: 100%;
-            max-width: 420px;
-            padding: 48px 40px;
-            animation: fadeIn 0.5s ease;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .welcome-section {
+            color: white;
+            margin-bottom: 48px;
         }
 
         .logo {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
             margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-text h1 {
+            font-size: 40px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .welcome-section h2 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .welcome-section p {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: 24px;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .auth-btn {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
-        }
-
-        .logo-icon {
-            width: 48px;
-            height: 48px;
+            padding: 16px 24px;
+            border: none;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3);
-            overflow: hidden;
-        }
-
-        .logo-icon img {
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .logo-text h1 {
+            background: white;
             color: #2e7d32;
-            font-size: 32px;
-            font-weight: 700;
-            margin: 0;
-            text-align: left;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .logo-text p {
-            color: #66bb6a;
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .auth-btn:active {
+            transform: translateY(0);
+        }
+
+        .auth-btn.login-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .auth-btn.login-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-icon {
+            font-size: 20px;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 999;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100vw;
+            height: 50vh;
+            padding: 48px 40px;
+            position: relative;
+            animation: slideIn 0.3s ease;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f0f0f0;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #e0e0e0;
+            transform: rotate(90deg);
+        }
+
+        .form-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .form-subtitle {
             font-size: 14px;
-            font-weight: 500;
-            margin: 0;
-            text-align: left;
+            color: #999;
+            text-align: center;
+            margin-bottom: 32px;
         }
 
         .form-group {
@@ -101,32 +221,15 @@
             font-size: 15px;
             transition: all 0.3s ease;
             outline: none;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+            font-family: inherit;
         }
 
         input:focus {
             border-color: #66bb6a;
-            box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.1), 0 4px 8px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.1);
         }
 
-        .forgot-password {
-            text-align: right;
-            margin-top: 8px;
-        }
-
-        .forgot-password a {
-            color: #2e7d32;
-            font-size: 13px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .forgot-password a:hover {
-            color: #1b5e20;
-        }
-
-        .login-btn {
+        .modal-btn {
             width: 100%;
             padding: 14px;
             background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
@@ -138,58 +241,21 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-top: 8px;
-            box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3);
         }
 
-        .login-btn:hover {
+        .modal-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(102, 187, 106, 0.4), 0 4px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 24px rgba(102, 187, 106, 0.4);
         }
 
-        .login-btn:active {
+        .modal-btn:active {
             transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(102, 187, 106, 0.3), 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 32px 0;
-            color: #999;
-            font-size: 14px;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #e0e0e0;
-        }
-
-        .divider::before {
-            margin-right: 16px;
-        }
-
-        .divider::after {
-            margin-left: 16px;
-        }
-
-        .signup-link {
-            text-align: center;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .signup-link a {
-            color: #2e7d32;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        .signup-link a:hover {
-            color: #1b5e20;
+        .modal-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
 
         .checkbox-group {
@@ -211,54 +277,195 @@
             color: #666;
             cursor: pointer;
         }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: 8px;
+        }
+
+        .forgot-password a {
+            color: #2e7d32;
+            font-size: 13px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: #ffebee;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .welcome-section h2 {
+                font-size: 32px;
+            }
+
+            .welcome-section p {
+                font-size: 16px;
+            }
+
+            .modal-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+
+            .modal-content {
+                border-radius: 24px 24px 0 0;
+                width: 100vw;
+                height: 90vh;
+                max-height: 90vh;
+                animation: slideUpMobile 0.4s ease;
+                padding: 24px 20px;
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+            }
+
+            @keyframes slideUpMobile {
+                from {
+                    transform: translateY(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+
+            .form-title {
+                font-size: 22px;
+            }
+
+            .form-subtitle {
+                margin-bottom: 24px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="logo">
-            <div class="logo-icon">
-                <img src="/favicon.png" alt="Crest Point Logo">
-            </div>
-            <div class="logo-text">
-                <h1>Crest Point</h1>
-                <p>Welcome back</p>
-            </div>
-        </div>
-
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" placeholder="Enter your email" required>
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter your password" required>
-                <div class="forgot-password">
-                    <a href="#">Forgot password?</a>
+    <div class="main-container">
+        <div class="welcome-section">
+            <div class="logo">
+                <div class="logo-icon">📍</div>
+                <div class="logo-text">
+                    <h1>Crest Point</h1>
                 </div>
             </div>
+            <h2>Manage Your Locations</h2>
+            <p>Track, monitor, and optimize your business locations all in one platform.</p>
+        </div>
 
-            <div class="checkbox-group">
-                <input type="checkbox" id="remember">
-                <label for="remember">Remember me</label>
+        <div class="button-group">
+            <button class="auth-btn" onclick="window.location.href='register.html'">
+                <span class="btn-icon">✓</span>
+                <span>Register with Crest Point</span>
+            </button>
+            <button class="auth-btn login-btn" onclick="openLoginModal()">
+                <span class="btn-icon">🔐</span>
+                <span>Login with Crest Point</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal()">×</button>
+
+            <!-- Login Form -->
+            <div id="loginForm">
+                <div class="form-title">Welcome back</div>
+                <div class="form-subtitle">Sign in to your account</div>
+
+                <div class="error-message" id="errorMessage"></div>
+
+                <form id="loginFormEl" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="loginEmail">Email Address</label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                        <div class="forgot-password">
+                            <a href="#">Forgot password?</a>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="remember">
+                        <label for="remember">Remember me</label>
+                    </div>
+
+                    <button type="submit" class="modal-btn" id="loginBtn">Sign In</button>
+                </form>
             </div>
-
-            <button type="submit" class="login-btn">Sign In</button>
-        </form>
-
-        <div class="divider">or</div>
-
-        <div class="signup-link">
-            Don't have an account? <a href="#">Sign up</a>
         </div>
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Login functionality would be implemented here!');
-        });
+        function openLoginModal() {
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal(event) {
+            if (event && event.target !== document.getElementById('modalOverlay')) {
+                return;
+            }
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+    </script>
+
+    <script type="module">
+        import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { auth } from "./lib/firebase.js";
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const rememberMe = document.getElementById('remember').checked;
+            const loginBtn = document.getElementById('loginBtn');
+            const errorMessage = document.getElementById('errorMessage');
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Signing in...';
+            errorMessage.classList.remove('show');
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                console.log('Login successful:', userCredential.user);
+                
+                if (rememberMe) {
+                    localStorage.setItem('userEmail', email);
+                }
+                
+                // Redirect to dashboard or home page
+                window.location.href = '/dashboard.html';
+            } catch (error) {
+                console.error('Login error:', error);
+                errorMessage.textContent = error.message;
+                errorMessage.classList.add('show');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Sign In';
+            }
+        }
+
+        window.handleLogin = handleLogin;
     </script>
 </body>
-</html>
+    </html>
