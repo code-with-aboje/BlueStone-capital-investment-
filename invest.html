@@ -17,30 +17,6 @@
             font-family: 'Inter', sans-serif;
             background: #fafafa;
             overflow: hidden;
-            --primary-color: #10b981;
-            --primary-dark: #059669;
-            --text-primary: #0f172a;
-            --text-secondary: #64748b;
-            --border-color: #e5e7eb;
-            --bg-light: #f8fafc;
-        }
-
-        body.dark-theme {
-            --primary-color: #10b981;
-            --primary-dark: #059669;
-            --text-primary: #f1f5f9;
-            --text-secondary: #cbd5e1;
-            --border-color: #334155;
-            --bg-light: #1e293b;
-        }
-
-        body,
-        body.dark-theme {
-            background: var(--bg-light);
-        }
-
-        body.dark-theme {
-            background: #0f172a;
         }
 
         .main-container {
@@ -51,7 +27,7 @@
         /* Sidebar Styles - Desktop Only */
         .sidebar {
             width: 260px;
-            background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            background: linear-gradient(180deg, #10b981 0%, #059669 100%);
             color: white;
             display: flex;
             flex-direction: column;
@@ -105,7 +81,8 @@
         }
 
         .sidebar .nav-item {
-            padding: 14px 20px;
+            padding: 14px 16px;
+            margin: 4px 12px;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
@@ -113,19 +90,18 @@
             gap: 12px;
             color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
-            border-left: 3px solid transparent;
+            border-radius: 12px;
         }
 
         .sidebar .nav-item:hover {
             background: rgba(255, 255, 255, 0.15);
-            border-left-color: white;
         }
 
         .sidebar .nav-item.active {
-            background: rgba(255, 255, 255, 0.2);
-            border-left-color: white;
+            background: rgba(255, 255, 255, 0.25);
             color: white;
             font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .sidebar .nav-icon {
@@ -149,11 +125,6 @@
             padding: 0 32px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             z-index: 50;
-        }
-
-        body.dark-theme .header {
-            background: #1e293b;
-            border-bottom-color: var(--border-color);
         }
 
         .header-left {
@@ -202,25 +173,12 @@
             margin-top: 2px;
         }
 
-        body.dark-theme .header-brand-name {
-            color: var(--text-primary);
-        }
-
-        body.dark-theme .header-brand-tagline {
-            color: var(--text-secondary);
-        }
-
         .page-title {
             font-size: 18px;
             font-weight: 600;
             color: #475569;
             padding-left: 20px;
             border-left: 2px solid #e5e7eb;
-        }
-
-        body.dark-theme .page-title {
-            color: var(--text-secondary);
-            border-left-color: var(--border-color);
         }
 
         .header-right {
@@ -246,16 +204,6 @@
             outline: none;
             border-color: #10b981;
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-        }
-
-        body.dark-theme .search-input {
-            background: #334155;
-            border-color: var(--border-color);
-            color: var(--text-primary);
-        }
-
-        body.dark-theme .search-input:focus {
-            border-color: var(--primary-color);
         }
 
         .search-icon {
@@ -322,26 +270,28 @@
         /* Bottom Navigation - Mobile Only */
         .bottom-nav {
             display: none;
-            height: 60px;
-            background: white;
-            border-top: 1px solid #e5e7eb;
-            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+            height: 80px;
+            background: transparent;
             z-index: 50;
             flex-shrink: 0;
-        }
-
-        body.dark-theme .bottom-nav {
-            background: #1e293b;
-            border-top-color: var(--border-color);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .bottom-nav-container {
             display: flex;
             align-items: center;
-            justify-content: space-around;
+            justify-content: center;
             height: 100%;
             padding: 0 8px;
-            gap: 12px;
+            gap: 0;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.1);
+            width: fit-content;
+            max-width: 95%;
         }
 
         .bottom-nav .nav-item {
@@ -349,40 +299,32 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 3px;
             cursor: pointer;
-            padding: 8px 10px;
+            padding: 8px 12px;
             border-radius: 12px;
             transition: all 0.3s ease;
-            flex: 1;
-            max-width: 75px;
+            color: #64748b;
             min-width: 60px;
         }
 
         .bottom-nav .nav-item:hover {
-            background: #f8fafc;
+            background: #f1f5f9;
         }
 
         .bottom-nav .nav-item.active {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        }
-
-        body.dark-theme .bottom-nav .nav-item {
-            color: var(--text-secondary);
-        }
-
-        body.dark-theme .bottom-nav .nav-item:hover {
-            background: #334155;
+            color: white;
         }
 
         .chat-button {
             position: fixed;
-            bottom: 80px;
+            bottom: 100px;
             right: 20px;
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: var(--primary-color);
+            background: #10b981;
             color: white;
             border: none;
             cursor: pointer;
@@ -402,22 +344,23 @@
 
         @media (max-width: 768px) {
             .chat-button {
-                bottom: 75px;
+                bottom: 95px;
             }
         }
 
         .bottom-nav .nav-icon {
-            font-size: 24px;
+            font-size: 20px;
             transition: transform 0.3s ease;
             line-height: 1;
         }
 
         .bottom-nav .nav-item.active .nav-icon {
             transform: scale(1.1);
+            color: white;
         }
 
         .bottom-nav .nav-label {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             color: #64748b;
             transition: color 0.3s ease;
@@ -549,7 +492,7 @@
                 </div>
             </header>
 
-            <!-- Theme Toggle Button -->
+            <!-- Chat Button -->
             <button class="chat-button" id="chatButton" title="Customer chat">
                 <i class="fas fa-comments"></i>
             </button>
@@ -630,10 +573,6 @@
         contentFrame.addEventListener('error', () => {
             console.error('Failed to load page');
         });
-
-        // Initialize theme on page load
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.body.classList.toggle('dark-theme', savedTheme === 'dark');
     </script>
 </body>
     </html>
