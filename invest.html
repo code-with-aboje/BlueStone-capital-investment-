@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BluStone Investment Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -16,6 +17,30 @@
             font-family: 'Inter', sans-serif;
             background: #fafafa;
             overflow: hidden;
+            --primary-color: #10b981;
+            --primary-dark: #059669;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border-color: #e5e7eb;
+            --bg-light: #f8fafc;
+        }
+
+        body.dark-theme {
+            --primary-color: #10b981;
+            --primary-dark: #059669;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border-color: #334155;
+            --bg-light: #1e293b;
+        }
+
+        body,
+        body.dark-theme {
+            background: var(--bg-light);
+        }
+
+        body.dark-theme {
+            background: #0f172a;
         }
 
         .main-container {
@@ -26,7 +51,7 @@
         /* Sidebar Styles - Desktop Only */
         .sidebar {
             width: 260px;
-            background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             color: white;
             display: flex;
             flex-direction: column;
@@ -126,6 +151,11 @@
             z-index: 50;
         }
 
+        body.dark-theme .header {
+            background: #1e293b;
+            border-bottom-color: var(--border-color);
+        }
+
         .header-left {
             display: flex;
             align-items: center;
@@ -172,12 +202,25 @@
             margin-top: 2px;
         }
 
+        body.dark-theme .header-brand-name {
+            color: var(--text-primary);
+        }
+
+        body.dark-theme .header-brand-tagline {
+            color: var(--text-secondary);
+        }
+
         .page-title {
             font-size: 18px;
             font-weight: 600;
             color: #475569;
             padding-left: 20px;
             border-left: 2px solid #e5e7eb;
+        }
+
+        body.dark-theme .page-title {
+            color: var(--text-secondary);
+            border-left-color: var(--border-color);
         }
 
         .header-right {
@@ -203,6 +246,16 @@
             outline: none;
             border-color: #10b981;
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        body.dark-theme .search-input {
+            background: #334155;
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        body.dark-theme .search-input:focus {
+            border-color: var(--primary-color);
         }
 
         .search-icon {
@@ -269,11 +322,17 @@
         /* Bottom Navigation - Mobile Only */
         .bottom-nav {
             display: none;
-            height: 70px;
+            height: 60px;
             background: white;
             border-top: 1px solid #e5e7eb;
             box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
             z-index: 50;
+            flex-shrink: 0;
+        }
+
+        body.dark-theme .bottom-nav {
+            background: #1e293b;
+            border-top-color: var(--border-color);
         }
 
         .bottom-nav-container {
@@ -282,6 +341,7 @@
             justify-content: space-around;
             height: 100%;
             padding: 0 8px;
+            gap: 12px;
         }
 
         .bottom-nav .nav-item {
@@ -305,6 +365,45 @@
 
         .bottom-nav .nav-item.active {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        body.dark-theme .bottom-nav .nav-item {
+            color: var(--text-secondary);
+        }
+
+        body.dark-theme .bottom-nav .nav-item:hover {
+            background: #334155;
+        }
+
+        .chat-button {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            z-index: 40;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .chat-button {
+                bottom: 75px;
+            }
         }
 
         .bottom-nav .nav-icon {
@@ -398,23 +497,23 @@
 
             <nav class="nav-menu">
                 <div class="nav-item active" data-page="home.html" data-title="Home">
-                    <span class="nav-icon">🏠</span>
+                    <span class="nav-icon"><i class="fas fa-home"></i></span>
                     <span class="nav-label">Home</span>
                 </div>
                 <div class="nav-item" data-page="invest.html" data-title="Invest">
-                    <span class="nav-icon">📈</span>
+                    <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
                     <span class="nav-label">Invest</span>
                 </div>
                 <div class="nav-item" data-page="withdraw.html" data-title="Withdraw">
-                    <span class="nav-icon">💸</span>
+                    <span class="nav-icon"><i class="fas fa-wallet"></i></span>
                     <span class="nav-label">Withdraw</span>
                 </div>
                 <div class="nav-item" data-page="profile.html" data-title="Profile">
-                    <span class="nav-icon">👤</span>
+                    <span class="nav-icon"><i class="fas fa-user"></i></span>
                     <span class="nav-label">Profile</span>
                 </div>
                 <div class="nav-item" data-page="settings.html" data-title="Settings">
-                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-icon"><i class="fas fa-gear"></i></span>
                     <span class="nav-label">Settings</span>
                 </div>
             </nav>
@@ -450,6 +549,11 @@
                 </div>
             </header>
 
+            <!-- Theme Toggle Button -->
+            <button class="chat-button" id="chatButton" title="Customer chat">
+                <i class="fas fa-comments"></i>
+            </button>
+
             <!-- iFrame Container -->
             <div class="iframe-container">
                 <iframe class="content-frame" id="contentFrame" src="home.html"></iframe>
@@ -459,23 +563,23 @@
             <nav class="bottom-nav">
                 <div class="bottom-nav-container">
                     <div class="nav-item active" data-page="home.html" data-title="Home">
-                        <span class="nav-icon">🏠</span>
+                        <span class="nav-icon"><i class="fas fa-home"></i></span>
                         <span class="nav-label">Home</span>
                     </div>
                     <div class="nav-item" data-page="invest.html" data-title="Invest">
-                        <span class="nav-icon">📈</span>
+                        <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
                         <span class="nav-label">Invest</span>
                     </div>
                     <div class="nav-item" data-page="withdraw.html" data-title="Withdraw">
-                        <span class="nav-icon">💸</span>
+                        <span class="nav-icon"><i class="fas fa-wallet"></i></span>
                         <span class="nav-label">Withdraw</span>
                     </div>
                     <div class="nav-item" data-page="profile.html" data-title="Profile">
-                        <span class="nav-icon">👤</span>
+                        <span class="nav-icon"><i class="fas fa-user"></i></span>
                         <span class="nav-label">Profile</span>
                     </div>
                     <div class="nav-item" data-page="settings.html" data-title="Settings">
-                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-icon"><i class="fas fa-gear"></i></span>
                         <span class="nav-label">Settings</span>
                     </div>
                 </div>
@@ -489,7 +593,14 @@
         const allNavItems = [...sidebarNavItems, ...bottomNavItems];
         const contentFrame = document.getElementById('contentFrame');
         const pageTitle = document.getElementById('pageTitle');
+        const chatButton = document.getElementById('chatButton');
 
+        // Chat button functionality
+        chatButton.addEventListener('click', () => {
+            alert('Customer chat opened! This is a placeholder.');
+        });
+
+        // Navigation functionality
         function handleNavigation(item) {
             const page = item.getAttribute('data-page');
             const title = item.getAttribute('data-title');
@@ -519,6 +630,10 @@
         contentFrame.addEventListener('error', () => {
             console.error('Failed to load page');
         });
+
+        // Initialize theme on page load
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.classList.toggle('dark-theme', savedTheme === 'dark');
     </script>
 </body>
     </html>
