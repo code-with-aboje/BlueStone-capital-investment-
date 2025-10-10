@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - BluStone</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fafafa;
+            padding: 24px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 0;
+            padding: 0;
+            color: white;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                left: -100%;
+            }
+            50%, 100% {
+                left: 100%;
+            }
+        }
+
+        .profile-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 0;
+            padding: 32px;
+        }
+
+        .avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #10b981;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            position: relative;
+            flex-shrink: 0;
+            margin-left: 0;
+        }
+
+        .edit-avatar {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #10b981;
+            border: 3px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .edit-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .profile-info {
+            flex: 1;
+            text-align: right;
+            margin-right: 0;
+        }
+
+        .profile-info h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .profile-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            opacity: 0.95;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .profile-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 16px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .edit-btn {
+            padding: 8px 16px;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 10px;
+            color: #64748b;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .edit-btn:hover {
+            background: #10b981;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-input:disabled {
+            background: #f8fafc;
+            color: #94a3b8;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: #f1f5f9;
+            transform: translateX(4px);
+        }
+
+        .activity-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .icon-green {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .icon-blue {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .icon-orange {
+            background: #fed7aa;
+            color: #ea580c;
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .activity-amount {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-header {
+                padding: 24px;
+            }
+
+            .profile-top {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-info h1 {
+                font-size: 24px;
+            }
+
+            .profile-meta {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-top">
+                <div class="avatar-large">
+                    JI
+                    <div class="edit-avatar">
+                        <i class="fas fa-camera" style="font-size: 14px; color: white;"></i>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h1>John Investor</h1>
+                    <div class="profile-meta">
+                        <div class="profile-meta-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>john.investor@email.com</span>
+                        </div>
+                        <div class="profile-meta-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+1 (555) 123-4567</span>
+                        </div>
+                        <div class="profile-meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>Member since Jan 2024</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Account Details -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Account Details</h2>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Account ID</span>
+                    <span class="info-value">BST-2024-10458</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Account Type</span>
+                    <span class="info-value">Premium Investor</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Status</span>
+                    <span class="badge badge-success">
+                        <i class="fas fa-check-circle"></i> Verified
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">KYC Status</span>
+                    <span class="badge badge-success">
+                        <i class="fas fa-shield-alt"></i> Approved
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Risk Profile</span>
+                    <span class="badge badge-warning">
+                        <i class="fas fa-chart-line"></i> Moderate
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Member Since</span>
+                    <span class="info-value">January 15, 2024</span>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card full-width">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Activity</h2>
+                    <button class="edit-btn">View All</button>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon icon-green">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div class="activity-info">
+                        <div class="activity-title">Investment in Tech Growth Fund</div>
+                        <div class="activity-time">2 hours ago</div>
+                    </div>
+                    <div class="activity-amount">$5,000</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon icon-blue">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <div class="activity-info">
+                        <div class="activity-title">Withdrawal to Bank Account</div>
+                        <div class="activity-time">1 day ago</div>
+                    </div>
+                    <div class="activity-amount">$2,500</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon icon-orange">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="activity-info">
+                        <div class="activity-title">Dividend Received - Real Estate Fund</div>
+                        <div class="activity-time">3 days ago</div>
+                    </div>
+                    <div class="activity-amount">$840</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon icon-green">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div class="activity-info">
+                        <div class="activity-title">Investment in Green Energy Portfolio</div>
+                        <div class="activity-time">5 days ago</div>
+                    </div>
+                    <div class="activity-amount">$10,000</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Edit button functionality
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const card = this.closest('.card');
+                const inputs = card.querySelectorAll('.form-input');
+                
+                if (inputs.length > 0) {
+                    const isDisabled = inputs[0].disabled;
+                    
+                    inputs.forEach(input => {
+                        input.disabled = !isDisabled;
+                    });
+                    
+                    this.innerHTML = isDisabled ? '<i class="fas fa-save"></i> Save' : '<i class="fas fa-edit"></i> Edit';
+                    
+                    if (!isDisabled) {
+                        // Save logic here
+                        setTimeout(() => {
+                            inputs.forEach(input => input.disabled = true);
+                            this.innerHTML = '<i class="fas fa-edit"></i> Edit';
+                        }, 100);
+                    }
+                }
+            });
+        });
+
+        // Avatar edit
+        document.querySelector('.edit-avatar').addEventListener('click', () => {
+            alert('Avatar upload functionality would be implemented here');
+        });
+    </script>
+</body>
+</html>
