@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdraw - BluStone</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fafafa;
+            padding: 24px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 32px;
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .header-subtitle {
+            font-size: 16px;
+            color: #64748b;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #cbd5e1;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .amount-presets {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .preset-btn {
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 10px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .preset-btn:hover,
+        .preset-btn.active {
+            border-color: #10b981;
+            background: #10b981;
+            color: white;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 16px;
+            padding: 24px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                left: -100%;
+            }
+            50%, 100% {
+                left: 100%;
+            }
+        }
+
+        .balance-label {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .balance-amount {
+            font-size: 32px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .info-box {
+            background: #f0fdf4;
+            border-left: 4px solid #10b981;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .info-box-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #065f46;
+            margin-bottom: 4px;
+        }
+
+        .info-box-text {
+            font-size: 13px;
+            color: #047857;
+        }
+
+        .fee-breakdown {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .fee-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .fee-row:last-child {
+            margin-bottom: 0;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 12px;
+            font-weight: 600;
+        }
+
+        .fee-label {
+            color: #64748b;
+        }
+
+        .fee-value {
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .summary-section {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .summary-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .summary-row:last-child {
+            border-top: 2px solid #e2e8f0;
+            padding-top: 16px;
+            margin-bottom: 0;
+        }
+
+        .summary-label {
+            color: #64748b;
+        }
+
+        .summary-value {
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 12px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px 24px;
+            background: white;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        .icon-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #d1fae5;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: #059669;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+
+        .modal-text {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 12px 24px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn:hover {
+            background: #059669;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-title {
+                font-size: 24px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .amount-presets {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .balance-amount {
+                font-size: 24px;
+            }
+
+            .modal-content {
+                padding: 32px 24px;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="header-title">Withdraw Funds</h1>
+            <p class="header-subtitle">Easily withdraw your investment funds to your bank account</p>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Withdrawal Form -->
+            <div class="card">
+                <h2 class="card-title">Withdrawal Details</h2>
+
+                <div class="balance-card">
+                    <div class="balance-label">Available Balance</div>
+                    <div class="balance-amount">$47,500</div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-title">Processing Time</div>
+                    <div class="info-box-text">Withdrawals typically process within 2-3 business days</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Withdrawal Amount</label>
+                    <input type="number" class="form-input" id="withdrawAmount" placeholder="Enter amount" min="100" max="47500">
+                    <div class="amount-presets">
+                        <button class="preset-btn" onclick="setAmount(500)">$500</button>
+                        <button class="preset-btn" onclick="setAmount(2500)">$2,500</button>
+                        <button class="preset-btn" onclick="setAmount(5000)">$5,000</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Destination Account</label>
+                    <select class="form-select" id="bankAccount">
+                        <option value="">Select a bank account</option>
+                        <option value="chase">Chase Bank - ****4321</option>
+                        <option value="bofa">Bank of America - ****5678</option>
+                        <option value="wells">Wells Fargo - ****9012</option>
+                        <option value="new">Add New Account</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Withdrawal Method</label>
+                    <select class="form-select" id="withdrawMethod">
+                        <option value="bank">Bank Transfer</option>
+                        <option value="wire">Wire Transfer</option>
+                        <option value="ach">ACH Transfer</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Reference Note (Optional)</label>
+                    <input type="text" class="form-input" placeholder="Add a note for this withdrawal">
+                </div>
+
+                <button class="btn-primary" onclick="processWithdrawal()">Continue to Review</button>
+                <button class="btn-secondary" onclick="cancelWithdrawal()">Cancel</button>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="card">
+                <h2 class="card-title">Withdrawal Summary</h2>
+
+                <div class="summary-section">
+                    <div class="summary-title">Breakdown</div>
+                    <div class="summary-row">
+                        <span class="summary-label">Withdrawal Amount</span>
+                        <span class="summary-value" id="summaryAmount">$0.00</span>
+                    </div>
+                    <div class="fee-breakdown">
+                        <div class="fee-row">
+                            <span class="fee-label">Processing Fee</span>
+                            <span class="fee-value" id="processingFee">$0.00</span>
+                        </div>
+                        <div class="fee-row">
+                            <span class="fee-label">Transfer Fee</span>
+                            <span class="fee-value" id="transferFee">$0.00</span>
+                        </div>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Total Amount</span>
+                        <span class="summary-value" id="totalAmount">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-title"><i class="fas fa-shield-alt"></i> Secure Transaction</div>
+                    <div class="info-box-text">Your withdrawal is protected by industry-standard encryption and fraud detection</div>
+                </div>
+
+                <div class="summary-section">
+                    <div class="summary-title">Important Information</div>
+                    <div style="font-size: 13px; color: #64748b; line-height: 1.6;">
+                        <div style="margin-bottom: 12px;">✓ Minimum withdrawal: $100</div>
+                        <div style="margin-bottom: 12px;">✓ Maximum withdrawal: $50,000 per transaction</div>
+                        <div>✓ Daily limit: $100,000</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h3 class="modal-title">Withdrawal Initiated</h3>
+            <p class="modal-text">Your withdrawal request has been submitted successfully. You will receive a confirmation email shortly.</p>
+            <button class="modal-btn" onclick="closeModal()">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        const amountInput = document.getElementById('withdrawAmount');
+
+        function setAmount(amount) {
+            document.getElementById('withdrawAmount').value = amount;
+            updateSummary();
+            document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function updateSummary() {
+            const amount = parseFloat(amountInput.value) || 0;
+            const processingFee = amount * 0.01; // 1% processing fee
+            const transferFee = 2.50; // $2.50 transfer fee
+            const total = amount + processingFee + transferFee;
+
+            document.getElementById('summaryAmount').textContent = `$${amount.toFixed(2)}`;
+            document.getElementById('processingFee').textContent = `$${processingFee.toFixed(2)}`;
+            document.getElementById('transferFee').textContent = `$${transferFee.toFixed(2)}`;
+            document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
+        }
+
+        function processWithdrawal() {
+            const amount = parseFloat(amountInput.value);
+            const account = document.getElementById('bankAccount').value;
+
+            if (!amount || amount < 100) {
+                alert('Please enter a valid amount (minimum $100)');
+                return;
+            }
+
+            if (!account) {
+                alert('Please select a destination account');
+                return;
+            }
+
+            document.getElementById('successModal').classList.add('active');
+        }
+
+        function cancelWithdrawal() {
+            if (confirm('Are you sure you want to cancel this withdrawal?')) {
+                amountInput.value = '';
+                updateSummary();
+                document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').classList.remove('active');
+            amountInput.value = '';
+            updateSummary();
+        }
+
+        amountInput.addEventListener('input', updateSummary);
+    </script>
+</body>
+  </html>
