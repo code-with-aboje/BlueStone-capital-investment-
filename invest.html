@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BluStone Investment Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fafafa;
+            overflow: hidden;
+        }
+
+        .main-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar Styles - Desktop Only */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .brand {
+            padding: 24px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: white;
+            padding: 4px;
+        }
+
+        .brand-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .brand-info {
+            flex: 1;
+        }
+
+        .brand-name {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-tagline {
+            font-size: 11px;
+            opacity: 0.85;
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .sidebar .nav-item {
+            padding: 14px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar .nav-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-left-color: white;
+        }
+
+        .sidebar .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-left-color: white;
+            color: white;
+            font-weight: 600;
+        }
+
+        .sidebar .nav-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .sidebar .nav-label {
+            font-size: 14px;
+        }
+
+        /* Header Styles */
+        .header {
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            z-index: 50;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-brand-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: white;
+            padding: 3px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-brand-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .header-brand-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-brand-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1;
+        }
+
+        .header-brand-tagline {
+            font-size: 10px;
+            color: #64748b;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #475569;
+            padding-left: 20px;
+            border-left: 2px solid #e5e7eb;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            padding: 8px 16px 8px 40px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 240px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .user-profile:hover {
+            background: #f8fafc;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        /* Content Area */
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .iframe-container {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .content-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #fafafa;
+        }
+
+        /* Bottom Navigation - Mobile Only */
+        .bottom-nav {
+            display: none;
+            height: 70px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 8px;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+            z-index: 50;
+        }
+
+        .bottom-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 80px;
+        }
+
+        .bottom-nav .nav-item:hover {
+            background: #f8fafc;
+        }
+
+        .bottom-nav .nav-item.active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .bottom-nav .nav-icon {
+            font-size: 22px;
+            transition: transform 0.3s ease;
+        }
+
+        .bottom-nav .nav-item.active .nav-icon {
+            transform: scale(1.1);
+        }
+
+        .bottom-nav .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            transition: color 0.3s ease;
+        }
+
+        .bottom-nav .nav-item.active .nav-label {
+            color: white;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .bottom-nav {
+                display: flex;
+            }
+
+            .header {
+                padding: 0 16px;
+            }
+
+            .search-box {
+                display: none;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 16px;
+                padding-left: 16px;
+            }
+
+            .header-brand-tagline {
+                display: none;
+            }
+
+            .header-brand-name {
+                font-size: 16px;
+            }
+
+            .header-brand-logo {
+                width: 32px;
+                height: 32px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .iframe-container {
+                padding-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Sidebar - Desktop -->
+        <div class="sidebar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <img src="favicon.png" alt="BluStone" onerror="this.style.display='none'">
+                </div>
+                <div class="brand-info">
+                    <div class="brand-name">BluStone</div>
+                    <div class="brand-tagline">Investment Platform</div>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-item active" data-page="home.html" data-title="Home">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Home</span>
+                </div>
+                <div class="nav-item" data-page="invest.html" data-title="Invest">
+                    <span class="nav-icon">📈</span>
+                    <span class="nav-label">Invest</span>
+                </div>
+                <div class="nav-item" data-page="withdraw.html" data-title="Withdraw">
+                    <span class="nav-icon">💸</span>
+                    <span class="nav-label">Withdraw</span>
+                </div>
+                <div class="nav-item" data-page="profile.html" data-title="Profile">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">Profile</span>
+                </div>
+                <div class="nav-item" data-page="settings.html" data-title="Settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Settings</span>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Content Wrapper -->
+        <div class="content-wrapper">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <div class="header-brand">
+                        <div class="header-brand-logo">
+                            <img src="favicon.png" alt="BluStone" onerror="this.style.display='none'">
+                        </div>
+                        <div class="header-brand-info">
+                            <div class="header-brand-name">BluStone</div>
+                            <div class="header-brand-tagline">Investment Platform</div>
+                        </div>
+                    </div>
+                    <h1 class="page-title" id="pageTitle">Home</h1>
+                </div>
+
+                <div class="header-right">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-input" placeholder="Search...">
+                    </div>
+
+                    <div class="user-profile">
+                        <div class="avatar">JI</div>
+                        <div class="user-name">John Investor</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- iFrame Container -->
+            <div class="iframe-container">
+                <iframe class="content-frame" id="contentFrame" src="home.html"></iframe>
+            </div>
+
+            <!-- Bottom Navigation - Mobile -->
+            <nav class="bottom-nav">
+                <div class="nav-item active" data-page="home.html" data-title="Home">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Home</span>
+                </div>
+                <div class="nav-item" data-page="invest.html" data-title="Invest">
+                    <span class="nav-icon">📈</span>
+                    <span class="nav-label">Invest</span>
+                </div>
+                <div class="nav-item" data-page="withdraw.html" data-title="Withdraw">
+                    <span class="nav-icon">💸</span>
+                    <span class="nav-label">Withdraw</span>
+                </div>
+                <div class="nav-item" data-page="profile.html" data-title="Profile">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">Profile</span>
+                </div>
+                <div class="nav-item" data-page="settings.html" data-title="Settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Settings</span>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        const sidebarNavItems = document.querySelectorAll('.sidebar .nav-item');
+        const bottomNavItems = document.querySelectorAll('.bottom-nav .nav-item');
+        const allNavItems = [...sidebarNavItems, ...bottomNavItems];
+        const contentFrame = document.getElementById('contentFrame');
+        const pageTitle = document.getElementById('pageTitle');
+
+        function handleNavigation(item) {
+            const page = item.getAttribute('data-page');
+            const title = item.getAttribute('data-title');
+
+            // Update active state for both sidebar and bottom nav
+            allNavItems.forEach(nav => nav.classList.remove('active'));
+            
+            // Find matching items in both navigations and set active
+            const matchingItems = allNavItems.filter(nav => 
+                nav.getAttribute('data-page') === page
+            );
+            matchingItems.forEach(nav => nav.classList.add('active'));
+
+            // Update iframe src
+            contentFrame.src = page;
+
+            // Update page title
+            pageTitle.textContent = title;
+        }
+
+        // Add click listeners to all navigation items
+        allNavItems.forEach(item => {
+            item.addEventListener('click', () => handleNavigation(item));
+        });
+
+        // Handle iframe load errors
+        contentFrame.addEventListener('error', () => {
+            console.error('Failed to load page');
+        });
+    </script>
+</body>
+  </html>
