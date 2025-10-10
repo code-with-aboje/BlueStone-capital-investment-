@@ -272,24 +272,31 @@
             height: 70px;
             background: white;
             border-top: 1px solid #e5e7eb;
-            align-items: center;
-            justify-content: space-around;
-            padding: 0 8px;
             box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
             z-index: 50;
+        }
+
+        .bottom-nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            height: 100%;
+            padding: 0 8px;
         }
 
         .bottom-nav .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 4px;
             cursor: pointer;
-            padding: 8px 12px;
+            padding: 8px 10px;
             border-radius: 12px;
             transition: all 0.3s ease;
             flex: 1;
-            max-width: 80px;
+            max-width: 75px;
+            min-width: 60px;
         }
 
         .bottom-nav .nav-item:hover {
@@ -301,8 +308,9 @@
         }
 
         .bottom-nav .nav-icon {
-            font-size: 22px;
+            font-size: 24px;
             transition: transform 0.3s ease;
+            line-height: 1;
         }
 
         .bottom-nav .nav-item.active .nav-icon {
@@ -314,6 +322,8 @@
             font-weight: 600;
             color: #64748b;
             transition: color 0.3s ease;
+            white-space: nowrap;
+            line-height: 1.2;
         }
 
         .bottom-nav .nav-item.active .nav-label {
@@ -447,25 +457,27 @@
 
             <!-- Bottom Navigation - Mobile -->
             <nav class="bottom-nav">
-                <div class="nav-item active" data-page="home.html" data-title="Home">
-                    <span class="nav-icon">🏠</span>
-                    <span class="nav-label">Home</span>
-                </div>
-                <div class="nav-item" data-page="invest.html" data-title="Invest">
-                    <span class="nav-icon">📈</span>
-                    <span class="nav-label">Invest</span>
-                </div>
-                <div class="nav-item" data-page="withdraw.html" data-title="Withdraw">
-                    <span class="nav-icon">💸</span>
-                    <span class="nav-label">Withdraw</span>
-                </div>
-                <div class="nav-item" data-page="profile.html" data-title="Profile">
-                    <span class="nav-icon">👤</span>
-                    <span class="nav-label">Profile</span>
-                </div>
-                <div class="nav-item" data-page="settings.html" data-title="Settings">
-                    <span class="nav-icon">⚙️</span>
-                    <span class="nav-label">Settings</span>
+                <div class="bottom-nav-container">
+                    <div class="nav-item active" data-page="home.html" data-title="Home">
+                        <span class="nav-icon">🏠</span>
+                        <span class="nav-label">Home</span>
+                    </div>
+                    <div class="nav-item" data-page="invest.html" data-title="Invest">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-label">Invest</span>
+                    </div>
+                    <div class="nav-item" data-page="withdraw.html" data-title="Withdraw">
+                        <span class="nav-icon">💸</span>
+                        <span class="nav-label">Withdraw</span>
+                    </div>
+                    <div class="nav-item" data-page="profile.html" data-title="Profile">
+                        <span class="nav-icon">👤</span>
+                        <span class="nav-label">Profile</span>
+                    </div>
+                    <div class="nav-item" data-page="settings.html" data-title="Settings">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-label">Settings</span>
+                    </div>
                 </div>
             </nav>
         </div>
@@ -509,4 +521,4 @@
         });
     </script>
 </body>
-  </html>
+    </html>
