@@ -27,7 +27,7 @@
 
         .profile-header {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            border-radius: 0;
+            border-radius: 24px;
             padding: 0;
             color: white;
             box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2);
@@ -82,26 +82,13 @@
             position: relative;
             flex-shrink: 0;
             margin-left: 0;
+            overflow: hidden;
         }
 
-        .edit-avatar {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: #10b981;
-            border: 3px solid white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .edit-avatar:hover {
-            transform: scale(1.1);
+        .avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .profile-info {
@@ -129,34 +116,6 @@
             display: flex;
             align-items: center;
             gap: 6px;
-        }
-
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-top: 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            padding: 16px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .stat-label {
-            font-size: 12px;
-            opacity: 0.9;
-            margin-bottom: 6px;
-        }
-
-        .stat-value {
-            font-size: 24px;
-            font-weight: 700;
         }
 
         .content-grid {
@@ -201,38 +160,6 @@
         .edit-btn:hover {
             background: #10b981;
             color: white;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #475569;
-            margin-bottom: 8px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #10b981;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-        }
-
-        .form-input:disabled {
-            background: #f8fafc;
-            color: #94a3b8;
         }
 
         .info-row {
@@ -345,6 +272,40 @@
             color: #0f172a;
         }
 
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #10b981;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 16px;
@@ -354,17 +315,9 @@
                 grid-template-columns: 1fr;
             }
 
-            .profile-header {
-                padding: 24px;
-            }
-
             .profile-top {
                 flex-direction: column;
                 text-align: center;
-            }
-
-            .stats-row {
-                grid-template-columns: 1fr;
             }
 
             .profile-info h1 {
@@ -374,6 +327,7 @@
             .profile-meta {
                 flex-direction: column;
                 gap: 8px;
+                justify-content: center;
             }
 
             .card {
@@ -387,26 +341,19 @@
         <!-- Profile Header -->
         <div class="profile-header">
             <div class="profile-top">
-                <div class="avatar-large">
-                    JI
-                    <div class="edit-avatar">
-                        <i class="fas fa-camera" style="font-size: 14px; color: white;"></i>
-                    </div>
+                <div class="avatar-large" id="avatarContainer">
+                    <span id="avatarInitials">JI</span>
                 </div>
                 <div class="profile-info">
-                    <h1>John Investor</h1>
+                    <h1 id="profileName">Loading...</h1>
                     <div class="profile-meta">
                         <div class="profile-meta-item">
                             <i class="fas fa-envelope"></i>
-                            <span>john.investor@email.com</span>
-                        </div>
-                        <div class="profile-meta-item">
-                            <i class="fas fa-phone"></i>
-                            <span>+1 (555) 123-4567</span>
+                            <span id="profileEmail">-</span>
                         </div>
                         <div class="profile-meta-item">
                             <i class="fas fa-calendar"></i>
-                            <span>Member since Jan 2024</span>
+                            <span id="memberSince">-</span>
                         </div>
                     </div>
                 </div>
@@ -420,35 +367,32 @@
                 <div class="card-header">
                     <h2 class="card-title">Account Details</h2>
                 </div>
-                <div class="info-row">
-                    <span class="info-label">Account ID</span>
-                    <span class="info-value">BST-2024-10458</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Account Type</span>
-                    <span class="info-value">Premium Investor</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Status</span>
-                    <span class="badge badge-success">
-                        <i class="fas fa-check-circle"></i> Verified
-                    </span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">KYC Status</span>
-                    <span class="badge badge-success">
-                        <i class="fas fa-shield-alt"></i> Approved
-                    </span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Risk Profile</span>
-                    <span class="badge badge-warning">
-                        <i class="fas fa-chart-line"></i> Moderate
-                    </span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Member Since</span>
-                    <span class="info-value">January 15, 2024</span>
+                <div id="accountAlert"></div>
+                <div id="accountForm">
+                    <div class="info-row">
+                        <span class="info-label">Full Name</span>
+                        <span class="info-value" id="fullName">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Email</span>
+                        <span class="info-value" id="emailInput">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Account Type</span>
+                        <span class="info-value" id="accountType">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Status</span>
+                        <span class="badge badge-success" id="statusBadge">
+                            <i class="fas fa-check-circle"></i> <span id="statusText">-</span>
+                        </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Risk Profile</span>
+                        <span class="badge badge-warning" id="riskBadge">
+                            <i class="fas fa-chart-line"></i> <span id="riskText">-</span>
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -456,83 +400,178 @@
             <div class="card full-width">
                 <div class="card-header">
                     <h2 class="card-title">Recent Activity</h2>
-                    <button class="edit-btn">View All</button>
+                    <button class="edit-btn" id="viewAllBtn">View All</button>
                 </div>
-                <div class="activity-item">
-                    <div class="activity-icon icon-green">
-                        <i class="fas fa-arrow-down"></i>
-                    </div>
-                    <div class="activity-info">
-                        <div class="activity-title">Investment in Tech Growth Fund</div>
-                        <div class="activity-time">2 hours ago</div>
-                    </div>
-                    <div class="activity-amount">$5,000</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon icon-blue">
-                        <i class="fas fa-arrow-up"></i>
-                    </div>
-                    <div class="activity-info">
-                        <div class="activity-title">Withdrawal to Bank Account</div>
-                        <div class="activity-time">1 day ago</div>
-                    </div>
-                    <div class="activity-amount">$2,500</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon icon-orange">
-                        <i class="fas fa-coins"></i>
-                    </div>
-                    <div class="activity-info">
-                        <div class="activity-title">Dividend Received - Real Estate Fund</div>
-                        <div class="activity-time">3 days ago</div>
-                    </div>
-                    <div class="activity-amount">$840</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon icon-green">
-                        <i class="fas fa-arrow-down"></i>
-                    </div>
-                    <div class="activity-info">
-                        <div class="activity-title">Investment in Green Energy Portfolio</div>
-                        <div class="activity-time">5 days ago</div>
-                    </div>
-                    <div class="activity-amount">$10,000</div>
+                <div id="activityContainer" style="min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                    <div class="loading"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        // Edit button functionality
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const card = this.closest('.card');
-                const inputs = card.querySelectorAll('.form-input');
-                
-                if (inputs.length > 0) {
-                    const isDisabled = inputs[0].disabled;
-                    
-                    inputs.forEach(input => {
-                        input.disabled = !isDisabled;
-                    });
-                    
-                    this.innerHTML = isDisabled ? '<i class="fas fa-save"></i> Save' : '<i class="fas fa-edit"></i> Edit';
-                    
-                    if (!isDisabled) {
-                        // Save logic here
-                        setTimeout(() => {
-                            inputs.forEach(input => input.disabled = true);
-                            this.innerHTML = '<i class="fas fa-edit"></i> Edit';
-                        }, 100);
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
+
+    <script type="module">
+        import { firebaseConfig } from './lib/firebase.js';
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentUser = null;
+
+        // Alert helper
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('accountAlert');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alertDiv);
+            
+            setTimeout(() => alertDiv.remove(), 5000);
+        }
+
+        // Load user profile
+        async function loadUserProfile() {
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    currentUser = user;
+                    try {
+                        const userDoc = await db.collection('users').doc(user.uid).get();
+                        
+                        if (userDoc.exists) {
+                            const userData = userDoc.data();
+                            populateProfileUI(userData, user);
+                            loadRecentActivity(user.uid);
+                        } else {
+                            console.log('No user data found');
+                        }
+                    } catch (error) {
+                        console.error('Error loading profile:', error);
+                        showAlert('Error loading profile data', 'error');
                     }
+                } else {
+                    console.log('No user logged in');
                 }
             });
-        });
+        }
 
-        // Avatar edit
-        document.querySelector('.edit-avatar').addEventListener('click', () => {
-            alert('Avatar upload functionality would be implemented here');
-        });
+        // Populate UI with user data
+        function populateProfileUI(userData, authUser) {
+            // Profile header
+            document.getElementById('profileName').textContent = userData.fullName || 'User';
+            document.getElementById('profileEmail').textContent = authUser.email || '-';
+            
+            const memberDate = userData.memberSince ? new Date(userData.memberSince.toDate()).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '-';
+            document.getElementById('memberSince').textContent = `Member since ${memberDate}`;
+
+            // Account details - read only
+            document.getElementById('fullName').textContent = userData.fullName || '-';
+            document.getElementById('emailInput').textContent = authUser.email || '-';
+            document.getElementById('accountType').textContent = userData.accountType || 'Standard';
+            document.getElementById('statusText').textContent = userData.status || 'Active';
+            document.getElementById('riskText').textContent = userData.riskProfile || 'Moderate';
+
+            // Avatar
+            const initials = (userData.fullName || 'JI').split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('avatarInitials').textContent = initials;
+
+            if (userData.avatarUrl) {
+                const img = document.createElement('img');
+                img.src = userData.avatarUrl;
+                document.getElementById('avatarContainer').innerHTML = '';
+                document.getElementById('avatarContainer').appendChild(img);
+            }
+        }
+
+        // Load recent activity
+        async function loadRecentActivity(userId) {
+            try {
+                const activityDocs = await db.collection('users').doc(userId)
+                    .collection('activities')
+                    .orderBy('timestamp', 'desc')
+                    .limit(5)
+                    .get();
+
+                const container = document.getElementById('activityContainer');
+                container.innerHTML = '';
+
+                if (activityDocs.empty) {
+                    container.innerHTML = '<p style="color: #94a3b8;">No recent activity</p>';
+                    return;
+                }
+
+                activityDocs.forEach(doc => {
+                    const activity = doc.data();
+                    const timestamp = new Date(activity.timestamp.toDate());
+                    const timeAgo = getTimeAgo(timestamp);
+                    
+                    const iconClass = getActivityIconClass(activity.type);
+                    const icon = getActivityIcon(activity.type);
+
+                    const activityHTML = `
+                        <div class="activity-item">
+                            <div class="activity-icon ${iconClass}">
+                                ${icon}
+                            </div>
+                            <div class="activity-info">
+                                <div class="activity-title">${activity.title}</div>
+                                <div class="activity-time">${timeAgo}</div>
+                            </div>
+                            <div class="activity-amount">${activity.amount ? '$' + activity.amount.toLocaleString() : ''}</div>
+                        </div>
+                    `;
+                    container.innerHTML += activityHTML;
+                });
+            } catch (error) {
+                console.error('Error loading activities:', error);
+                document.getElementById('activityContainer').innerHTML = '<p style="color: #e11d48;">Error loading activities</p>';
+            }
+        }
+
+        function getActivityIcon(type) {
+            const icons = {
+                'investment': '<i class="fas fa-arrow-down"></i>',
+                'withdrawal': '<i class="fas fa-arrow-up"></i>',
+                'dividend': '<i class="fas fa-coins"></i>',
+                'transfer': '<i class="fas fa-exchange-alt"></i>'
+            };
+            return icons[type] || '<i class="fas fa-circle"></i>';
+        }
+
+        function getActivityIconClass(type) {
+            const classes = {
+                'investment': 'icon-green',
+                'withdrawal': 'icon-blue',
+                'dividend': 'icon-orange',
+                'transfer': 'icon-green'
+            };
+            return classes[type] || 'icon-green';
+        }
+
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + ' years ago';
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + ' months ago';
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + ' days ago';
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + ' hours ago';
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + ' minutes ago';
+            return 'just now';
+        }
+
+        // Initialize
+        loadUserProfile();
     </script>
 </body>
-</html>
+    </html>
