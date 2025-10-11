@@ -188,42 +188,20 @@
             color: #92400e;
         }
 
-        .full-width {
-            grid-column: 1 / -1;
-        }
-
-        .loading {
+        .spinner {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #10b981;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #e0e0e0;
+            border-top-color: #10b981;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .alert {
-            padding: 12px 16px;
-            border-radius: 10px;
-            margin-bottom: 16px;
-            font-size: 14px;
-        }
-
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-
-        .alert-success {
-            background: #dcfce7;
-            color: #166534;
-            border: 1px solid #bbf7d0;
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         @media (max-width: 768px) {
@@ -265,7 +243,7 @@
                     <span id="avatarInitials">JI</span>
                 </div>
                 <div class="profile-info">
-                    <h1 id="profileName">Loading...</h1>
+                    <h1 id="profileName"><span class="spinner"></span> Loading...</h1>
                     <div class="profile-meta">
                         <div class="profile-meta-item">
                             <i class="fas fa-envelope"></i>
@@ -287,15 +265,14 @@
                 <div class="card-header">
                     <h2 class="card-title">Account Details</h2>
                 </div>
-                <div id="accountAlert"></div>
                 <div id="accountForm">
                     <div class="info-row">
                         <span class="info-label">Full Name</span>
-                        <span class="info-value" id="fullName">-</span>
+                        <span class="info-value" id="fullName"><span class="spinner"></span></span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Email</span>
-                        <span class="info-value" id="emailInput">-</span>
+                        <span class="info-value" id="emailInput"><span class="spinner"></span></span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Account Type</span>
@@ -304,13 +281,13 @@
                     <div class="info-row">
                         <span class="info-label">Status</span>
                         <span class="badge badge-success" id="statusBadge">
-                            <i class="fas fa-check-circle"></i> <span id="statusText">-</span>
+                            <i class="fas fa-check-circle"></i> <span id="statusText">Active</span>
                         </span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Risk Profile</span>
                         <span class="badge badge-warning" id="riskBadge">
-                            <i class="fas fa-chart-line"></i> <span id="riskText">-</span>
+                            <i class="fas fa-chart-line"></i> <span id="riskText">Moderate</span>
                         </span>
                     </div>
                 </div>
@@ -324,66 +301,40 @@
                 <div id="additionalInfo">
                     <div class="info-row">
                         <span class="info-label">User ID</span>
-                        <span class="info-value" id="userId">-</span>
+                        <span class="info-value" id="userId"><span class="spinner"></span></span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Email Verified</span>
-                        <span class="info-value" id="emailVerified">-</span>
+                        <span class="info-value" id="emailVerified"><span class="spinner"></span></span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Last Sign In</span>
-                        <span class="info-value" id="lastSignIn">-</span>
+                        <span class="info-value" id="lastSignIn"><span class="spinner"></span></span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Created</span>
-                        <span class="info-value" id="createdAt">-</span>
+                        <span class="info-value" id="createdAt"><span class="spinner"></span></span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
-
     <script type="module">
-        import { firebaseConfig } from './lib/firebase.js';
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { auth } from "./lib/firebase.js";
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                populateProfileUI(user);
+            } else {
+                console.log('No user logged in');
+                document.getElementById('profileName').textContent = 'Not Logged In';
+            }
+        });
 
-        let currentUser = null;
-
-        // Alert helper
-        function showAlert(message, type = 'success') {
-            const alertContainer = document.getElementById('accountAlert');
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type}`;
-            alertDiv.textContent = message;
-            alertContainer.innerHTML = '';
-            alertContainer.appendChild(alertDiv);
-            
-            setTimeout(() => alertDiv.remove(), 5000);
-        }
-
-        // Load user profile from Auth
-        async function loadUserProfile() {
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    currentUser = user;
-                    populateProfileUI(user);
-                } else {
-                    console.log('No user logged in');
-                    showAlert('No user logged in', 'error');
-                }
-            });
-        }
-
-        // Populate UI with auth user data
         function populateProfileUI(user) {
-            const displayName = user.displayName || 'User';
+            const displayName = user.displayName || user.email?.split('@')[0] || 'User';
             const email = user.email || '-';
             const createdDate = new Date(user.metadata.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
             const lastSignInDate = new Date(user.metadata.lastSignInTime).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
@@ -417,9 +368,6 @@
                 document.getElementById('avatarContainer').appendChild(img);
             }
         }
-
-        // Initialize
-        loadUserProfile();
     </script>
 </body>
-                    </html>
+                        </html>
