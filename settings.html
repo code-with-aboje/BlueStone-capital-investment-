@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - BluStone</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fafafa;
+            padding: 24px;
+            min-height: 100vh;
+            padding-bottom: 100px;
+            padding-top: 60px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .settings-header {
+            margin-bottom: 32px;
+        }
+
+        .settings-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .settings-header p {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .card-title-section h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .card-title-section p {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .button {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .button-primary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .button-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .button-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .button-danger {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .button-danger:hover {
+            background: #fecaca;
+            transform: translateY(-2px);
+        }
+
+        .button-danger:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 24px 0;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #e0e0e0;
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-header h1 {
+                font-size: 24px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Settings Header -->
+        <div class="settings-header">
+            <h1>Settings</h1>
+            <p>Manage your account and preferences</p>
+        </div>
+
+        <!-- Settings Grid -->
+        <div class="settings-grid">
+            <!-- Change Password Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="card-title-section">
+                        <h2>Change Password</h2>
+                        <p>Update your password</p>
+                    </div>
+                </div>
+
+                <div id="passwordAlert" class="alert"></div>
+
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" class="form-input" id="currentPassword" placeholder="Enter current password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">New Password</label>
+                        <input type="password" class="form-input" id="newPassword" placeholder="Enter new password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-input" id="confirmPassword" placeholder="Confirm new password" required>
+                    </div>
+                    <button type="submit" class="button button-primary" id="changePasswordBtn">
+                        <i class="fas fa-check"></i>
+                        Update Password
+                    </button>
+                </form>
+            </div>
+
+            <!-- Logout Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                    <div class="card-title-section">
+                        <h2>Logout</h2>
+                        <p>Sign out from your account</p>
+                    </div>
+                </div>
+
+                <div id="logoutAlert" class="alert"></div>
+
+                <div class="divider"></div>
+
+                <p style="font-size: 14px; color: #64748b; margin-bottom: 16px;">
+                    Signing out will end your current session. You'll need to log in again to access your account.
+                </p>
+
+                <button id="logoutBtn" class="button button-danger">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div style="height: 100px;"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+
+    <script type="module">
+        import { getAuth, onAuthStateChanged, updatePassword, reauthenticateWithCredential, EmailAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { auth } from "./lib/firebase.js";
+
+        let currentUser = null;
+
+        // Check if user is logged in
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = '/login';
+            } else {
+                currentUser = user;
+            }
+        });
+
+        // Show alert helper
+        function showAlert(elementId, message, type) {
+            const alertEl = document.getElementById(elementId);
+            alertEl.textContent = message;
+            alertEl.className = `alert show alert-${type}`;
+            
+            setTimeout(() => {
+                alertEl.classList.remove('show');
+            }, 5000);
+        }
+
+        // Change Password Form
+        document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const btn = document.getElementById('changePasswordBtn');
+
+            // Validation
+            if (newPassword !== confirmPassword) {
+                showAlert('passwordAlert', 'Passwords do not match', 'error');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showAlert('passwordAlert', 'Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner"></span> Updating...';
+
+                // Reauthenticate user
+                const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+                await reauthenticateWithCredential(currentUser, credential);
+
+                // Update password
+                await updatePassword(currentUser, newPassword);
+
+                showAlert('passwordAlert', 'Password updated successfully!', 'success');
+                document.getElementById('changePasswordForm').reset();
+            } catch (error) {
+                console.error('Error:', error);
+                if (error.code === 'auth/wrong-password') {
+                    showAlert('passwordAlert', 'Current password is incorrect', 'error');
+                } else if (error.code === 'auth/weak-password') {
+                    showAlert('passwordAlert', 'Password is too weak', 'error');
+                } else {
+                    showAlert('passwordAlert', 'Error updating password: ' + error.message, 'error');
+                }
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check"></i> Update Password';
+            }
+        });
+
+        // Logout Button
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('logoutBtn');
+            
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner"></span> Logging out...';
+
+                await signOut(auth);
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('Error logging out:', error);
+                showAlert('logoutAlert', 'Error logging out: ' + error.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+            }
+        });
+    </script>
+</body>
+  </html>
