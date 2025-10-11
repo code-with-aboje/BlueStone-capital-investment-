@@ -145,23 +145,6 @@
             color: #0f172a;
         }
 
-        .edit-btn {
-            padding: 8px 16px;
-            background: #f1f5f9;
-            border: none;
-            border-radius: 10px;
-            color: #64748b;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-        }
-
-        .edit-btn:hover {
-            background: #10b981;
-            color: white;
-        }
-
         .info-row {
             display: flex;
             justify-content: space-between;
@@ -207,69 +190,6 @@
 
         .full-width {
             grid-column: 1 / -1;
-        }
-
-        .activity-item {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            background: #f8fafc;
-            transition: all 0.3s ease;
-        }
-
-        .activity-item:hover {
-            background: #f1f5f9;
-            transform: translateX(4px);
-        }
-
-        .activity-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .icon-green {
-            background: #d1fae5;
-            color: #059669;
-        }
-
-        .icon-blue {
-            background: #dbeafe;
-            color: #2563eb;
-        }
-
-        .icon-orange {
-            background: #fed7aa;
-            color: #ea580c;
-        }
-
-        .activity-info {
-            flex: 1;
-        }
-
-        .activity-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #0f172a;
-            margin-bottom: 4px;
-        }
-
-        .activity-time {
-            font-size: 12px;
-            color: #94a3b8;
-        }
-
-        .activity-amount {
-            font-size: 16px;
-            font-weight: 700;
-            color: #0f172a;
         }
 
         .loading {
@@ -396,14 +316,28 @@
                 </div>
             </div>
 
-            <!-- Recent Activity -->
-            <div class="card full-width">
+            <!-- Additional Info -->
+            <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title">Recent Activity</h2>
-                    <button class="edit-btn" id="viewAllBtn">View All</button>
+                    <h2 class="card-title">Additional Information</h2>
                 </div>
-                <div id="activityContainer" style="min-height: 200px; display: flex; align-items: center; justify-content: center;">
-                    <div class="loading"></div>
+                <div id="additionalInfo">
+                    <div class="info-row">
+                        <span class="info-label">User ID</span>
+                        <span class="info-value" id="userId">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Email Verified</span>
+                        <span class="info-value" id="emailVerified">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Last Sign In</span>
+                        <span class="info-value" id="lastSignIn">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Created</span>
+                        <span class="info-value" id="createdAt">-</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -412,8 +346,6 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
 
     <script type="module">
         import { firebaseConfig } from './lib/firebase.js';
@@ -421,7 +353,6 @@
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const db = firebase.firestore();
 
         let currentUser = null;
 
@@ -437,141 +368,58 @@
             setTimeout(() => alertDiv.remove(), 5000);
         }
 
-        // Load user profile
+        // Load user profile from Auth
         async function loadUserProfile() {
-            auth.onAuthStateChanged(async (user) => {
+            auth.onAuthStateChanged((user) => {
                 if (user) {
                     currentUser = user;
-                    try {
-                        const userDoc = await db.collection('users').doc(user.uid).get();
-                        
-                        if (userDoc.exists) {
-                            const userData = userDoc.data();
-                            populateProfileUI(userData, user);
-                            loadRecentActivity(user.uid);
-                        } else {
-                            console.log('No user data found');
-                        }
-                    } catch (error) {
-                        console.error('Error loading profile:', error);
-                        showAlert('Error loading profile data', 'error');
-                    }
+                    populateProfileUI(user);
                 } else {
                     console.log('No user logged in');
+                    showAlert('No user logged in', 'error');
                 }
             });
         }
 
-        // Populate UI with user data
-        function populateProfileUI(userData, authUser) {
-            // Profile header
-            document.getElementById('profileName').textContent = userData.fullName || 'User';
-            document.getElementById('profileEmail').textContent = authUser.email || '-';
-            
-            const memberDate = userData.memberSince ? new Date(userData.memberSince.toDate()).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '-';
-            document.getElementById('memberSince').textContent = `Member since ${memberDate}`;
+        // Populate UI with auth user data
+        function populateProfileUI(user) {
+            const displayName = user.displayName || 'User';
+            const email = user.email || '-';
+            const createdDate = new Date(user.metadata.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            const lastSignInDate = new Date(user.metadata.lastSignInTime).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 
-            // Account details - read only
-            document.getElementById('fullName').textContent = userData.fullName || '-';
-            document.getElementById('emailInput').textContent = authUser.email || '-';
-            document.getElementById('accountType').textContent = userData.accountType || 'Standard';
-            document.getElementById('statusText').textContent = userData.status || 'Active';
-            document.getElementById('riskText').textContent = userData.riskProfile || 'Moderate';
+            // Profile header
+            document.getElementById('profileName').textContent = displayName;
+            document.getElementById('profileEmail').textContent = email;
+            document.getElementById('memberSince').textContent = `Member since ${createdDate}`;
+
+            // Account details
+            document.getElementById('fullName').textContent = displayName;
+            document.getElementById('emailInput').textContent = email;
+            document.getElementById('accountType').textContent = 'Standard';
+            document.getElementById('statusText').textContent = 'Active';
+            document.getElementById('riskText').textContent = 'Moderate';
+
+            // Additional info
+            document.getElementById('userId').textContent = user.uid;
+            document.getElementById('emailVerified').textContent = user.emailVerified ? 'Yes' : 'No';
+            document.getElementById('lastSignIn').textContent = lastSignInDate;
+            document.getElementById('createdAt').textContent = createdDate;
 
             // Avatar
-            const initials = (userData.fullName || 'JI').split(' ').map(n => n[0]).join('').toUpperCase();
+            const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
             document.getElementById('avatarInitials').textContent = initials;
 
-            if (userData.avatarUrl) {
+            if (user.photoURL) {
                 const img = document.createElement('img');
-                img.src = userData.avatarUrl;
+                img.src = user.photoURL;
                 document.getElementById('avatarContainer').innerHTML = '';
                 document.getElementById('avatarContainer').appendChild(img);
             }
-        }
-
-        // Load recent activity
-        async function loadRecentActivity(userId) {
-            try {
-                const activityDocs = await db.collection('users').doc(userId)
-                    .collection('activities')
-                    .orderBy('timestamp', 'desc')
-                    .limit(5)
-                    .get();
-
-                const container = document.getElementById('activityContainer');
-                container.innerHTML = '';
-
-                if (activityDocs.empty) {
-                    container.innerHTML = '<p style="color: #94a3b8;">No recent activity</p>';
-                    return;
-                }
-
-                activityDocs.forEach(doc => {
-                    const activity = doc.data();
-                    const timestamp = new Date(activity.timestamp.toDate());
-                    const timeAgo = getTimeAgo(timestamp);
-                    
-                    const iconClass = getActivityIconClass(activity.type);
-                    const icon = getActivityIcon(activity.type);
-
-                    const activityHTML = `
-                        <div class="activity-item">
-                            <div class="activity-icon ${iconClass}">
-                                ${icon}
-                            </div>
-                            <div class="activity-info">
-                                <div class="activity-title">${activity.title}</div>
-                                <div class="activity-time">${timeAgo}</div>
-                            </div>
-                            <div class="activity-amount">${activity.amount ? '$' + activity.amount.toLocaleString() : ''}</div>
-                        </div>
-                    `;
-                    container.innerHTML += activityHTML;
-                });
-            } catch (error) {
-                console.error('Error loading activities:', error);
-                document.getElementById('activityContainer').innerHTML = '<p style="color: #e11d48;">Error loading activities</p>';
-            }
-        }
-
-        function getActivityIcon(type) {
-            const icons = {
-                'investment': '<i class="fas fa-arrow-down"></i>',
-                'withdrawal': '<i class="fas fa-arrow-up"></i>',
-                'dividend': '<i class="fas fa-coins"></i>',
-                'transfer': '<i class="fas fa-exchange-alt"></i>'
-            };
-            return icons[type] || '<i class="fas fa-circle"></i>';
-        }
-
-        function getActivityIconClass(type) {
-            const classes = {
-                'investment': 'icon-green',
-                'withdrawal': 'icon-blue',
-                'dividend': 'icon-orange',
-                'transfer': 'icon-green'
-            };
-            return classes[type] || 'icon-green';
-        }
-
-        function getTimeAgo(date) {
-            const seconds = Math.floor((new Date() - date) / 1000);
-            let interval = seconds / 31536000;
-            if (interval > 1) return Math.floor(interval) + ' years ago';
-            interval = seconds / 2592000;
-            if (interval > 1) return Math.floor(interval) + ' months ago';
-            interval = seconds / 86400;
-            if (interval > 1) return Math.floor(interval) + ' days ago';
-            interval = seconds / 3600;
-            if (interval > 1) return Math.floor(interval) + ' hours ago';
-            interval = seconds / 60;
-            if (interval > 1) return Math.floor(interval) + ' minutes ago';
-            return 'just now';
         }
 
         // Initialize
         loadUserProfile();
     </script>
 </body>
-    </html>
+                    </html>
