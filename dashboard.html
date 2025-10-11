@@ -359,8 +359,14 @@
                             updatedAt: new Date().toISOString()
                         };
                         
-                        await set(userRef, defaultData);
-                        updateDashboard(defaultData);
+                        try {
+                            await set(userRef, defaultData);
+                            console.log('User data created successfully');
+                            updateDashboard(defaultData);
+                        } catch (writeError) {
+                            console.error('Error writing user data:', writeError);
+                            updateDashboard(defaultData);
+                        }
                     }
                 } catch (error) {
                     console.error('Error loading user data:', error);
