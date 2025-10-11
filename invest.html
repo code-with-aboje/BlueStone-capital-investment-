@@ -27,6 +27,47 @@
             width: 100%;
         }
 
+        /* Auth Loading Screen */
+        .auth-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            gap: 20px;
+        }
+
+        .auth-loader.hidden {
+            display: none;
+        }
+
+        .spinner-large {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .auth-loader-text {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
         /* Sidebar Styles - Desktop Only */
         .sidebar {
             width: 260px;
@@ -52,12 +93,11 @@
             border-radius: 10px;
             background: white;
             padding: 4px;
-        }
-
-        .brand-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #10b981;
+            font-size: 24px;
         }
 
         .brand-info {
@@ -146,15 +186,14 @@
             width: 36px;
             height: 36px;
             border-radius: 8px;
-            background: white;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             padding: 3px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-brand-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
         }
 
         .header-brand-info {
@@ -215,6 +254,7 @@
             top: 50%;
             transform: translateY(-50%);
             color: #94a3b8;
+            font-size: 14px;
         }
 
         .user-profile {
@@ -256,6 +296,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
 
         .iframe-container {
@@ -273,15 +314,153 @@
             display: block;
         }
 
+        /* Chat Frame */
+        .chat-frame {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 380px;
+            height: 500px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+            border: 1px solid #e5e7eb;
+            animation: slideUp 0.3s ease;
+        }
+
+        .chat-frame.active {
+            display: flex;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-header {
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .chat-close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .chat-close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            padding: 10px 14px;
+            border-radius: 12px;
+            max-width: 80%;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .message.bot {
+            background: #f1f5f9;
+            color: #0f172a;
+            align-self: flex-start;
+        }
+
+        .message.user {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            align-self: flex-end;
+        }
+
+        .chat-input-area {
+            padding: 16px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .chat-send-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .chat-send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
         /* Chat Button */
         .chat-button {
             position: fixed;
-            bottom: 85px;
+            bottom: 20px;
             right: 20px;
-            width: 50px;
-            height: 50px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
-            background: #10b981;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             border: none;
             cursor: pointer;
@@ -297,6 +476,10 @@
         .chat-button:hover {
             transform: scale(1.1);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-button.hidden {
+            display: none;
         }
 
         /* Bottom Navigation - Mobile Only */
@@ -434,10 +617,19 @@
             .header-brand-logo {
                 width: 32px;
                 height: 32px;
+                font-size: 16px;
             }
 
-            .chat-button {
-                bottom: 80px;
+            .chat-frame {
+                width: 100%;
+                height: 100%;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+            }
+
+            .chat-frame.active {
+                display: flex;
             }
         }
 
@@ -453,12 +645,18 @@
     </style>
 </head>
 <body>
-    <div class="main-container">
+    <!-- Auth Loading Screen -->
+    <div class="auth-loader" id="authLoader">
+        <div class="spinner-large"></div>
+        <div class="auth-loader-text">Authenticating...</div>
+    </div>
+
+    <div class="main-container" id="mainContainer" style="display: none;">
         <!-- Sidebar - Desktop -->
         <div class="sidebar">
             <div class="brand">
                 <div class="brand-logo">
-                    <img src="favicon.png" alt="BluStone" onerror="this.style.display='none'">
+                    <i class="fas fa-gem"></i>
                 </div>
                 <div class="brand-info">
                     <div class="brand-name">BluStone</div>
@@ -497,7 +695,7 @@
                 <div class="header-left">
                     <div class="header-brand">
                         <div class="header-brand-logo">
-                            <img src="favicon.png" alt="BluStone" onerror="this.style.display='none'">
+                            <i class="fas fa-gem"></i>
                         </div>
                         <div class="header-brand-info">
                             <div class="header-brand-name">BluStone</div>
@@ -509,13 +707,13 @@
 
                 <div class="header-right">
                     <div class="search-box">
-                        <span class="search-icon">🔍</span>
+                        <span class="search-icon"><i class="fas fa-magnifying-glass"></i></span>
                         <input type="text" class="search-input" placeholder="Search...">
                     </div>
 
                     <div class="user-profile">
-                        <div class="avatar">JI</div>
-                        <div class="user-name">John Investor</div>
+                        <div class="avatar" id="avatarText">JI</div>
+                        <div class="user-name" id="headerUserName">John Investor</div>
                     </div>
                 </div>
             </header>
@@ -524,6 +722,27 @@
             <button class="chat-button" id="chatButton" title="Customer chat">
                 <i class="fas fa-comments"></i>
             </button>
+
+              <!-- Chat Frame -->
+            <div class="chat-frame" id="chatFrame">
+                <div class="chat-header">
+                    <span class="chat-title">BluStone Support</span>
+                    <button class="chat-close-btn" id="chatCloseBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot">
+                        Hello! How can we help you today?
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Type a message...">
+                    <button class="chat-send-btn" id="chatSendBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
 
             <!-- iFrame Container -->
             <div class="iframe-container">
@@ -558,17 +777,96 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+        import { auth, database } from "./lib/firebase.js";
+
+        const authLoader = document.getElementById('authLoader');
+        const mainContainer = document.getElementById('mainContainer');
+        const headerUserName = document.getElementById('headerUserName');
+        const avatarText = document.getElementById('avatarText');
+        const chatButton = document.getElementById('chatButton');
+        const chatFrame = document.getElementById('chatFrame');
+        const chatCloseBtn = document.getElementById('chatCloseBtn');
+        const chatInput = document.getElementById('chatInput');
+        const chatSendBtn = document.getElementById('chatSendBtn');
         const sidebarNavItems = document.querySelectorAll('.sidebar .nav-item');
         const bottomNavItems = document.querySelectorAll('.bottom-nav .nav-item');
         const allNavItems = [...sidebarNavItems, ...bottomNavItems];
         const contentFrame = document.getElementById('contentFrame');
         const pageTitle = document.getElementById('pageTitle');
-        const chatButton = document.getElementById('chatButton');
 
-        // Chat button functionality
+        // Check authentication
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    // Fetch user data from Firebase
+                    const userRef = ref(database, `users/${user.uid}`);
+                    const snapshot = await get(userRef);
+                    
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+                        const displayName = userData.fullName || user.email.split('@')[0] || 'User';
+                        
+                        // Update header with user name
+                        headerUserName.textContent = displayName;
+                        
+                        // Update avatar with initials
+                        const initials = displayName
+                            .split(' ')
+                            .map(word => word.charAt(0))
+                            .join('')
+                            .toUpperCase();
+                        avatarText.textContent = initials;
+                    }
+                    
+                    // Show main container
+                    authLoader.classList.add('hidden');
+                    mainContainer.style.display = 'flex';
+                } catch (error) {
+                    console.error('Error loading user data:', error);
+                    authLoader.classList.add('hidden');
+                    mainContainer.style.display = 'flex';
+                }
+            } else {
+                // User not authenticated, redirect to login
+                window.location.href = '/login';
+            }
+        });
+
+        // Chat functionality
         chatButton.addEventListener('click', () => {
-            alert('Customer chat opened! This is a placeholder.');
+            chatFrame.classList.toggle('active');
+            chatButton.classList.toggle('hidden');
+            if (chatFrame.classList.contains('active')) {
+                chatInput.focus();
+            }
+        });
+
+        chatCloseBtn.addEventListener('click', () => {
+            chatFrame.classList.remove('active');
+            chatButton.classList.remove('hidden');
+        });
+
+        // Send chat message
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                const userMsg = document.createElement('div');
+                userMsg.className = 'message user';
+                userMsg.textContent = message;
+                document.getElementById('chatMessages').appendChild(userMsg);
+                chatInput.value = '';
+                document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+            }
+        }
+
+        chatSendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
         });
 
         // Navigation functionality
@@ -576,31 +874,19 @@
             const page = item.getAttribute('data-page');
             const title = item.getAttribute('data-title');
 
-            // Update active state for both sidebar and bottom nav
             allNavItems.forEach(nav => nav.classList.remove('active'));
-            
-            // Find matching items in both navigations and set active
             const matchingItems = allNavItems.filter(nav => 
                 nav.getAttribute('data-page') === page
             );
             matchingItems.forEach(nav => nav.classList.add('active'));
 
-            // Update iframe src
             contentFrame.src = page;
-
-            // Update page title
             pageTitle.textContent = title;
         }
 
-        // Add click listeners to all navigation items
         allNavItems.forEach(item => {
             item.addEventListener('click', () => handleNavigation(item));
         });
-
-        // Handle iframe load errors
-        contentFrame.addEventListener('error', () => {
-            console.error('Failed to load page');
-        });
     </script>
 </body>
-    </html>
+                        </html>
