@@ -386,10 +386,18 @@
             font-size: 12px;
             color: #1565c0;
             display: none;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
         }
 
         .debug-info.show {
             display: block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
 
         @media (max-width: 480px) {
@@ -512,12 +520,13 @@
         let currentUserData = null;
         const debugInfo = document.getElementById('debugInfo');
 
-        // Show debug info in development
-        // debugInfo.classList.add('show');
+        // Show debug info in development (ENABLE THIS TO SEE DEBUG MESSAGES)
+        debugInfo.classList.add('show');
 
         function logDebug(message) {
             console.log('🔍 DEBUG:', message);
             debugInfo.textContent = message;
+            debugInfo.classList.add('show');
         }
 
         function showError(message) {
@@ -636,7 +645,7 @@
             window.location.href = '/analytics.html';
         };
 
-        onAuthStateChanged(auth, async (user) => {
+         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 console.log('User logged in:', user.email);
                 const uid = user.uid;
@@ -651,6 +660,17 @@
                         currentUserData = userData;
                         updateDashboard(userData);
                         setupRealtimeListener(uid);
+                        
+                        // Check if fund button exists after data loads
+                        setTimeout(() => {
+                            const btn = document.getElementById('fundButton');
+                            console.log('🔘 Fund button check:', btn ? 'EXISTS' : 'NOT FOUND');
+                            if (btn) {
+                                console.log('   - Disabled?', btn.disabled);
+                                console.log('   - Display:', getComputedStyle(btn).display);
+                                console.log('   - Visibility:', getComputedStyle(btn).visibility);
+                            }
+                        }, 500);
                     } else {
                         console.error('✗ No user data found in Realtime Database');
                         showError('No user profile found. Please complete your registration.');
