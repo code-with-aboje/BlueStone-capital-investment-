@@ -84,7 +84,7 @@
             flex: 1;
         }
 
-        .invest-button {
+        .fund-button {
             background: white;
             color: #10b981;
             border: none;
@@ -100,7 +100,7 @@
             width: fit-content;
         }
 
-        .invest-button:hover {
+        .fund-button:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
@@ -404,7 +404,7 @@
             <div class="card-content">
                 <div class="top-section">
                     <div class="user-name" id="userName"><span class="spinner"></span> Loading...</div>
-                    <button class="invest-button" onclick="goToInvest()">+ Invest</button>
+                    <button class="fund-button" id="fundButton">+ Fund</button>
                 </div>
 
                 <div class="balance-section">
@@ -520,16 +520,30 @@
             updatedAt: new Date().toISOString()
         };
 
-        window.goToInvest = function() {
-            window.location.href = '/invest.html';
-        };
+        // Fund button handler - triggers modal in parent page
+        document.getElementById('fundButton').addEventListener('click', function() {
+            // Send message to parent window to open funding modal
+            if (window.parent && window.parent.openFundingModal) {
+                window.parent.openFundingModal();
+            } else {
+                // Fallback: post message to parent
+                window.parent.postMessage({ type: 'OPEN_FUNDING_MODAL' }, '*');
+            }
+        });
 
         window.goToPortfolio = function() {
             window.location.href = '/portfolio.html';
         };
 
         window.goToWithdraw = function() {
-            window.location.href = '/withdraw.html';
+            // On mobile, trigger modal in parent
+            if (window.innerWidth <= 768 && window.parent && window.parent.openWithdrawModal) {
+                window.parent.openWithdrawModal();
+            } else if (window.innerWidth <= 768) {
+                window.parent.postMessage({ type: 'OPEN_WITHDRAW_MODAL' }, '*');
+            } else {
+                window.location.href = '/withdraw.html';
+            }
         };
 
         window.goToAnalytics = function() {
@@ -613,6 +627,7 @@
                 const activePlans = userData.activePlans || [];
                 document.getElementById('investedCount').textContent = `${activePlans.length} ${activePlans.length === 1 ? 'plan' : 'plans'}`;
 
+                
                 // Income
                 const totalIncome = userData.totalIncome || 0;
                 const todayIncome = userData.todayIncome || 0;
