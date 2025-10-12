@@ -778,7 +778,7 @@
     </div>
 
     <!-- Firebase SDKs - Module Version -->
-     <script type="module" src="./assets/js/funding-modal.js"></script>
+    <script type="module" src="./assets/js/funding-modal.js"></script>
     <script type="module" src="./assets/js/withdraw-modal.js"></script>
     
     <script type="module">
@@ -803,11 +803,40 @@
         const contentFrame = document.getElementById('contentFrame');
         const pageTitle = document.getElementById('pageTitle');
 
+        // ✅ CRITICAL: Listen for messages from iframe to open funding/withdraw modals
+        window.addEventListener('message', (event) => {
+            console.log('📨 Parent received message:', event.data);
+            
+            if (!event.data || !event.data.type) return;
+            
+            if (event.data.type === 'OPEN_FUNDING_MODAL') {
+                console.log('✅ Opening funding modal from iframe request');
+                if (typeof window.openFundingModal === 'function') {
+                    window.openFundingModal();
+                } else {
+                    console.error('❌ openFundingModal function not found! Make sure funding-modal.js is loaded.');
+                }
+            }
+            
+            if (event.data.type === 'OPEN_WITHDRAW_MODAL') {
+                console.log('✅ Opening withdraw modal from iframe request');
+                if (typeof window.openWithdrawModal === 'function') {
+                    window.openWithdrawModal();
+                } else {
+                    console.error('❌ openWithdrawModal function not found! Make sure withdraw-modal.js is loaded.');
+                }
+            }
+
+            if (event.data.type === 'FUNDING_REQUEST_SUBMITTED') {
+                console.log('✅ Funding request submitted:', event.data.data);
+                // Optional: Reload iframe or update balance
+            }
+        });
+
         // Check authentication
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 try {
-                    // Fetch user data from Firebase Realtime Database
                     const userRef = ref(database, 'users/' + user.uid);
                     const snapshot = await get(userRef);
                     
@@ -815,10 +844,8 @@
                         const userData = snapshot.val();
                         const displayName = userData.fullName || user.email.split('@')[0] || 'User';
                         
-                        // Update header with user name
                         headerUserName.textContent = displayName;
                         
-                        // Update avatar with initials
                         const initials = displayName
                             .split(' ')
                             .map(word => word.charAt(0))
@@ -828,7 +855,6 @@
                         avatarText.textContent = initials;
                     }
                     
-                    // Show main container
                     authLoader.classList.add('hidden');
                     mainContainer.style.display = 'flex';
                 } catch (error) {
@@ -837,7 +863,6 @@
                     mainContainer.style.display = 'flex';
                 }
             } else {
-                // User not authenticated, redirect to login
                 window.location.href = '/login';
             }
         });
@@ -856,7 +881,6 @@
             chatButton.classList.remove('hidden');
         });
 
-        // Send chat message
         function sendMessage() {
             const message = chatInput.value.trim();
             if (message) {
@@ -867,7 +891,6 @@
                 chatInput.value = '';
                 chatMessages.scrollTop = chatMessages.scrollHeight;
 
-                // Simulate bot response (replace with actual bot logic)
                 setTimeout(() => {
                     const botMsg = document.createElement('div');
                     botMsg.className = 'message bot';
@@ -890,24 +913,20 @@
             const page = item.getAttribute('data-page');
             const title = item.getAttribute('data-title');
 
-            // Remove active class from all nav items
             allNavItems.forEach(nav => nav.classList.remove('active'));
             
-            // Add active class to matching items in both navigations
             const matchingItems = allNavItems.filter(nav => 
                 nav.getAttribute('data-page') === page
             );
             matchingItems.forEach(nav => nav.classList.add('active'));
 
-            // Update iframe and page title
             contentFrame.src = page;
             pageTitle.textContent = title;
         }
 
-        // Add click listeners to all navigation items
         allNavItems.forEach(item => {
             item.addEventListener('click', () => handleNavigation(item));
         });
     </script>
 </body>
-    </html>
+</html>
