@@ -1,4 +1,8 @@
-// Withdraw Modal System - Firebase Integrated Version
+// Withdraw Modal System - Firebase Module Version
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { getDatabase, ref, get, set, push, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+import { auth, database } from "./lib/firebase.js";
+
 (function() {
     // Create modal HTML
     const modalHTML = `
@@ -338,13 +342,8 @@
         // Load user balance from Firebase Realtime Database
         async function loadUserBalance() {
             try {
-                // Check if Firebase is available
-                if (typeof firebase === 'undefined') {
-                    throw new Error('Firebase is not loaded');
-                }
-
-                // Check if user is authenticated
-                const user = firebase.auth().currentUser;
+                // Get current user
+                const user = auth.currentUser;
                 if (!user) {
                     availableBalance.textContent = '$0.00';
                     errorMessage.textContent = 'Please log in to view your balance';
@@ -352,11 +351,9 @@
                     return;
                 }
 
-                // Get Realtime Database instance
-                const db = firebase.database();
-
                 // Fetch user data
-                const snapshot = await db.ref('users/' + user.uid).once('value');
+                const userRef = ref(database, 'users/' + user.uid);
+                const snapshot = await get(userRef);
                 
                 if (snapshot.exists()) {
                     userData = snapshot.val();
@@ -464,18 +461,11 @@
             submitWithdrawBtn.textContent = 'Processing...';
 
             try {
-                // Check Firebase and auth
-                if (typeof firebase === 'undefined') {
-                    throw new Error('Firebase is not loaded');
-                }
-
-                const user = firebase.auth().currentUser;
+                const user = auth.currentUser;
                 if (!user) {
                     throw new Error('User not authenticated');
                 }
 
-                const db = firebase.database();
-                
                 // Create withdrawal request
                 const withdrawalData = {
                     userId: user.uid,
@@ -490,15 +480,16 @@
                 };
 
                 // Add to withdrawals in Realtime Database
-                const newWithdrawalRef = db.ref('withdrawals').push();
-                await newWithdrawalRef.set(withdrawalData);
+                const withdrawalsRef = ref(database, 'withdrawals');
+                const newWithdrawalRef = push(withdrawalsRef);
+                await set(newWithdrawalRef, withdrawalData);
 
                 // Update user's available balance
-                const userRef = db.ref('users/' + user.uid);
-                const userSnapshot = await userRef.once('value');
+                const userRef = ref(database, 'users/' + user.uid);
+                const userSnapshot = await get(userRef);
                 const currentBalance = userSnapshot.val().available || 0;
                 
-                await userRef.update({
+                await update(userRef, {
                     available: currentBalance - amount
                 });
 
@@ -522,10 +513,6 @@
                 submitWithdrawBtn.textContent = 'Request Withdrawal';
             }
         });
-
-        // Initial load (optional - only if you want to pre-load on page load)
-        // Uncomment the next line if you want to load balance when page loads
-        // loadUserBalance();
     }
 
     // Wait for DOM to be ready
