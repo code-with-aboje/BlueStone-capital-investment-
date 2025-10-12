@@ -1,7 +1,7 @@
 // Withdraw Modal System - Firebase Module Version
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 import { getDatabase, ref, get, set, push, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-import { auth, database } from "./lib/firebase.js";
+import { auth, database } from "./firebase.js";
 
 (function() {
     // Create modal HTML
