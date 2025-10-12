@@ -777,21 +777,13 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs - Compat Version -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <!-- Firebase SDKs - Module Version -->
+    <script type="module" src="./assets/js/withdraw-modal.js"></script>
     
-    <!-- Your Firebase Config -->
-    <script src="./lib/firebase.js"></script>
-    
-    <!-- Withdraw Modal Script -->
-    <script src="./assets/js/withdraw-modal.js"></script>
-    
-    <script>
-        // Get Firebase instances
-        const auth = firebase.auth();
-        const database = firebase.database();
+    <script type="module">
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+        import { auth, database } from "./lib/firebase.js";
 
         // DOM Elements
         const authLoader = document.getElementById('authLoader');
@@ -811,12 +803,12 @@
         const pageTitle = document.getElementById('pageTitle');
 
         // Check authentication
-        auth.onAuthStateChanged(async (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 try {
                     // Fetch user data from Firebase Realtime Database
-                    const userRef = database.ref('users/' + user.uid);
-                    const snapshot = await userRef.once('value');
+                    const userRef = ref(database, 'users/' + user.uid);
+                    const snapshot = await get(userRef);
                     
                     if (snapshot.exists()) {
                         const userData = snapshot.val();
@@ -917,4 +909,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
