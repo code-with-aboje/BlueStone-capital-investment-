@@ -778,10 +778,8 @@
     </div>
 
     <!-- Firebase SDKs - Module Version -->
-  
-    <script type="module" src="./assets/js/withdraw-modal.js"></script><script type="module" src="./assets/js/funding-modal.js"></script>
-    
     <script type="module" src="./assets/js/funding-modal.js"></script>
+    <script type="module" src="./assets/js/withdraw-modal.js"></script>
     
     <script type="module">
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
@@ -807,29 +805,52 @@
 
         // ✅ CRITICAL: Listen for messages from iframe to open funding/withdraw modals
         window.addEventListener('message', (event) => {
+            // Log all messages for debugging
             console.log('📨 Parent received message:', event.data);
             
-            if (!event.data || !event.data.type) return;
+            // Skip if no data or no type
+            if (!event.data || typeof event.data !== 'object') {
+                return;
+            }
             
-            if (event.data.type === 'OPEN_FUNDING_MODAL') {
+            // Skip Firebase/Google auth internal messages
+            if (typeof event.data === 'string' || event.data.h !== undefined || event.data.s !== undefined) {
+                return;
+            }
+            
+            const messageType = event.data.type;
+            
+            if (messageType === 'OPEN_FUNDING_MODAL') {
                 console.log('✅ Opening funding modal from iframe request');
+                console.log('🔍 Checking if openFundingModal exists:', typeof window.openFundingModal);
+                
                 if (typeof window.openFundingModal === 'function') {
-                    window.openFundingModal();
+                    try {
+                        window.openFundingModal();
+                        console.log('✅ Funding modal opened successfully');
+                    } catch (err) {
+                        console.error('❌ Error opening funding modal:', err);
+                    }
                 } else {
-                    console.error('❌ openFundingModal function not found! Make sure funding-modal.js is loaded.');
+                    console.error('❌ openFundingModal function not found!');
+                    console.error('💡 Make sure funding-modal.js is loaded correctly');
+                    console.error('💡 Check the import path in funding-modal.js');
+                    
+                    // Show user-friendly error
+                    alert('Funding feature is temporarily unavailable. Please refresh the page.');
                 }
             }
             
-            if (event.data.type === 'OPEN_WITHDRAW_MODAL') {
+            if (messageType === 'OPEN_WITHDRAW_MODAL') {
                 console.log('✅ Opening withdraw modal from iframe request');
                 if (typeof window.openWithdrawModal === 'function') {
                     window.openWithdrawModal();
                 } else {
-                    console.error('❌ openWithdrawModal function not found! Make sure withdraw-modal.js is loaded.');
+                    console.error('❌ openWithdrawModal function not found!');
                 }
             }
 
-            if (event.data.type === 'FUNDING_REQUEST_SUBMITTED') {
+            if (messageType === 'FUNDING_REQUEST_SUBMITTED') {
                 console.log('✅ Funding request submitted:', event.data.data);
                 // Optional: Reload iframe or update balance
             }
@@ -931,4 +952,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
