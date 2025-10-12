@@ -479,9 +479,13 @@ import { auth, database } from "./lib/firebase.js";
             }
         });
 
-        // Listen for iframe messages
+        // ENHANCED: Listen for iframe messages from both parent and child contexts
         window.addEventListener('message', (event) => {
-            if (event.data.type === 'OPEN_FUNDING_MODAL') {
+            // Security: Validate message origin if needed
+            // if (event.origin !== 'https://your-trusted-domain.com') return;
+            
+            if (event.data && event.data.type === 'OPEN_FUNDING_MODAL') {
+                console.log('Funding modal open request received');
                 window.openFundingModal();
             }
         });
@@ -540,6 +544,14 @@ import { auth, database } from "./lib/firebase.js";
                 successMessage.classList.add('show');
                 errorMessage.classList.remove('show');
 
+                // Notify parent window of successful submission
+                if (window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'FUNDING_REQUEST_SUBMITTED',
+                        data: { amount, method }
+                    }, '*');
+                }
+
                 setTimeout(() => {
                     closeFundingModal();
                 }, 3000);
@@ -553,6 +565,9 @@ import { auth, database } from "./lib/firebase.js";
                 submitFundingBtn.textContent = 'Submit Request';
             }
         });
+
+        // Log initialization
+        console.log('Funding modal initialized and ready to receive messages');
     }
 
     // Wait for DOM to be ready
