@@ -785,7 +785,9 @@
 <script src="./assets/js/withdraw-modal.js"></script>
     
     <script>
-        
+        const auth = firebase.auth();
+    const database = firebase.database();
+    
         const authLoader = document.getElementById('authLoader');
         const mainContainer = document.getElementById('mainContainer');
         const headerUserName = document.getElementById('headerUserName');
