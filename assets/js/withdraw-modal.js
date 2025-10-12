@@ -488,7 +488,7 @@
 
             try {
                 // Import Firebase functions from your lib
-                const { auth, database } = await import('../../../lib/firebase.js');
+                const { auth, database } = await import('../../lib/firebase.js');
                 const { ref, push, update } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js');
 
                 currentUser = auth.currentUser;
