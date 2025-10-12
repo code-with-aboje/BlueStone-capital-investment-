@@ -105,6 +105,10 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
+        .fund-button:active {
+            transform: scale(0.98);
+        }
+
         .balance-section {
             margin-top: 8px;
         }
@@ -373,6 +377,21 @@
             display: block;
         }
 
+        .debug-info {
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: #1565c0;
+            display: none;
+        }
+
+        .debug-info.show {
+            display: block;
+        }
+
         @media (max-width: 480px) {
             body {
                 padding: 20px 16px;
@@ -398,6 +417,7 @@
 </head>
 <body>
     <div class="container">
+        <div class="debug-info" id="debugInfo">Waiting for button click...</div>
         <div class="error-message" id="errorMessage"></div>
 
         <div class="dashboard-card">
@@ -490,6 +510,15 @@
         import { auth, database } from "./lib/firebase.js";
 
         let currentUserData = null;
+        const debugInfo = document.getElementById('debugInfo');
+
+        // Show debug info in development
+        // debugInfo.classList.add('show');
+
+        function logDebug(message) {
+            console.log('🔍 DEBUG:', message);
+            debugInfo.textContent = message;
+        }
 
         function showError(message) {
             const errorEl = document.getElementById('errorMessage');
@@ -501,46 +530,103 @@
             }, 5000);
         }
 
-        const defaultUserData = {
-            fullName: 'Loading...',
-            totalBalance: 0,
-            invested: 0,
-            available: 0,
-            totalIncome: 0,
-            todayIncome: 0,
-            totalReturn: 0,
-            totalROI: 0,
-            todayPL: 0,
-            todayTrend: 0,
-            balanceChange: 0,
-            changePercent: 0,
-            activePlans: [],
-            planHistory: [],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-        };
+        // FIXED: Improved fund button handler with proper message structure
+        const fundButton = document.getElementById('fundButton');
+        
+        if (fundButton) {
+            fundButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                logDebug('Fund button clicked!');
+                
+                console.log('🔘 Fund button clicked');
+                console.log('📍 Window location:', window.location.href);
+                console.log('👪 Has parent?', window.parent !== window);
+                console.log('🖥️ Screen width:', window.innerWidth);
+                
+                // Visual feedback immediately
+                const originalText = this.textContent;
+                this.textContent = 'Opening...';
+                this.disabled = true;
+                
+                // Method 1: Try to call parent function directly (same-origin)
+                try {
+                    if (window.parent !== window && typeof window.parent.openFundingModal === 'function') {
+                        console.log('✅ Calling parent.openFundingModal() directly');
+                        logDebug('Calling parent function directly...');
+                        window.parent.openFundingModal();
+                        
+                        setTimeout(() => {
+                            this.textContent = originalText;
+                            this.disabled = false;
+                        }, 1000);
+                        return;
+                    }
+                } catch (err) {
+                    console.log('⚠️ Direct call failed (cross-origin):', err.message);
+                }
 
-        // Fund button handler - triggers modal in parent page
-        document.getElementById('fundButton').addEventListener('click', function() {
-            // Send message to parent window to open funding modal
-            if (window.parent && window.parent.openFundingModal) {
-                window.parent.openFundingModal();
-            } else {
-                // Fallback: post message to parent
-                window.parent.postMessage({ type: 'OPEN_FUNDING_MODAL' }, '*');
-            }
-        });
+                // Method 2: Post message to parent (cross-origin safe)
+                console.log('📤 Sending postMessage to parent');
+                logDebug('Sending message to parent window...');
+                
+                const message = { 
+                    type: 'OPEN_FUNDING_MODAL',
+                    source: 'dashboard-fund-button',
+                    timestamp: Date.now()
+                };
+                
+                console.log('📦 Message payload:', message);
+                
+                try {
+                    // Send to parent window
+                    if (window.parent && window.parent !== window) {
+                        window.parent.postMessage(message, '*');
+                        console.log('✅ Message sent to parent window');
+                    }
+                    
+                    // Also try window.top in case of nested iframes
+                    if (window.top && window.top !== window) {
+                        window.top.postMessage(message, '*');
+                        console.log('✅ Message also sent to top window');
+                    }
+                    
+                    logDebug('Message sent! Waiting for modal...');
+                    
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                        this.disabled = false;
+                    }, 2000);
+                    
+                } catch (err) {
+                    console.error('❌ Failed to send message:', err);
+                    logDebug('Error: ' + err.message);
+                    showError('Unable to open funding modal. Please refresh the page.');
+                    
+                    this.textContent = originalText;
+                    this.disabled = false;
+                }
+            });
+        } else {
+            console.error('❌ Fund button not found!');
+        }
 
         window.goToPortfolio = function() {
             window.location.href = '/portfolio.html';
         };
 
         window.goToWithdraw = function() {
-            // On mobile, trigger modal in parent
-            if (window.innerWidth <= 768 && window.parent && window.parent.openWithdrawModal) {
-                window.parent.openWithdrawModal();
-            } else if (window.innerWidth <= 768) {
-                window.parent.postMessage({ type: 'OPEN_WITHDRAW_MODAL' }, '*');
+            if (window.innerWidth <= 768) {
+                try {
+                    if (window.parent && typeof window.parent.openWithdrawModal === 'function') {
+                        window.parent.openWithdrawModal();
+                    } else {
+                        window.parent.postMessage({ type: 'OPEN_WITHDRAW_MODAL' }, '*');
+                    }
+                } catch (err) {
+                    window.location.href = '/withdraw.html';
+                }
             } else {
                 window.location.href = '/withdraw.html';
             }
@@ -606,11 +692,9 @@
 
         function updateDashboard(userData) {
             try {
-                // User info
                 const displayName = userData.fullName || userData.email?.split('@')[0] || 'Investor';
                 document.getElementById('userName').textContent = displayName;
 
-                // Balance section
                 const totalBalance = userData.totalBalance || 0;
                 const invested = userData.invested || 0;
                 const available = userData.available || 0;
@@ -620,15 +704,12 @@
                 document.getElementById('totalBalance').textContent = `$${totalBalance.toLocaleString()}`;
                 document.getElementById('balanceChange').textContent = `↑ $${balanceChange.toLocaleString()} (${changePercent}%)`;
 
-                // Stats
                 document.getElementById('invested').textContent = `$${invested.toLocaleString()}`;
                 document.getElementById('available').textContent = `$${available.toLocaleString()}`;
 
                 const activePlans = userData.activePlans || [];
                 document.getElementById('investedCount').textContent = `${activePlans.length} ${activePlans.length === 1 ? 'plan' : 'plans'}`;
 
-                
-                // Income
                 const totalIncome = userData.totalIncome || 0;
                 const todayIncome = userData.todayIncome || 0;
                 const monthlyIncome = calculateMonthlyIncome(activePlans);
@@ -640,7 +721,6 @@
                 document.getElementById('monthlyIncome').textContent = `$${Math.round(monthlyIncome).toLocaleString()}`;
                 document.getElementById('totalROI').textContent = `${totalROI.toFixed(2)}%`;
 
-                // Plans list
                 const plansList = document.getElementById('plansList');
                 if (activePlans.length > 0) {
                     plansList.innerHTML = activePlans.map((plan, idx) => `
