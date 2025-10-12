@@ -1,4 +1,4 @@
-// Withdraw Modal System - Desktop & Mobile
+// Withdraw Modal System - Works on Desktop & Mobile with Firebase
 (function() {
     // Create modal HTML
     const modalHTML = `
@@ -94,7 +94,6 @@
             bottom: 0;
             width: 100%;
             height: 100%;
-            background: transparent;
             z-index: 10000;
         }
 
@@ -127,16 +126,16 @@
 
             .withdraw-modal-container {
                 width: 100vw;
-                height: 90vh;
+                max-height: 90vh;
             }
 
             .withdraw-modal-content {
                 width: 100%;
-                height: 100%;
                 background: white;
                 border-radius: 20px 20px 0 0;
                 padding: 24px;
                 animation: slideUp 0.4s ease;
+                max-height: 90vh;
                 overflow-y: auto;
                 box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.15);
             }
@@ -156,6 +155,8 @@
                 padding: 32px;
                 animation: popIn 0.3s ease;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+                max-height: 90vh;
+                overflow-y: auto;
             }
         }
 
@@ -393,11 +394,6 @@
         // Public function to open modal
         window.openWithdrawModal = function() {
             console.log('Opening withdraw modal');
-            if (!userData) {
-                errorMessage.textContent = 'User data not loaded. Please refresh the page.';
-                errorMessage.classList.add('show');
-                return;
-            }
             withdrawModal.classList.add('active');
             document.body.style.overflow = 'hidden';
         };
@@ -442,7 +438,7 @@
             }
         });
 
-        // Update balance from window userData (set by parent page)
+        // Update balance from window.userData
         function updateBalance() {
             if (window.userData) {
                 userData = window.userData;
@@ -451,22 +447,14 @@
             }
         }
 
-        // Check balance on init and watch for changes
         updateBalance();
-        
-        // Watch for userData changes every 500ms
-        const balanceWatcher = setInterval(() => {
-            if (window.userData && window.userData.available !== userData?.available) {
-                updateBalance();
-            }
-        }, 500);
 
         // Form submission
         withdrawForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             if (!userData) {
-                errorMessage.textContent = 'User data not loaded';
+                errorMessage.textContent = 'User data not loaded. Please refresh the page.';
                 errorMessage.classList.add('show');
                 return;
             }
@@ -499,13 +487,11 @@
             submitWithdrawBtn.textContent = 'Processing...';
 
             try {
-                // Access Firebase from parent window
-                const { getDatabase, ref, push, update } = window.firebase.database;
-                const { getAuth } = window.firebase.auth;
-                
-                const auth = getAuth();
-                const database = getDatabase();
-                const currentUser = auth.currentUser;
+                // Import Firebase functions from your lib
+                const { auth, database } = await import('./lib/firebase.js');
+                const { ref, push, update } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js');
+
+                currentUser = auth.currentUser;
 
                 if (!currentUser) {
                     errorMessage.textContent = 'User not authenticated';
@@ -549,9 +535,11 @@
 
                 setTimeout(() => {
                     closeWithdrawModal();
-                    // Reload iframe if applicable
+                    // Reload page if in iframe
                     if (window.parent !== window) {
                         window.parent.location.reload();
+                    } else {
+                        location.reload();
                     }
                 }, 2000);
             } catch (error) {
