@@ -204,8 +204,9 @@
             const dailyIncome = (amt / 500) * selectedPlan.daily;
             const totalReturns = (amt * selectedPlan.returns) / 100;
 
-            // Update user data structure
+            // Update user data structure - deduct from both totalBalance and available
             await update(userRef, {
+                totalBalance: totalBalance - amt,
                 available: available - amt,
                 invested: invested + amt,
                 updatedAt: new Date().toISOString(),
