@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,434 +7,77 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #fafafa; min-height: 100vh; padding: 60px 20px 100px 20px; }
+        .container { max-width: 500px; margin: 0 auto; padding-bottom: 200px; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #fafafa;
-            min-height: 100vh;
-            padding: 60px 20px 100px 20px;
-        }
+        .dashboard-card { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 24px; padding: 24px; box-shadow: 0 8px 32px rgba(16, 185, 129, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1); position: relative; overflow: hidden; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.2); }
+        .dashboard-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, transparent 40%, rgba(255, 255, 255, 0.25) 50%, transparent 60%, transparent); animation: shine 3s infinite; }
+        @keyframes shine { 0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); } 100% { transform: translateX(100%) translateY(100%) rotate(45deg); } }
+        .card-content { position: relative; z-index: 1; }
+        .top-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 12px; }
+        .user-name { color: white; font-size: 18px; font-weight: 600; flex: 1; }
+        .fund-button { background: white; color: #10b981; border: none; border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); white-space: nowrap; flex-shrink: 0; }
+        .fund-button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+        .balance-section { margin-top: 8px; }
+        .balance-label { color: rgba(255, 255, 255, 0.85); font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+        .balance-amount { color: white; font-size: 36px; font-weight: 700; margin-bottom: 6px; }
+        .balance-change { color: rgba(255, 255, 255, 0.95); font-size: 14px; font-weight: 600; }
 
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            padding-bottom: 200px;
-        }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .stat-card { background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); transition: all 0.3s ease; }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); }
+        .stat-label { color: #64748b; font-size: 12px; font-weight: 500; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { color: #0f172a; font-size: 20px; font-weight: 700; }
+        .stat-trend { color: #10b981; font-size: 11px; font-weight: 600; margin-top: 4px; }
 
-        .dashboard-card {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
+        .income-section { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); margin-bottom: 20px; }
+        .income-title { font-size: 14px; font-weight: 600; color: #0f172a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .income-title i { color: #10b981; font-size: 18px; }
+        .income-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .income-item { background: #f8fafc; border-radius: 12px; padding: 14px; text-align: center; }
+        .income-item-label { color: #64748b; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; }
+        .income-item-value { color: #10b981; font-size: 18px; font-weight: 700; }
 
-        .dashboard-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent,
-                transparent 40%,
-                rgba(255, 255, 255, 0.25) 50%,
-                transparent 60%,
-                transparent
-            );
-            animation: shine 3s infinite;
-        }
+        .plans-section { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); margin-bottom: 20px; }
+        .plans-title { font-size: 14px; font-weight: 600; color: #0f172a; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .plans-title i { color: #10b981; }
+        .no-plans { text-align: center; padding: 20px; color: #94a3b8; font-size: 14px; }
+        .plan-item { background: #f8fafc; border-left: 4px solid #10b981; border-radius: 8px; padding: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .plan-info h4 { color: #0f172a; font-size: 14px; margin-bottom: 4px; font-weight: 600; }
+        .plan-info p { color: #64748b; font-size: 12px; }
+        .plan-amount { text-align: right; }
+        .plan-amount .value { color: #10b981; font-size: 16px; font-weight: 700; }
+        .plan-amount .return { color: #059669; font-size: 12px; margin-top: 4px; }
 
-        @keyframes shine {
-            0% {
-                transform: translateX(-100%) translateY(-100%) rotate(45deg);
-            }
-            100% {
-                transform: translateX(100%) translateY(100%) rotate(45deg);
-            }
-        }
+        .quick-actions { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); }
+        .actions-title { font-size: 15px; font-weight: 600; color: #0f172a; margin-bottom: 14px; }
+        .action-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .action-btn { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 8px; text-align: center; cursor: pointer; transition: all 0.3s ease; }
+        .action-btn:hover { background: #f1f5f9; border-color: #cbd5e1; transform: translateY(-2px); }
+        .action-icon { font-size: 20px; margin-bottom: 6px; color: #10b981; }
+        .action-label { font-size: 12px; font-weight: 600; color: #475569; }
 
-        .card-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .top-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            gap: 12px;
-        }
-
-        .user-name {
-            color: white;
-            font-size: 18px;
-            font-weight: 600;
-            flex: 1;
-        }
-
-        .fund-button {
-            background: white;
-            color: #10b981;
-            border: none;
-            border-radius: 8px;
-            padding: 6px 12px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            white-space: nowrap;
-            flex-shrink: 0;
-            width: fit-content;
-        }
-
-        .fund-button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .fund-button:active {
-            transform: scale(0.98);
-        }
-
-        .balance-section {
-            margin-top: 8px;
-        }
-
-        .balance-label {
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 13px;
-            font-weight: 500;
-            margin-bottom: 6px;
-        }
-
-        .balance-amount {
-            color: white;
-            font-size: 36px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .balance-change {
-            color: rgba(255, 255, 255, 0.95);
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 16px;
-            padding: 16px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-label {
-            color: #64748b;
-            font-size: 12px;
-            font-weight: 500;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-value {
-            color: #0f172a;
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .stat-trend {
-            color: #10b981;
-            font-size: 11px;
-            font-weight: 600;
-            margin-top: 4px;
-        }
-
-        .stat-trend.down {
-            color: #ef4444;
-        }
-
-        .income-section {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-            margin-bottom: 20px;
-        }
-
-        .income-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #0f172a;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .income-title i {
-            color: #10b981;
-            font-size: 18px;
-        }
-
-        .income-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .income-item {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 14px;
-            text-align: center;
-        }
-
-        .income-item-label {
-            color: #64748b;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-
-        .income-item-value {
-            color: #10b981;
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        .plans-section {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-            margin-bottom: 20px;
-        }
-
-        .plans-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #0f172a;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .plans-title i {
-            color: #10b981;
-        }
-
-        .no-plans {
-            text-align: center;
-            padding: 20px;
-            color: #94a3b8;
-            font-size: 14px;
-        }
-
-        .plan-item {
-            background: #f8fafc;
-            border-left: 4px solid #10b981;
-            border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .plan-info h4 {
-            color: #0f172a;
-            font-size: 14px;
-            margin-bottom: 4px;
-            font-weight: 600;
-        }
-
-        .plan-info p {
-            color: #64748b;
-            font-size: 12px;
-        }
-
-        .plan-amount {
-            text-align: right;
-        }
-
-        .plan-amount .value {
-            color: #10b981;
-            font-size: 16px;
-            font-weight: 700;
-        }
-
-        .plan-amount .return {
-            color: #059669;
-            font-size: 12px;
-            margin-top: 4px;
-        }
-
-        .quick-actions {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-        }
-
-        .actions-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: #0f172a;
-            margin-bottom: 14px;
-        }
-
-        .action-buttons {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-
-        .action-btn {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 12px 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .action-btn:hover {
-            background: #f1f5f9;
-            border-color: #cbd5e1;
-            transform: translateY(-2px);
-        }
-
-        .action-icon {
-            font-size: 20px;
-            margin-bottom: 6px;
-            color: #10b981;
-        }
-
-        .action-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #475569;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border: 2px solid #e0e0e0;
-            border-top-color: #10b981;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .error-message {
-            background: #ffebee;
-            border: 2px solid #ef5350;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin-bottom: 20px;
-            color: #c62828;
-            font-size: 14px;
-            text-align: center;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-        }
-
-        .debug-info {
-            background: #e3f2fd;
-            border: 1px solid #90caf9;
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 20px;
-            font-size: 12px;
-            color: #1565c0;
-            display: none;
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
-        }
-
-        .debug-info.show {
-            display: block;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
+        .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid #e0e0e0; border-top-color: #10b981; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         @media (max-width: 480px) {
-            body {
-                padding: 20px 16px;
-            }
-
-            .dashboard-card {
-                padding: 20px;
-            }
-
-            .balance-amount {
-                font-size: 32px;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .income-grid {
-                grid-template-columns: 1fr;
-            }
+            body { padding: 20px 16px; }
+            .dashboard-card { padding: 20px; }
+            .balance-amount { font-size: 32px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .income-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="debug-info" id="debugInfo">Waiting for button click...</div>
-        <div class="error-message" id="errorMessage"></div>
-
         <div class="dashboard-card">
             <div class="card-content">
                 <div class="top-section">
                     <div class="user-name" id="userName"><span class="spinner"></span> Loading...</div>
                     <button class="fund-button" id="fundButton">+ Fund</button>
                 </div>
-
                 <div class="balance-section">
                     <div class="balance-label">Total Balance</div>
                     <div class="balance-amount" id="totalBalance"><span class="spinner"></span></div>
@@ -467,30 +110,22 @@
         </div>
 
         <div class="income-section">
-            <div class="income-title">
-                <i class="fas fa-money-bill-wave"></i>
-                Current Income
-            </div>
+            <div class="income-title"><i class="fas fa-money-bill-wave"></i>Current Income</div>
             <div class="income-grid">
                 <div class="income-item">
                     <div class="income-item-label">Today's Income</div>
                     <div class="income-item-value" id="todayIncome">$0</div>
                 </div>
                 <div class="income-item">
-                    <div class="income-item-label">Monthly Income</div>
-                    <div class="income-item-value" id="monthlyIncome">$0</div>
+                    <div class="income-item-label">Total Earned</div>
+                    <div class="income-item-value" id="totalEarned">$0</div>
                 </div>
             </div>
         </div>
 
         <div class="plans-section">
-            <div class="plans-title">
-                <i class="fas fa-chart-line"></i>
-                Active Investment Plans
-            </div>
-            <div id="plansList">
-                <div class="no-plans">No active investment plans yet</div>
-            </div>
+            <div class="plans-title"><i class="fas fa-chart-line"></i>Active Investment Plans</div>
+            <div id="plansList"><div class="no-plans">No active investment plans yet</div></div>
         </div>
 
         <div class="quick-actions">
@@ -504,267 +139,126 @@
                     <div class="action-icon"><i class="fas fa-money-bill-wave"></i></div>
                     <div class="action-label">Withdraw</div>
                 </div>
-                <div class="action-btn" onclick="goToAnalytics()">
-                    <div class="action-icon"><i class="fas fa-chart-line"></i></div>
-                    <div class="action-label">Analytics</div>
+                <div class="action-btn" onclick="goToPlans()">
+                    <div class="action-icon"><i class="fas fa-plus-circle"></i></div>
+                    <div class="action-label">Invest</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script type="module">
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-        import { getDatabase, ref, get, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
         import { auth, database } from "./lib/firebase.js";
 
-        let currentUserData = null;
-        const debugInfo = document.getElementById('debugInfo');
+        let currentUser = null;
 
-        // Show debug info in development (ENABLE THIS TO SEE DEBUG MESSAGES)
-        debugInfo.classList.add('show');
-
-        function logDebug(message) {
-            console.log('🔍 DEBUG:', message);
-            debugInfo.textContent = message;
-            debugInfo.classList.add('show');
-        }
-
-        function showError(message) {
-            const errorEl = document.getElementById('errorMessage');
-            errorEl.textContent = message;
-            errorEl.classList.add('show');
-            console.error(message);
-            setTimeout(() => {
-                errorEl.classList.remove('show');
-            }, 5000);
-        }
-
-        // FIXED: Improved fund button handler with proper message structure
-        const fundButton = document.getElementById('fundButton');
-        
-        if (fundButton) {
-            fundButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                logDebug('Fund button clicked!');
-                
-                console.log('🔘 Fund button clicked');
-                console.log('📍 Window location:', window.location.href);
-                console.log('👪 Has parent?', window.parent !== window);
-                console.log('🖥️ Screen width:', window.innerWidth);
-                
-                // Visual feedback immediately
-                const originalText = this.textContent;
-                this.textContent = 'Opening...';
-                this.disabled = true;
-                
-                // Method 1: Try to call parent function directly (same-origin)
-                try {
-                    if (window.parent !== window && typeof window.parent.openFundingModal === 'function') {
-                        console.log('✅ Calling parent.openFundingModal() directly');
-                        logDebug('Calling parent function directly...');
-                        window.parent.openFundingModal();
-                        
-                        setTimeout(() => {
-                            this.textContent = originalText;
-                            this.disabled = false;
-                        }, 1000);
-                        return;
-                    }
-                } catch (err) {
-                    console.log('⚠️ Direct call failed (cross-origin):', err.message);
+        // Fund button handler
+        document.getElementById('fundButton')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            try {
+                if (window.parent && typeof window.parent.openFundingModal === 'function') {
+                    window.parent.openFundingModal();
+                } else {
+                    window.parent.postMessage({ type: 'OPEN_FUNDING_MODAL' }, '*');
                 }
-
-                // Method 2: Post message to parent (cross-origin safe)
-                console.log('📤 Sending postMessage to parent');
-                logDebug('Sending message to parent window...');
-                
-                const message = { 
-                    type: 'OPEN_FUNDING_MODAL',
-                    source: 'dashboard-fund-button',
-                    timestamp: Date.now()
-                };
-                
-                console.log('📦 Message payload:', message);
-                
-                try {
-                    // Send to parent window
-                    if (window.parent && window.parent !== window) {
-                        window.parent.postMessage(message, '*');
-                        console.log('✅ Message sent to parent window');
-                    }
-                    
-                    // Also try window.top in case of nested iframes
-                    if (window.top && window.top !== window) {
-                        window.top.postMessage(message, '*');
-                        console.log('✅ Message also sent to top window');
-                    }
-                    
-                    logDebug('Message sent! Waiting for modal...');
-                    
-                    setTimeout(() => {
-                        this.textContent = originalText;
-                        this.disabled = false;
-                    }, 2000);
-                    
-                } catch (err) {
-                    console.error('❌ Failed to send message:', err);
-                    logDebug('Error: ' + err.message);
-                    showError('Unable to open funding modal. Please refresh the page.');
-                    
-                    this.textContent = originalText;
-                    this.disabled = false;
-                }
-            });
-        } else {
-            console.error('❌ Fund button not found!');
-        }
-
-        window.goToPortfolio = function() {
-            window.location.href = '/portfolio.html';
-        };
-
-        window.goToWithdraw = function() {
-            if (window.innerWidth <= 768) {
-                try {
-                    if (window.parent && typeof window.parent.openWithdrawModal === 'function') {
-                        window.parent.openWithdrawModal();
-                    } else {
-                        window.parent.postMessage({ type: 'OPEN_WITHDRAW_MODAL' }, '*');
-                    }
-                } catch (err) {
-                    window.location.href = '/withdraw.html';
-                }
-            } else {
-                window.location.href = '/withdraw.html';
+            } catch (err) {
+                window.location.href = '/fund.html';
             }
-        };
+        });
 
-        window.goToAnalytics = function() {
-            window.location.href = '/analytics.html';
-        };
+        window.goToPortfolio = () => window.location.href = '/portfolio.html';
+        window.goToWithdraw = () => window.location.href = '/withdraw.html';
+        window.goToPlans = () => window.location.href = '/plans.html';
 
-         onAuthStateChanged(auth, async (user) => {
+        onAuthStateChanged(auth, (user) => {
             if (user) {
-                console.log('User logged in:', user.email);
-                const uid = user.uid;
-                const userRef = ref(database, `users/${uid}`);
+                currentUser = user;
+                const userRef = ref(database, `users/${user.uid}`);
                 
-                try {
-                    const snapshot = await get(userRef);
-                    
-                    if (snapshot.exists()) {
-                        const userData = snapshot.val();
-                        console.log('✓ User data loaded from Realtime Database:', userData);
-                        currentUserData = userData;
-                        updateDashboard(userData);
-                        setupRealtimeListener(uid);
-                        
-                        // Check if fund button exists after data loads
-                        setTimeout(() => {
-                            const btn = document.getElementById('fundButton');
-                            console.log('🔘 Fund button check:', btn ? 'EXISTS' : 'NOT FOUND');
-                            if (btn) {
-                                console.log('   - Disabled?', btn.disabled);
-                                console.log('   - Display:', getComputedStyle(btn).display);
-                                console.log('   - Visibility:', getComputedStyle(btn).visibility);
-                            }
-                        }, 500);
-                    } else {
-                        console.error('✗ No user data found in Realtime Database');
-                        showError('No user profile found. Please complete your registration.');
-                        setTimeout(() => {
-                            window.location.href = '/signup.html';
-                        }, 2000);
+                onValue(userRef, (snap) => {
+                    if (snap.exists()) {
+                        updateDashboard(snap.val());
                     }
-                } catch (readError) {
-                    console.error('✗ Error reading user data:', readError);
-                    showError('Error loading profile. Please try again.');
-                }
+                });
             } else {
-                console.log('User not logged in, redirecting to login...');
                 window.location.href = '/login.html';
             }
         });
 
-        function setupRealtimeListener(uid) {
-            const userRef = ref(database, `users/${uid}`);
-            onValue(userRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const userData = snapshot.val();
-                    currentUserData = userData;
-                    updateDashboard(userData);
-                    console.log('Real-time update received');
-                }
-            }, (error) => {
-                console.error('Real-time listener error:', error);
-            });
-        }
-
-        function calculateMonthlyIncome(plans) {
-            if (!plans || plans.length === 0) return 0;
-            return plans.reduce((total, plan) => {
-                const monthlyReturn = (plan.amount * plan.returnRate) / 100;
-                return total + monthlyReturn;
-            }, 0);
-        }
-
         function updateDashboard(userData) {
-            try {
-                const displayName = userData.fullName || userData.email?.split('@')[0] || 'Investor';
-                document.getElementById('userName').textContent = displayName;
+            // User name
+            const displayName = userData.fullName || userData.email?.split('@')[0] || 'Investor';
+            document.getElementById('userName').textContent = displayName;
 
-                const totalBalance = userData.totalBalance || 0;
-                const invested = userData.invested || 0;
-                const available = userData.available || 0;
-                const balanceChange = userData.balanceChange || 0;
-                const changePercent = userData.changePercent || 0;
+            // Balances
+            const totalBalance = userData.totalBalance || 0;
+            const invested = userData.invested || 0;
+            const available = userData.available || 0;
+            const totalIncome = userData.totalIncome || 0;
+            const todayIncome = userData.todayIncome || 0;
 
-                document.getElementById('totalBalance').textContent = `$${totalBalance.toLocaleString()}`;
-                document.getElementById('balanceChange').textContent = `↑ $${balanceChange.toLocaleString()} (${changePercent}%)`;
+            document.getElementById('totalBalance').textContent = `$${totalBalance.toFixed(2)}`;
+            document.getElementById('balanceChange').textContent = `$${(userData.balanceChange || 0).toFixed(2)} Today`;
+            document.getElementById('invested').textContent = `$${invested.toFixed(2)}`;
+            document.getElementById('available').textContent = `$${available.toFixed(2)}`;
+            document.getElementById('totalIncome').textContent = `$${totalIncome.toFixed(2)}`;
+            document.getElementById('todayIncome').textContent = `$${todayIncome.toFixed(2)}`;
+            document.getElementById('totalEarned').textContent = `$${totalIncome.toFixed(2)}`;
 
-                document.getElementById('invested').textContent = `$${invested.toLocaleString()}`;
-                document.getElementById('available').textContent = `$${available.toLocaleString()}`;
+            // Active Plans - Read from activePlans object
+            const activePlansObj = userData.activePlans || {};
+            const activePlansArray = Object.entries(activePlansObj).map(([id, plan]) => ({
+                id,
+                ...plan
+            }));
 
-                const activePlans = userData.activePlans || [];
-                document.getElementById('investedCount').textContent = `${activePlans.length} ${activePlans.length === 1 ? 'plan' : 'plans'}`;
+            const planCount = activePlansArray.length;
+            document.getElementById('investedCount').textContent = `${planCount} active ${planCount === 1 ? 'plan' : 'plans'}`;
+            document.getElementById('incomeTrend').textContent = planCount > 0 ? `From ${planCount} ${planCount === 1 ? 'plan' : 'plans'}` : 'No plans yet';
 
-                const totalIncome = userData.totalIncome || 0;
-                const todayIncome = userData.todayIncome || 0;
-                const monthlyIncome = calculateMonthlyIncome(activePlans);
-                const totalROI = userData.totalROI || 0;
+            // Calculate ROI
+            const totalROI = invested > 0 ? ((totalIncome / invested) * 100) : 0;
+            document.getElementById('totalROI').textContent = `${totalROI.toFixed(2)}%`;
 
-                document.getElementById('totalIncome').textContent = `$${totalIncome.toLocaleString()}`;
-                document.getElementById('incomeTrend').textContent = `↑ From ${activePlans.length} ${activePlans.length === 1 ? 'plan' : 'plans'}`;
-                document.getElementById('todayIncome').textContent = `$${todayIncome.toLocaleString()}`;
-                document.getElementById('monthlyIncome').textContent = `$${Math.round(monthlyIncome).toLocaleString()}`;
-                document.getElementById('totalROI').textContent = `${totalROI.toFixed(2)}%`;
+            // Display plans
+            const plansList = document.getElementById('plansList');
+            if (planCount > 0) {
+                plansList.innerHTML = activePlansArray.map(plan => {
+                    const planName = getPlanDisplayName(plan.type);
+                    const earnedSoFar = plan.earnedSoFar || 0;
+                    const dailyIncome = plan.dailyIncome || 0;
+                    const totalReturns = plan.totalReturns || 0;
+                    const progressPercent = totalReturns > 0 ? ((earnedSoFar / totalReturns) * 100).toFixed(1) : 0;
 
-                const plansList = document.getElementById('plansList');
-                if (activePlans.length > 0) {
-                    plansList.innerHTML = activePlans.map((plan, idx) => `
+                    return `
                         <div class="plan-item">
                             <div class="plan-info">
-                                <h4>${plan.planName || `Plan ${idx + 1}`}</h4>
-                                <p>${plan.duration || '12'} month${plan.duration !== 1 ? 's' : ''} • ${plan.returnRate || 0}% return</p>
+                                <h4>${planName}</h4>
+                                <p>$${dailyIncome.toFixed(2)}/day • ${progressPercent}% earned</p>
                             </div>
                             <div class="plan-amount">
-                                <div class="value">$${(plan.amount || 0).toLocaleString()}</div>
-                                <div class="return">+$${Math.round((plan.amount * plan.returnRate / 100) || 0).toLocaleString()}</div>
+                                <div class="value">$${(plan.amount || 0).toFixed(2)}</div>
+                                <div class="return">+$${earnedSoFar.toFixed(2)}</div>
                             </div>
                         </div>
-                    `).join('');
-                } else {
-                    plansList.innerHTML = '<div class="no-plans">No active investment plans yet</div>';
-                }
-
-                console.log('✓ Dashboard updated successfully');
-            } catch (error) {
-                console.error('Error updating dashboard UI:', error);
-                showError('Error updating dashboard');
+                    `;
+                }).join('');
+            } else {
+                plansList.innerHTML = '<div class="no-plans">No active investment plans yet</div>';
             }
+        }
+
+        function getPlanDisplayName(type) {
+            const names = {
+                'Weekly': 'Weekly Plan',
+                'Monthly-10.5': 'Monthly 10.5%',
+                'Monthly-11.5': 'Monthly Premium 11.5%',
+                'Yearly': 'Annual Plan'
+            };
+            return names[type] || type;
         }
     </script>
 </body>
-</html>
+             </html>
