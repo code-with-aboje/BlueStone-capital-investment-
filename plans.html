@@ -124,6 +124,7 @@
         let currentUser = null;
         let selectedPlan = null;
 
+        // Generate plans HTML
         const plansGrid = document.getElementById('plansGrid');
         plans.forEach(plan => {
             plansGrid.innerHTML += `
@@ -189,42 +190,55 @@
 
             const userRef = ref(database, `users/${currentUser.uid}`);
             const snap = await get(userRef);
-            const balance = snap.val()?.balance || 0;
+            const userData = snap.val();
+            const totalBalance = userData?.totalBalance || 0;
+            const available = userData?.available || 0;
+            const invested = userData?.invested || 0;
 
-            if (balance < amt) {
-                showError('Insufficient balance');
+            if (available < amt) {
+                showError('Insufficient available balance');
                 return;
             }
 
             const planId = `${selectedPlan.name}_${Date.now()}`;
             const dailyIncome = (amt / 500) * selectedPlan.daily;
+            const totalReturns = (amt * selectedPlan.returns) / 100;
 
+            // Update user data structure
             await update(userRef, {
-                balance: balance - amt,
+                available: available - amt,
+                invested: invested + amt,
+                updatedAt: new Date().toISOString(),
                 [`activePlans/${planId}`]: {
                     type: selectedPlan.name,
                     amount: amt,
                     dailyIncome: dailyIncome,
-                    totalReturns: (amt * selectedPlan.returns) / 100,
+                    totalReturns: totalReturns,
+                    returnRate: selectedPlan.returns,
                     startDate: Date.now(),
-                    lastUpdate: Date.now()
+                    lastUpdate: Date.now(),
+                    earnedSoFar: 0
                 }
             });
 
             closeModal();
-            alert('Investment successful!');
+            alert('✅ Investment successful! Your earnings will start updating automatically.');
         };
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
                 const userRef = ref(database, `users/${currentUser.uid}`);
+                
+                // Real-time balance listener
                 onValue(userRef, (snap) => {
                     if (snap.exists()) {
-                        const balance = snap.val().balance || 0;
-                        document.getElementById('userBalance').textContent = `$${balance.toFixed(2)}`;
+                        const userData = snap.val();
+                        const totalBalance = userData.totalBalance || 0;
+                        document.getElementById('userBalance').textContent = `$${totalBalance.toFixed(2)}`;
                     }
                 });
+
                 startIncomeUpdater();
             } else {
                 window.location.href = '/login.html';
@@ -234,30 +248,56 @@
         function startIncomeUpdater() {
             setInterval(async () => {
                 if (!currentUser) return;
+
                 const plansRef = ref(database, `users/${currentUser.uid}/activePlans`);
                 const snap = await get(plansRef);
                 if (!snap.exists()) return;
 
                 const userPlans = snap.val();
+                const userRef = ref(database, `users/${currentUser.uid}`);
+                const userSnap = await get(userRef);
+                const userData = userSnap.val();
+
                 for (const planId in userPlans) {
                     const plan = userPlans[planId];
                     const planConfig = plans.find(p => p.name === plan.type);
                     if (!planConfig) continue;
 
                     const now = Date.now();
+                    
+                    // Check if it's time to update
                     if (now - plan.lastUpdate >= planConfig.interval) {
-                        const userRef = ref(database, `users/${currentUser.uid}`);
-                        const userSnap = await get(userRef);
-                        const currentBalance = userSnap.val()?.balance || 0;
+                        const currentTotalBalance = userData?.totalBalance || 0;
+                        const currentAvailable = userData?.available || 0;
+                        const currentTotalIncome = userData?.totalIncome || 0;
+                        const currentTodayIncome = userData?.todayIncome || 0;
+                        const earnedSoFar = plan.earnedSoFar || 0;
 
+                        // Check if plan has reached max returns
+                        if (earnedSoFar >= plan.totalReturns) {
+                            console.log(`Plan ${planId} has reached maximum returns`);
+                            continue;
+                        }
+
+                        const incomeToAdd = Math.min(plan.dailyIncome, plan.totalReturns - earnedSoFar);
+
+                        // Update all relevant fields
                         await update(userRef, {
-                            balance: currentBalance + plan.dailyIncome,
-                            [`activePlans/${planId}/lastUpdate`]: now
+                            totalBalance: currentTotalBalance + incomeToAdd,
+                            available: currentAvailable + incomeToAdd,
+                            totalIncome: currentTotalIncome + incomeToAdd,
+                            todayIncome: currentTodayIncome + incomeToAdd,
+                            lastIncomeUpdate: new Date().toISOString(),
+                            updatedAt: new Date().toISOString(),
+                            [`activePlans/${planId}/lastUpdate`]: now,
+                            [`activePlans/${planId}/earnedSoFar`]: earnedSoFar + incomeToAdd
                         });
+
+                        console.log(`✅ Added $${incomeToAdd.toFixed(2)} income from ${plan.type} plan`);
                     }
                 }
-            }, 5000);
+            }, 5000); // Check every 5 seconds
         }
     </script>
 </body>
-            </html>
+    </html>
