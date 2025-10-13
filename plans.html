@@ -7,292 +7,69 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #fafafa; min-height: 100vh; padding: 40px 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 32px; }
+        .header h1 { font-size: 32px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+        .header p { font-size: 16px; color: #64748b; }
+        
+        .balance-display { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 20px; border-radius: 16px; text-align: center; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25); }
+        .balance-label { font-size: 14px; opacity: 0.9; margin-bottom: 8px; }
+        .balance-amount { font-size: 36px; font-weight: 700; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #fafafa;
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
+        .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .plan-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); transition: all 0.3s; position: relative; border: 2px solid transparent; }
+        .plan-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); border-color: #10b981; }
+        .plan-card.featured { border-color: #10b981; }
+        .featured-badge { position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+        
+        .plan-header { text-align: center; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0; }
+        .plan-icon { width: 48px; height: 48px; margin: 0 auto 12px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; }
+        .plan-name { font-size: 18px; color: #0f172a; font-weight: 700; margin-bottom: 4px; }
+        .plan-period { color: #64748b; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        
+        .plan-price { text-align: center; margin: 12px 0; padding: 12px; background: #f8fafc; border-radius: 10px; font-size: 32px; color: #0f172a; font-weight: 700; }
+        .plan-price span { font-size: 16px; color: #64748b; }
+        .min-label { color: #64748b; font-size: 10px; margin-top: 4px; text-transform: uppercase; }
+        
+        .plan-interest { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 10px; border-radius: 10px; text-align: center; margin: 10px 0; font-size: 13px; font-weight: 700; }
+        .daily-income { background: #f0fdf4; color: #059669; padding: 8px; border-radius: 8px; text-align: center; margin: 8px 0; font-size: 12px; font-weight: 600; }
+        
+        .plan-features { list-style: none; margin: 12px 0; }
+        .plan-features li { padding: 6px 0; color: #475569; display: flex; align-items: center; font-size: 12px; }
+        .plan-features li i { color: #10b981; font-size: 12px; margin-right: 8px; }
+        
+        .purchase-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s; margin-top: 12px; text-transform: uppercase; }
+        .purchase-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35); }
+        .purchase-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 48px;
-        }
-
-        .header h1 {
-            font-size: 32px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 12px;
-        }
-
-        .header p {
-            font-size: 16px;
-            color: #64748b;
-            font-weight: 500;
-        }
-
-        .plans-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 24px;
-            margin-top: 40px;
-        }
-
-        .plan-card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-            transition: all 0.3s ease;
-            position: relative;
-            border: 2px solid transparent;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .plan-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            border-color: #10b981;
-        }
-
-        .plan-card.featured {
-            border-color: #10b981;
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
-        }
-
-        .featured-badge {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-        }
-
-        .plan-header {
-            text-align: center;
-            margin-bottom: 16px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .plan-icon {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto 12px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: white;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-        }
-
-        .plan-name {
-            font-size: 18px;
-            color: #0f172a;
-            margin-bottom: 4px;
-            font-weight: 700;
-        }
-
-        .plan-period {
-            color: #64748b;
-            font-size: 13px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .plan-price-section {
-            text-align: center;
-            margin: 12px 0;
-            padding: 16px;
-            background: #f8fafc;
-            border-radius: 12px;
-        }
-
-        .plan-price {
-            font-size: 36px;
-            color: #0f172a;
-            font-weight: 700;
-            line-height: 1;
-        }
-
-        .plan-price span {
-            font-size: 18px;
-            color: #64748b;
-            font-weight: 600;
-        }
-
-        .minimum-label {
-            color: #64748b;
-            font-size: 11px;
-            font-weight: 600;
-            margin-top: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .plan-interest {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            text-align: center;
-            margin: 12px 0;
-            font-size: 14px;
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-        }
-
-        .plan-features {
-            list-style: none;
-            margin: 12px 0;
-            flex-grow: 1;
-        }
-
-        .plan-features li {
-            padding: 8px 0;
-            color: #475569;
-            display: flex;
-            align-items: center;
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .plan-features li i {
-            color: #10b981;
-            font-size: 14px;
-            margin-right: 10px;
-            width: 16px;
-            text-align: center;
-        }
-
-        .purchase-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 12px;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .purchase-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
-        }
-
-        .purchase-btn:active {
-            transform: scale(0.98);
-        }
-
-        .features-section {
-            background: white;
-            border-radius: 16px;
-            padding: 32px;
-            margin-top: 48px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-        }
-
-        .features-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 24px;
-            text-align: center;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 24px;
-            margin-top: 32px;
-        }
-
-        .feature-item {
-            text-align: center;
-        }
-
-        .feature-icon {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto 12px;
-            background: #f8fafc;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: #10b981;
-        }
-
-        .feature-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 8px;
-        }
-
-        .feature-desc {
-            font-size: 13px;
-            color: #64748b;
-            line-height: 1.6;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 16px; padding: 24px; max-width: 450px; width: 90%; }
+        .modal h3 { font-size: 20px; color: #0f172a; margin-bottom: 16px; text-align: center; }
+        
+        .input-group { margin: 16px 0; }
+        .input-group label { display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 6px; }
+        .input-group input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; font-weight: 600; }
+        .input-group input:focus { outline: none; border-color: #10b981; }
+        
+        .summary { background: #f8fafc; padding: 12px; border-radius: 10px; margin: 12px 0; font-size: 13px; }
+        .summary-row { display: flex; justify-content: space-between; padding: 6px 0; }
+        .summary-row.total { border-top: 2px solid #e2e8f0; margin-top: 8px; padding-top: 8px; font-weight: 700; }
+        
+        .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+        .modal-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase; }
+        .modal-btn.cancel { background: #f1f5f9; color: #475569; }
+        .modal-btn.confirm { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        
+        .error { background: #fee2e2; color: #dc2626; padding: 10px; border-radius: 8px; font-size: 12px; margin-top: 10px; display: none; }
+        .error.show { display: block; }
 
         @media (max-width: 768px) {
-            body {
-                padding: 24px 16px;
-            }
-
-            .header h1 {
-                font-size: 26px;
-            }
-
-            .plans-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .plan-price {
-                font-size: 36px;
-            }
-
-            .features-section {
-                padding: 24px 20px;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
+            body { padding: 20px 16px; }
+            .header h1 { font-size: 24px; }
+            .plans-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -300,158 +77,187 @@
     <div class="container">
         <div class="header">
             <h1>Choose Your Investment Plan</h1>
-            <p>Start growing your wealth with our flexible investment options</p>
+            <p>Start growing your wealth with flexible options</p>
         </div>
 
-        <div class="plans-grid">
-            <!-- Weekly Plan -->
-            <div class="plan-card">
-                <div class="plan-header">
-                    <div class="plan-icon">
-                        <i class="fas fa-calendar-week"></i>
-                    </div>
-                    <h2 class="plan-name">Weekly Plan</h2>
-                    <p class="plan-period">Short Term</p>
-                </div>
-
-                <div class="plan-price-section">
-                    <div class="plan-price">$100<span>+</span></div>
-                    <div class="minimum-label">Minimum Investment</div>
-                </div>
-
-                <div class="plan-interest">
-                    Earn up to 5% Weekly Interest
-                </div>
-
-                <ul class="plan-features">
-                    <li><i class="fas fa-check-circle"></i> Flexible withdrawals</li>
-                    <li><i class="fas fa-check-circle"></i> Quick returns</li>
-                    <li><i class="fas fa-check-circle"></i> Low minimum investment</li>
-                    <li><i class="fas fa-check-circle"></i> 24/7 support</li>
-                </ul>
-
-                <button class="purchase-btn" onclick="purchasePlan('Weekly')">
-                    Select Plan
-                </button>
-            </div>
-
-            <!-- Monthly Plan -->
-            <div class="plan-card featured">
-                <span class="featured-badge">Popular</span>
-                <div class="plan-header">
-                    <div class="plan-icon">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <h2 class="plan-name">Monthly Plan</h2>
-                    <p class="plan-period">Medium Term</p>
-                </div>
-
-                <div class="plan-price-section">
-                    <div class="plan-price">$500<span>+</span></div>
-                    <div class="minimum-label">Minimum Investment</div>
-                </div>
-
-                <div class="plan-interest">
-                    Earn up to 15% Monthly Interest
-                </div>
-
-                <ul class="plan-features">
-                    <li><i class="fas fa-check-circle"></i> Higher returns</li>
-                    <li><i class="fas fa-check-circle"></i> Priority support</li>
-                    <li><i class="fas fa-check-circle"></i> Portfolio insights</li>
-                    <li><i class="fas fa-check-circle"></i> Monthly statements</li>
-                </ul>
-
-                <button class="purchase-btn" onclick="purchasePlan('Monthly')">
-                    Select Plan
-                </button>
-            </div>
-
-            <!-- Annual Plan -->
-            <div class="plan-card">
-                <div class="plan-header">
-                    <div class="plan-icon">
-                        <i class="fas fa-calendar"></i>
-                    </div>
-                    <h2 class="plan-name">Annual Plan</h2>
-                    <p class="plan-period">Long Term</p>
-                </div>
-
-                <div class="plan-price-section">
-                    <div class="plan-price">$5,000<span>+</span></div>
-                    <div class="minimum-label">Minimum Investment</div>
-                </div>
-
-                <div class="plan-interest">
-                    Earn up to 45% Annual Interest
-                </div>
-
-                <ul class="plan-features">
-                    <li><i class="fas fa-check-circle"></i> Maximum returns</li>
-                    <li><i class="fas fa-check-circle"></i> VIP support</li>
-                    <li><i class="fas fa-check-circle"></i> Dedicated advisor</li>
-                    <li><i class="fas fa-check-circle"></i> Exclusive opportunities</li>
-                </ul>
-
-                <button class="purchase-btn" onclick="purchasePlan('Annual')">
-                    Select Plan
-                </button>
-            </div>
+        <div class="balance-display">
+            <div class="balance-label">Available Balance</div>
+            <div class="balance-amount" id="userBalance">$0.00</div>
         </div>
 
-        <!-- Additional Features Section -->
-        <div class="features-section">
-            <h3 class="features-title">Why Choose Our Investment Plans?</h3>
-            <div class="features-grid">
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <div class="feature-title">Secure & Safe</div>
-                    <div class="feature-desc">Your investments are protected with bank-level security</div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="feature-title">Proven Returns</div>
-                    <div class="feature-desc">Consistent performance with transparent reporting</div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-headset"></i>
-                    </div>
-                    <div class="feature-title">Expert Support</div>
-                    <div class="feature-desc">Professional guidance available 24/7</div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <div class="feature-title">Fast Processing</div>
-                    <div class="feature-desc">Quick deposits and withdrawals</div>
-                </div>
+        <div class="plans-grid" id="plansGrid"></div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Confirm Investment</h3>
+            <div class="input-group">
+                <label>Investment Amount ($)</label>
+                <input type="number" id="amount" min="0" step="0.01" placeholder="Enter amount">
+            </div>
+            <div class="summary">
+                <div class="summary-row"><span>Plan:</span><strong id="sPlan">-</strong></div>
+                <div class="summary-row"><span>Daily Income:</span><strong id="sDaily">-</strong></div>
+                <div class="summary-row"><span>Total Returns:</span><strong id="sReturns">-</strong></div>
+                <div class="summary-row total"><span>Investment:</span><strong id="sAmount">$0.00</strong></div>
+            </div>
+            <div class="error" id="error"></div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn confirm" onclick="confirmPurchase()">Confirm</button>
             </div>
         </div>
     </div>
 
-    <script>
-        function purchasePlan(planType) {
-            console.log(`Selected plan: ${planType}`);
-            
-            // Visual feedback
-            event.target.textContent = 'Processing...';
-            event.target.disabled = true;
-            
-            setTimeout(() => {
-                alert(`You selected the ${planType} Plan. Redirecting to checkout...`);
-                // Add your checkout logic here
-                // window.location.href = '/checkout?plan=' + planType.toLowerCase();
-                
-                event.target.textContent = 'Select Plan';
-                event.target.disabled = false;
-            }, 500);
+    <script type="module">
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { getDatabase, ref, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+        import { auth, database } from "./lib/firebase.js";
+
+        const plans = [
+            { name: 'Weekly', icon: 'calendar-week', period: 'Short Term', min: 100, returns: 20, daily: 14.30, badge: 'Testing', featured: true, interval: 60000 },
+            { name: 'Monthly-10.5', display: 'Monthly', icon: 'calendar-alt', period: 'Medium Term', min: 500, returns: 10.5, daily: 1.75, interval: 86400000 },
+            { name: 'Monthly-11.5', display: 'Monthly Premium', icon: 'calendar-check', period: 'Medium Term', min: 500, returns: 11.5, daily: 1.92, badge: 'Popular', featured: true, interval: 86400000 },
+            { name: 'Yearly', icon: 'calendar', period: 'Long Term', min: 500, returns: 130, daily: 1.78, interval: 86400000 }
+        ];
+
+        let currentUser = null;
+        let selectedPlan = null;
+
+        const plansGrid = document.getElementById('plansGrid');
+        plans.forEach(plan => {
+            plansGrid.innerHTML += `
+                <div class="plan-card ${plan.featured ? 'featured' : ''}">
+                    ${plan.badge ? `<span class="featured-badge">${plan.badge}</span>` : ''}
+                    <div class="plan-header">
+                        <div class="plan-icon"><i class="fas fa-${plan.icon}"></i></div>
+                        <div class="plan-name">${plan.display || plan.name}</div>
+                        <div class="plan-period">${plan.period}</div>
+                    </div>
+                    <div class="plan-price">$${plan.min}<span>+</span><div class="min-label">Minimum Investment</div></div>
+                    <div class="plan-interest">${plan.returns}% Total Returns</div>
+                    <div class="daily-income">💰 $${plan.daily}/day on $500</div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle"></i> ${plan.name === 'Weekly' ? 'Per minute (testing)' : 'Daily income'}</li>
+                        <li><i class="fas fa-check-circle"></i> Auto balance update</li>
+                        <li><i class="fas fa-check-circle"></i> Priority support</li>
+                        <li><i class="fas fa-check-circle"></i> 24/7 assistance</li>
+                    </ul>
+                    <button class="purchase-btn" onclick="openModal('${plan.name}', ${plan.returns}, ${plan.daily}, ${plan.min})">Select Plan</button>
+                </div>
+            `;
+        });
+
+        window.openModal = (name, returns, daily, min) => {
+            selectedPlan = plans.find(p => p.name === name);
+            document.getElementById('modalTitle').textContent = selectedPlan.display || name;
+            document.getElementById('sPlan').textContent = selectedPlan.display || name;
+            document.getElementById('sDaily').textContent = `$${daily}/day`;
+            document.getElementById('sReturns').textContent = `${returns}%`;
+            document.getElementById('amount').min = min;
+            document.getElementById('amount').value = min;
+            updateSummary();
+            document.getElementById('modal').classList.add('active');
+        };
+
+        window.closeModal = () => {
+            document.getElementById('modal').classList.remove('active');
+            document.getElementById('error').classList.remove('show');
+        };
+
+        document.getElementById('amount').addEventListener('input', updateSummary);
+
+        function updateSummary() {
+            const amt = parseFloat(document.getElementById('amount').value) || 0;
+            document.getElementById('sAmount').textContent = `$${amt.toFixed(2)}`;
+        }
+
+        function showError(msg) {
+            const err = document.getElementById('error');
+            err.textContent = msg;
+            err.classList.add('show');
+        }
+
+        window.confirmPurchase = async () => {
+            if (!currentUser || !selectedPlan) return;
+
+            const amt = parseFloat(document.getElementById('amount').value);
+            if (!amt || amt < selectedPlan.min) {
+                showError(`Minimum investment is $${selectedPlan.min}`);
+                return;
+            }
+
+            const userRef = ref(database, `users/${currentUser.uid}`);
+            const snap = await get(userRef);
+            const balance = snap.val()?.balance || 0;
+
+            if (balance < amt) {
+                showError('Insufficient balance');
+                return;
+            }
+
+            const planId = `${selectedPlan.name}_${Date.now()}`;
+            const dailyIncome = (amt / 500) * selectedPlan.daily;
+
+            await update(userRef, {
+                balance: balance - amt,
+                [`activePlans/${planId}`]: {
+                    type: selectedPlan.name,
+                    amount: amt,
+                    dailyIncome: dailyIncome,
+                    totalReturns: (amt * selectedPlan.returns) / 100,
+                    startDate: Date.now(),
+                    lastUpdate: Date.now()
+                }
+            });
+
+            closeModal();
+            alert('Investment successful!');
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                const userRef = ref(database, `users/${currentUser.uid}`);
+                onValue(userRef, (snap) => {
+                    if (snap.exists()) {
+                        const balance = snap.val().balance || 0;
+                        document.getElementById('userBalance').textContent = `$${balance.toFixed(2)}`;
+                    }
+                });
+                startIncomeUpdater();
+            } else {
+                window.location.href = '/login.html';
+            }
+        });
+
+        function startIncomeUpdater() {
+            setInterval(async () => {
+                if (!currentUser) return;
+                const plansRef = ref(database, `users/${currentUser.uid}/activePlans`);
+                const snap = await get(plansRef);
+                if (!snap.exists()) return;
+
+                const userPlans = snap.val();
+                for (const planId in userPlans) {
+                    const plan = userPlans[planId];
+                    const planConfig = plans.find(p => p.name === plan.type);
+                    if (!planConfig) continue;
+
+                    const now = Date.now();
+                    if (now - plan.lastUpdate >= planConfig.interval) {
+                        const userRef = ref(database, `users/${currentUser.uid}`);
+                        const userSnap = await get(userRef);
+                        const currentBalance = userSnap.val()?.balance || 0;
+
+                        await update(userRef, {
+                            balance: currentBalance + plan.dailyIncome,
+                            [`activePlans/${planId}/lastUpdate`]: now
+                        });
+                    }
+                }
+            }, 5000);
         }
     </script>
 </body>
-    </html>
+            </html>
