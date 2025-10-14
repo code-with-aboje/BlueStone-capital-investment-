@@ -52,6 +52,9 @@
         .daily-income { background: #f0fdf4; border: 2px solid #10b981; color: #059669; padding: 10px; border-radius: 10px; text-align: center; margin: 12px 0; font-size: 13px; font-weight: 600; }
         .daily-income i { margin-right: 6px; }
         
+        .plan-duration { background: #e0f2fe; border: 2px solid #0284c7; color: #075985; padding: 10px; border-radius: 10px; text-align: center; margin: 12px 0; font-size: 13px; font-weight: 600; }
+        .plan-duration i { margin-right: 6px; }
+        
         .plan-features { list-style: none; margin: 16px 0; }
         .plan-features li { padding: 8px 0; color: #475569; display: flex; align-items: center; font-size: 13px; }
         .plan-features li i { color: #10b981; font-size: 14px; margin-right: 10px; flex-shrink: 0; }
@@ -111,12 +114,12 @@
 
         <div class="info-note">
             <i class="fas fa-lightbulb"></i>
-            <div><strong>Smart Investing:</strong> Choose a plan that matches your financial goals and risk tolerance</div>
+            <div><strong>Smart Investing:</strong> Plans mature at the end of their duration. Weekly ends in 7 days, Monthly in 30 days, Yearly in 365 days.</div>
         </div>
 
         <div class="claim-info">
             <i class="fas fa-hand-holding-usd"></i>
-            <div><strong>How Claims Work:</strong> Earnings accumulate over time. Claim them anytime from your dashboard!</div>
+            <div><strong>How Claims Work:</strong> Earnings accumulate over time. Claim them anytime from your dashboard! When the plan matures, claim all earnings and reinvest.</div>
         </div>
 
         <div class="balance-display">
@@ -148,7 +151,7 @@
 
             <div class="claim-notice">
                 <i class="fas fa-info-circle"></i>
-                <strong>After investing, go to your dashboard to claim earnings anytime!</strong>
+                <strong>After investing, go to your dashboard to claim earnings anytime! Plan completes when duration ends.</strong>
             </div>
 
             <div class="error" id="error"></div>
@@ -161,15 +164,58 @@
     </div>
 
     <script type="module">
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+       import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
         import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
         import { auth, database } from "./lib/firebase.js";
 
         const plans = [
-            { name: 'Weekly', icon: 'calendar-week', period: 'Short Term', min: 100, returns: 20, daily: 14.30, badge: 'Quick Returns', featured: true, duration: 7 },
-            { name: 'Monthly-10.5', display: 'Monthly Standard', icon: 'calendar-alt', period: 'Medium Term', min: 500, returns: 10.5, daily: 1.75, duration: 30 },
-            { name: 'Monthly-11.5', display: 'Monthly Premium', icon: 'calendar-check', period: 'Medium Term', min: 500, returns: 11.5, daily: 1.92, badge: 'Most Popular', featured: true, duration: 30 },
-            { name: 'Yearly', icon: 'calendar', period: 'Long Term', min: 500, returns: 130, daily: 1.78, duration: 365, badge: 'Best Value' }
+            { 
+                name: 'Weekly', 
+                icon: 'calendar-week', 
+                period: 'Short Term', 
+                min: 100, 
+                returns: 20, 
+                daily: 14.30, 
+                badge: 'Testing - 7 Minutes', 
+                featured: true, 
+                duration: 7,
+                durationInMs: 7 * 60 * 1000 // 7 minutes for testing
+            },
+            { 
+                name: 'Monthly-10.5', 
+                display: 'Monthly Standard', 
+                icon: 'calendar-alt', 
+                period: 'Medium Term', 
+                min: 500, 
+                returns: 10.5, 
+                daily: 1.75, 
+                duration: 7,
+                durationInMs: 7 * 24 * 60 * 60 * 1000 // 7 days
+            },
+            { 
+                name: 'Monthly-11.5', 
+                display: 'Monthly Premium', 
+                icon: 'calendar-check', 
+                period: 'Medium Term', 
+                min: 500, 
+                returns: 11.5, 
+                daily: 1.92, 
+                badge: 'Most Popular', 
+                featured: true, 
+                duration: 7,
+                durationInMs: 7 * 24 * 60 * 60 * 1000 // 7 days
+            },
+            { 
+                name: 'Yearly', 
+                icon: 'calendar', 
+                period: 'Long Term', 
+                min: 500, 
+                returns: 130, 
+                daily: 1.78, 
+                duration: 7, 
+                badge: 'Best Value',
+                durationInMs: 7 * 24 * 60 * 60 * 1000 // 7 days
+            }
         ];
 
         let currentUser = null;
@@ -179,6 +225,8 @@
         const plansGrid = document.getElementById('plansGrid');
         plans.forEach(plan => {
             const dailyOn500 = (500 * plan.returns / 100) / plan.duration;
+            const durationText = plan.name === 'Weekly' ? '7 minutes (testing)' : '7 days';
+            
             plansGrid.innerHTML += `
                 <div class="plan-card ${plan.featured ? 'featured' : ''}">
                     ${plan.badge ? `<span class="featured-badge">${plan.badge}</span>` : ''}
@@ -204,18 +252,22 @@
                         <i class="fas fa-coins"></i>~$${dailyOn500.toFixed(2)}/day on $500 investment
                     </div>
                     
+                    <div class="plan-duration">
+                        <i class="fas fa-clock"></i>${durationText} investment period
+                    </div>
+                    
                     <div class="claim-method">
                         <strong><i class="fas fa-hand-holding-usd"></i> Manual Claim System</strong>
-                        Earnings accumulate daily. Visit your dashboard to claim anytime!
+                        Earnings accumulate ${plan.name === 'Weekly' ? 'per minute' : 'daily'}. Visit your dashboard to claim anytime! Plan completes when duration ends.
                     </div>
                     
                     <ul class="plan-features">
-                        <li><i class="fas fa-check-circle"></i> ${plan.duration} days investment period</li>
+                        <li><i class="fas fa-check-circle"></i> ${durationText} to maturity</li>
                         <li><i class="fas fa-check-circle"></i> Claim earnings anytime</li>
                         <li><i class="fas fa-check-circle"></i> Real-time earnings tracking</li>
-                        <li><i class="fas fa-check-circle"></i> Instant withdrawals</li>
+                        <li><i class="fas fa-check-circle"></i> Auto-completes at maturity</li>
+                        <li><i class="fas fa-check-circle"></i> Reinvest after completion</li>
                         <li><i class="fas fa-check-circle"></i> 24/7 Priority support</li>
-                        <li><i class="fas fa-check-circle"></i> Secure & transparent</li>
                     </ul>
                     
                     <button class="purchase-btn" onclick="openModal('${plan.name}')">
@@ -229,13 +281,14 @@
             selectedPlan = plans.find(p => p.name === name);
             const displayName = selectedPlan.display || selectedPlan.name;
             const dailyIncome = (selectedPlan.min * selectedPlan.returns / 100) / selectedPlan.duration;
+            const durationText = selectedPlan.name === 'Weekly' ? '7 minutes (testing)' : '7 days';
             
             document.getElementById('modalTitle').textContent = `Confirm ${displayName} Investment`;
             document.getElementById('confirmAmount').textContent = `$${selectedPlan.min.toFixed(2)}`;
             document.getElementById('sPlan').textContent = displayName;
-            document.getElementById('sDaily').textContent = `$${dailyIncome.toFixed(2)}/day`;
+            document.getElementById('sDaily').textContent = `$${dailyIncome.toFixed(2)}/${selectedPlan.name === 'Weekly' ? 'min' : 'day'}`;
             document.getElementById('sReturns').textContent = `$${(selectedPlan.min * selectedPlan.returns / 100).toFixed(2)}`;
-            document.getElementById('sDuration').textContent = `${selectedPlan.duration} days`;
+            document.getElementById('sDuration').textContent = durationText;
             document.getElementById('sROI').textContent = `${selectedPlan.returns}%`;
             document.getElementById('modal').classList.add('active');
             document.getElementById('error').classList.remove('show');
@@ -267,7 +320,7 @@
                 const userData = snap.val();
 
                 const now = Date.now();
-                const endDate = now + (selectedPlan.duration * 24 * 60 * 60 * 1000);
+                const endDate = now + selectedPlan.durationInMs;
                 const totalReturns = amount * (selectedPlan.returns / 100);
                 const dailyIncome = totalReturns / selectedPlan.duration;
 
@@ -282,6 +335,7 @@
                     startDate: now,
                     endDate: endDate,
                     duration: selectedPlan.duration,
+                    durationInMs: selectedPlan.durationInMs,
                     isActive: true,
                     claimedAmount: 0,
                     lastClaim: now,
@@ -296,7 +350,7 @@
                     updatedAt: new Date().toISOString()
                 });
 
-                alert(`✅ Successfully invested $${amount.toFixed(2)} in ${selectedPlan.display || selectedPlan.name}!\n\n💰 Go to your dashboard to track and claim earnings.`);
+                alert(`✅ Successfully invested $${amount.toFixed(2)} in ${displayName || selectedPlan.name}!\n\n💰 Go to your dashboard to track and claim earnings.\n\n⏰ Plan matures in ${selectedPlan.name === 'Weekly' ? '7 minutes' : '7 days'}.`);
                 window.location.href = '/dashboard.html';
             } catch (error) {
                 console.error('Purchase error:', error);
@@ -325,4 +379,4 @@
         });
     </script>
 </body>
-    </html>
+</html>
