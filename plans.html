@@ -198,7 +198,9 @@
             try {
                 const snap = await get(rtdbRef);
                 const userData = snap.val();
+                const totalBalance = userData?.totalBalance || 0;
                 const available = userData?.available || 0;
+                const invested = userData?.invested || 0;
 
                 if (available < amt) {
                     showError('Insufficient available balance');
@@ -212,7 +214,25 @@
                 const totalReturns = (amt * selectedPlan.returns) / 100;
                 const now = Date.now();
 
-                // Create Firestore document - THIS IS THE SOURCE OF TRUTH
+                // 1. DEDUCT from Realtime Database & create plan entry
+                await update(rtdbRef, {
+                    totalBalance: totalBalance - amt,
+                    available: available - amt,
+                    invested: invested + amt,
+                    updatedAt: new Date().toISOString(),
+                    [`activePlans/${planId}`]: {
+                        type: selectedPlan.name,
+                        amount: amt,
+                        dailyIncome: dailyIncome,
+                        totalReturns: totalReturns,
+                        returnRate: selectedPlan.returns,
+                        startDate: now,
+                        lastUpdate: now,
+                        earnedSoFar: 0
+                    }
+                });
+
+                // 2. Create Firestore document for Cloud Function automation
                 const firestorePlanRef = doc(firestore, 'activeInvestments', planId);
                 await setDoc(firestorePlanRef, {
                     userId: currentUser.uid,
@@ -231,11 +251,12 @@
                     createdAt: serverTimestamp()
                 });
 
-                console.log('✅ Investment created in Firestore:', planId);
-                console.log('⏰ Cloud Function will process updates automatically');
+                console.log('✅ RTDB updated - balance deducted');
+                console.log('✅ Firestore document created:', planId);
+                console.log('⏰ Cloud Function will auto-update balance', selectedPlan.freq.toLowerCase());
 
                 closeModal();
-                alert(`✅ Investment successful!\n\nFirestore Cloud Functions will automatically update your balance ${selectedPlan.freq.toLowerCase()}.`);
+                alert(`✅ Investment successful!\n\nYour balance has been deducted.\nFirestore Cloud Functions will automatically credit income ${selectedPlan.freq.toLowerCase()}.`);
                 
                 confirmBtn.disabled = false;
                 confirmBtn.textContent = 'Confirm Investment';
