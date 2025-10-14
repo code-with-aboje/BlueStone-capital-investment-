@@ -66,6 +66,7 @@
         .error.show { display: block; }
 
         .info-note { background: #dbeafe; border: 2px solid #3b82f6; color: #1e40af; padding: 12px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; text-align: center; }
+        .info-note strong { font-weight: 700; }
 
         @media (max-width: 768px) {
             body { padding: 20px 16px; }
@@ -82,7 +83,7 @@
         </div>
 
         <div class="info-note">
-            ℹ️ Auto income updates handled by Firestore Cloud Functions
+            ⚡ <strong>Firestore Cloud Functions</strong> automatically update your balance every minute for Weekly plan, daily for others
         </div>
 
         <div class="balance-display">
@@ -124,7 +125,6 @@
         import { getFirestore, collection, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
         import { auth, database } from "./lib/firebase.js";
 
-        // Initialize Firestore
         const firestore = getFirestore();
 
         const plans = [
@@ -137,7 +137,6 @@
         let currentUser = null;
         let selectedPlan = null;
 
-        // Generate plans HTML
         const plansGrid = document.getElementById('plansGrid');
         plans.forEach(plan => {
             plansGrid.innerHTML += `
@@ -152,8 +151,8 @@
                     <div class="plan-interest">${plan.returns}% Total Returns</div>
                     <div class="daily-income">💰 $${plan.daily}/day on $500</div>
                     <ul class="plan-features">
-                        <li><i class="fas fa-check-circle"></i> ${plan.freq} income</li>
-                        <li><i class="fas fa-check-circle"></i> Auto balance update</li>
+                        <li><i class="fas fa-check-circle"></i> ${plan.freq} auto-update</li>
+                        <li><i class="fas fa-check-circle"></i> Firestore managed</li>
                         <li><i class="fas fa-check-circle"></i> Priority support</li>
                         <li><i class="fas fa-check-circle"></i> 24/7 assistance</li>
                     </ul>
@@ -197,12 +196,9 @@
             const rtdbRef = ref(database, `users/${currentUser.uid}`);
             
             try {
-                // Get current Realtime Database data
                 const snap = await get(rtdbRef);
                 const userData = snap.val();
-                const totalBalance = userData?.totalBalance || 0;
                 const available = userData?.available || 0;
-                const invested = userData?.invested || 0;
 
                 if (available < amt) {
                     showError('Insufficient available balance');
@@ -214,27 +210,10 @@
                 const planId = `${selectedPlan.name}_${Date.now()}`;
                 const dailyIncome = (amt / 500) * selectedPlan.daily;
                 const totalReturns = (amt * selectedPlan.returns) / 100;
+                const now = Date.now();
 
-                // 1. Update Realtime Database (user balance & plan)
-                await update(rtdbRef, {
-                    totalBalance: totalBalance - amt,
-                    available: available - amt,
-                    invested: invested + amt,
-                    updatedAt: new Date().toISOString(),
-                    [`activePlans/${planId}`]: {
-                        type: selectedPlan.name,
-                        amount: amt,
-                        dailyIncome: dailyIncome,
-                        totalReturns: totalReturns,
-                        returnRate: selectedPlan.returns,
-                        startDate: Date.now(),
-                        lastUpdate: Date.now(),
-                        earnedSoFar: 0
-                    }
-                });
-
-                // 2. Create Firestore document for scheduled updates
-                const firestorePlanRef = doc(firestore, 'scheduledIncome', planId);
+                // Create Firestore document - THIS IS THE SOURCE OF TRUTH
+                const firestorePlanRef = doc(firestore, 'activeInvestments', planId);
                 await setDoc(firestorePlanRef, {
                     userId: currentUser.uid,
                     planId: planId,
@@ -244,22 +223,22 @@
                     totalReturns: totalReturns,
                     returnRate: selectedPlan.returns,
                     earnedSoFar: 0,
-                    updateInterval: selectedPlan.interval, // 60000 for weekly, 86400000 for others
-                    lastUpdate: serverTimestamp(),
-                    nextUpdate: new Date(Date.now() + selectedPlan.interval),
+                    updateIntervalMs: selectedPlan.interval,
+                    lastUpdateTime: serverTimestamp(),
+                    nextUpdateTime: new Date(now + selectedPlan.interval),
+                    startDate: serverTimestamp(),
                     active: true,
                     createdAt: serverTimestamp()
                 });
 
+                console.log('✅ Investment created in Firestore:', planId);
+                console.log('⏰ Cloud Function will process updates automatically');
+
                 closeModal();
-                alert('✅ Investment successful! Firestore will automatically update your balance.');
+                alert(`✅ Investment successful!\n\nFirestore Cloud Functions will automatically update your balance ${selectedPlan.freq.toLowerCase()}.`);
+                
                 confirmBtn.disabled = false;
                 confirmBtn.textContent = 'Confirm Investment';
-
-                console.log('✅ Created investment:', {
-                    rtdb: `users/${currentUser.uid}/activePlans/${planId}`,
-                    firestore: `scheduledIncome/${planId}`
-                });
 
             } catch (error) {
                 console.error('Investment error:', error);
@@ -274,12 +253,11 @@
                 currentUser = user;
                 const userRef = ref(database, `users/${currentUser.uid}`);
                 
-                // Real-time balance listener
                 onValue(userRef, (snap) => {
                     if (snap.exists()) {
                         const userData = snap.val();
-                        const totalBalance = userData.totalBalance || 0;
-                        document.getElementById('userBalance').textContent = `$${totalBalance.toFixed(2)}`;
+                        const available = userData.available || 0;
+                        document.getElementById('userBalance').textContent = `$${available.toFixed(2)}`;
                     }
                 });
             } else {
@@ -288,83 +266,4 @@
         });
     </script>
 </body>
-</html>
-
-<!-- 
-FIREBASE CLOUD FUNCTION NEEDED:
-Deploy this function to handle automatic income updates from Firestore to Realtime Database
-
-==================================================
-functions/index.js:
-==================================================
-
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-admin.initializeApp();
-
-const db = admin.firestore();
-const rtdb = admin.database();
-
-// Scheduled function - runs every minute
-exports.updateIncomes = functions.pubsub.schedule('every 1 minute').onRun(async (context) => {
-  const now = Date.now();
-  
-  // Get all active plans from Firestore
-  const plansSnapshot = await db.collection('scheduledIncome')
-    .where('active', '==', true)
-    .where('nextUpdate', '<=', new Date(now))
-    .get();
-
-  const batch = db.batch();
-  const promises = [];
-
-  plansSnapshot.forEach(doc => {
-    const plan = doc.data();
-    
-    // Check if plan has reached max returns
-    if (plan.earnedSoFar >= plan.totalReturns) {
-      batch.update(doc.ref, { active: false });
-      return;
-    }
-
-    const incomeToAdd = Math.min(plan.dailyIncome, plan.totalReturns - plan.earnedSoFar);
-    const newEarned = plan.earnedSoFar + incomeToAdd;
-
-    // Update Realtime Database
-    const userRef = rtdb.ref(`users/${plan.userId}`);
-    const promise = userRef.once('value').then(snapshot => {
-      const userData = snapshot.val();
-      return userRef.update({
-        totalBalance: (userData.totalBalance || 0) + incomeToAdd,
-        available: (userData.available || 0) + incomeToAdd,
-        totalIncome: (userData.totalIncome || 0) + incomeToAdd,
-        todayIncome: (userData.todayIncome || 0) + incomeToAdd,
-        lastIncomeUpdate: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        [`activePlans/${plan.planId}/lastUpdate`]: now,
-        [`activePlans/${plan.planId}/earnedSoFar`]: newEarned
-      });
-    });
-
-    promises.push(promise);
-
-    // Update Firestore document
-    batch.update(doc.ref, {
-      earnedSoFar: newEarned,
-      lastUpdate: admin.firestore.FieldValue.serverTimestamp(),
-      nextUpdate: new Date(now + plan.updateInterval),
-      active: newEarned < plan.totalReturns
-    });
-  });
-
-  await Promise.all(promises);
-  await batch.commit();
-
-  console.log(`✅ Processed ${plansSnapshot.size} income updates`);
-  return null;
-});
-
-==================================================
-Deploy: firebase deploy --only functions
-==================================================
--->
+    </html>
