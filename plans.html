@@ -10,63 +10,90 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #fafafa; min-height: 100vh; padding: 40px 20px; }
         .container { max-width: 1200px; margin: 0 auto; }
+        
         .header { text-align: center; margin-bottom: 32px; }
         .header h1 { font-size: 32px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
         .header p { font-size: 16px; color: #64748b; }
         
-        .balance-display { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 20px; border-radius: 16px; text-align: center; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25); }
-        .balance-label { font-size: 14px; opacity: 0.9; margin-bottom: 8px; }
+        .balance-display { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 20px; border-radius: 16px; text-align: center; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25); position: relative; overflow: hidden; }
+        .balance-display::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, transparent 40%, rgba(255, 255, 255, 0.15) 50%, transparent 60%, transparent); animation: shine 3s infinite; }
+        @keyframes shine { 0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); } 100% { transform: translateX(100%) translateY(100%) rotate(45deg); } }
+        .balance-content { position: relative; z-index: 1; }
+        .balance-label { font-size: 14px; opacity: 0.9; margin-bottom: 8px; font-weight: 500; }
         .balance-amount { font-size: 36px; font-weight: 700; }
 
-        .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .plan-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); transition: all 0.3s; position: relative; border: 2px solid transparent; }
-        .plan-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); border-color: #10b981; }
-        .plan-card.featured { border-color: #10b981; }
-        .featured-badge { position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-        
-        .plan-header { text-align: center; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0; }
-        .plan-icon { width: 48px; height: 48px; margin: 0 auto 12px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; }
-        .plan-name { font-size: 18px; color: #0f172a; font-weight: 700; margin-bottom: 4px; }
-        .plan-period { color: #64748b; font-size: 12px; font-weight: 600; text-transform: uppercase; }
-        
-        .plan-price { text-align: center; margin: 12px 0; padding: 12px; background: #f8fafc; border-radius: 10px; font-size: 32px; color: #0f172a; font-weight: 700; }
-        .plan-price span { font-size: 16px; color: #64748b; }
-        .min-label { color: #64748b; font-size: 10px; margin-top: 4px; text-transform: uppercase; }
-        
-        .plan-interest { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 10px; border-radius: 10px; text-align: center; margin: 10px 0; font-size: 13px; font-weight: 700; }
-        .daily-income { background: #f0fdf4; color: #059669; padding: 8px; border-radius: 8px; text-align: center; margin: 8px 0; font-size: 12px; font-weight: 600; }
-        
-        .plan-features { list-style: none; margin: 12px 0; }
-        .plan-features li { padding: 6px 0; color: #475569; display: flex; align-items: center; font-size: 12px; }
-        .plan-features li i { color: #10b981; font-size: 12px; margin-right: 8px; }
-        
-        .purchase-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s; margin-top: 12px; text-transform: uppercase; }
-        .purchase-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35); }
-        .purchase-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .info-note { background: #dbeafe; border: 2px solid #3b82f6; color: #1e40af; padding: 14px; border-radius: 12px; margin-bottom: 24px; font-size: 13px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .info-note i { font-size: 18px; }
+        .info-note strong { font-weight: 700; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .claim-info { background: #fef3c7; border: 2px solid #f59e0b; color: #92400e; padding: 14px; border-radius: 12px; margin-bottom: 24px; font-size: 13px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .claim-info i { font-size: 18px; }
+
+        .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+        .plan-card { background: white; border-radius: 20px; padding: 24px; box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08); transition: all 0.3s; position: relative; border: 2px solid transparent; }
+        .plan-card:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15); border-color: #10b981; }
+        .plan-card.featured { border-color: #10b981; background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); }
+        .featured-badge { position: absolute; top: 16px; right: 16px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); }
+        
+        .plan-header { text-align: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 2px solid #e2e8f0; }
+        .plan-icon { width: 56px; height: 56px; margin: 0 auto 14px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
+        .plan-name { font-size: 20px; color: #0f172a; font-weight: 700; margin-bottom: 6px; }
+        .plan-period { color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .plan-price { text-align: center; margin: 20px 0; padding: 16px; background: #f8fafc; border-radius: 12px; }
+        .price-label { color: #64748b; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; }
+        .price-amount { font-size: 36px; color: #0f172a; font-weight: 700; }
+        .price-amount span { font-size: 18px; color: #10b981; }
+        .min-investment { color: #64748b; font-size: 11px; margin-top: 6px; }
+        
+        .plan-interest { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 12px; border-radius: 12px; text-align: center; margin: 16px 0; font-size: 14px; font-weight: 700; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25); }
+        .plan-interest .percentage { font-size: 24px; display: block; margin-bottom: 4px; }
+        
+        .daily-income { background: #f0fdf4; border: 2px solid #10b981; color: #059669; padding: 10px; border-radius: 10px; text-align: center; margin: 12px 0; font-size: 13px; font-weight: 600; }
+        .daily-income i { margin-right: 6px; }
+        
+        .plan-features { list-style: none; margin: 16px 0; }
+        .plan-features li { padding: 8px 0; color: #475569; display: flex; align-items: center; font-size: 13px; }
+        .plan-features li i { color: #10b981; font-size: 14px; margin-right: 10px; flex-shrink: 0; }
+        
+        .claim-method { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; border-radius: 8px; margin: 16px 0; font-size: 12px; color: #92400e; }
+        .claim-method strong { display: block; margin-bottom: 4px; font-size: 13px; }
+        
+        .purchase-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.3s; text-transform: uppercase; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25); }
+        .purchase-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
+        .purchase-btn:disabled { opacity: 0.6; cursor: not-allowed; background: #94a3b8; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal.active { display: flex; }
-        .modal-content { background: white; border-radius: 16px; padding: 24px; max-width: 450px; width: 90%; }
-        .modal h3 { font-size: 20px; color: #0f172a; margin-bottom: 16px; text-align: center; }
+        .modal-content { background: white; border-radius: 20px; padding: 28px; max-width: 480px; width: 90%; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
+        .modal h3 { font-size: 22px; color: #0f172a; margin-bottom: 20px; text-align: center; font-weight: 700; }
         
-        .confirm-amount { background: #f8fafc; border: 2px solid #10b981; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0; }
-        .confirm-label { color: #64748b; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; }
-        .confirm-value { color: #10b981; font-size: 32px; font-weight: 700; }
+        .confirm-amount { background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid #10b981; border-radius: 16px; padding: 24px; text-align: center; margin: 20px 0; }
+        .confirm-label { color: #059669; font-size: 13px; font-weight: 600; text-transform: uppercase; margin-bottom: 10px; }
+        .confirm-value { color: #10b981; font-size: 40px; font-weight: 700; }
         
-        .summary { background: #f8fafc; padding: 12px; border-radius: 10px; margin: 12px 0; font-size: 13px; }
-        .summary-row { display: flex; justify-content: space-between; padding: 6px 0; }
+        .summary { background: #f8fafc; padding: 16px; border-radius: 12px; margin: 16px 0; }
+        .summary-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
+        .summary-row span { color: #64748b; }
+        .summary-row strong { color: #0f172a; font-weight: 600; }
         
-        .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
-        .modal-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase; }
+        .claim-notice { background: #fef3c7; border: 2px solid #f59e0b; color: #92400e; padding: 12px; border-radius: 10px; margin: 16px 0; font-size: 12px; text-align: center; }
+        .claim-notice i { margin-right: 6px; }
+        
+        .modal-actions { display: flex; gap: 12px; margin-top: 20px; }
+        .modal-btn { flex: 1; padding: 14px; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; transition: all 0.3s; }
         .modal-btn.cancel { background: #f1f5f9; color: #475569; }
-        .modal-btn.confirm { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .modal-btn.cancel:hover { background: #e2e8f0; }
+        .modal-btn.confirm { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25); }
+        .modal-btn.confirm:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
         .modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
         
-        .error { background: #fee2e2; color: #dc2626; padding: 10px; border-radius: 8px; font-size: 12px; margin-top: 10px; display: none; }
+        .error { background: #fee2e2; border: 2px solid #dc2626; color: #dc2626; padding: 12px; border-radius: 10px; font-size: 13px; margin-top: 12px; display: none; }
         .error.show { display: block; }
+        .error i { margin-right: 6px; }
 
-        .info-note { background: #dbeafe; border: 2px solid #3b82f6; color: #1e40af; padding: 12px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; text-align: center; }
-        .info-note strong { font-weight: 700; }
+        .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #e0e0e0; border-top-color: #10b981; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         @media (max-width: 768px) {
             body { padding: 20px 16px; }
@@ -83,12 +110,20 @@
         </div>
 
         <div class="info-note">
-            ⚡ <strong>Firestore Cloud Functions</strong> automatically update your balance every minute for Weekly plan, daily for others
+            <i class="fas fa-lightbulb"></i>
+            <div><strong>Smart Investing:</strong> Choose a plan that matches your financial goals and risk tolerance</div>
+        </div>
+
+        <div class="claim-info">
+            <i class="fas fa-hand-holding-usd"></i>
+            <div><strong>How Claims Work:</strong> Earnings accumulate over time. Claim them anytime from your dashboard!</div>
         </div>
 
         <div class="balance-display">
-            <div class="balance-label">Available Balance</div>
-            <div class="balance-amount" id="userBalance">$0.00</div>
+            <div class="balance-content">
+                <div class="balance-label">Available Balance</div>
+                <div class="balance-amount" id="userBalance"><span class="spinner"></span></div>
+            </div>
         </div>
 
         <div class="plans-grid" id="plansGrid"></div>
@@ -107,7 +142,13 @@
                 <div class="summary-row"><span>Plan:</span><strong id="sPlan">-</strong></div>
                 <div class="summary-row"><span>Daily Income:</span><strong id="sDaily">-</strong></div>
                 <div class="summary-row"><span>Total Returns:</span><strong id="sReturns">-</strong></div>
-                <div class="summary-row"><span>Update Frequency:</span><strong id="sFreq">-</strong></div>
+                <div class="summary-row"><span>Duration:</span><strong id="sDuration">-</strong></div>
+                <div class="summary-row"><span>ROI:</span><strong id="sROI">-</strong></div>
+            </div>
+
+            <div class="claim-notice">
+                <i class="fas fa-info-circle"></i>
+                <strong>After investing, go to your dashboard to claim earnings anytime!</strong>
             </div>
 
             <div class="error" id="error"></div>
@@ -121,166 +162,163 @@
 
     <script type="module">
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-        import { getDatabase, ref, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-        import { getFirestore, collection, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
         import { auth, database } from "./lib/firebase.js";
 
-        const firestore = getFirestore();
-
         const plans = [
-            { name: 'Weekly', icon: 'calendar-week', period: 'Short Term', min: 100, returns: 20, daily: 14.30, badge: 'Testing', featured: true, interval: 60000, freq: 'Every minute' },
-            { name: 'Monthly-10.5', display: 'Monthly', icon: 'calendar-alt', period: 'Medium Term', min: 500, returns: 10.5, daily: 1.75, interval: 86400000, freq: 'Daily' },
-            { name: 'Monthly-11.5', display: 'Monthly Premium', icon: 'calendar-check', period: 'Medium Term', min: 500, returns: 11.5, daily: 1.92, badge: 'Popular', featured: true, interval: 86400000, freq: 'Daily' },
-            { name: 'Yearly', icon: 'calendar', period: 'Long Term', min: 500, returns: 130, daily: 1.78, interval: 86400000, freq: 'Daily' }
+            { name: 'Weekly', icon: 'calendar-week', period: 'Short Term', min: 100, returns: 20, daily: 14.30, badge: 'Quick Returns', featured: true, duration: 7 },
+            { name: 'Monthly-10.5', display: 'Monthly Standard', icon: 'calendar-alt', period: 'Medium Term', min: 500, returns: 10.5, daily: 1.75, duration: 30 },
+            { name: 'Monthly-11.5', display: 'Monthly Premium', icon: 'calendar-check', period: 'Medium Term', min: 500, returns: 11.5, daily: 1.92, badge: 'Most Popular', featured: true, duration: 30 },
+            { name: 'Yearly', icon: 'calendar', period: 'Long Term', min: 500, returns: 130, daily: 1.78, duration: 365, badge: 'Best Value' }
         ];
 
         let currentUser = null;
+        let userBalance = 0;
         let selectedPlan = null;
 
         const plansGrid = document.getElementById('plansGrid');
         plans.forEach(plan => {
+            const dailyOn500 = (500 * plan.returns / 100) / plan.duration;
             plansGrid.innerHTML += `
                 <div class="plan-card ${plan.featured ? 'featured' : ''}">
                     ${plan.badge ? `<span class="featured-badge">${plan.badge}</span>` : ''}
+                    
                     <div class="plan-header">
                         <div class="plan-icon"><i class="fas fa-${plan.icon}"></i></div>
                         <div class="plan-name">${plan.display || plan.name}</div>
                         <div class="plan-period">${plan.period}</div>
                     </div>
-                    <div class="plan-price">$${plan.min}<span>+</span><div class="min-label">Minimum Investment</div></div>
-                    <div class="plan-interest">${plan.returns}% Total Returns</div>
-                    <div class="daily-income">💰 $${plan.daily}/day on $500</div>
+                    
+                    <div class="plan-price">
+                        <div class="price-label">Minimum Investment</div>
+                        <div class="price-amount">$${plan.min}<span>+</span></div>
+                        <div class="min-investment">Start with $${plan.min} or more</div>
+                    </div>
+                    
+                    <div class="plan-interest">
+                        <span class="percentage">${plan.returns}%</span>
+                        Total Returns
+                    </div>
+                    
+                    <div class="daily-income">
+                        <i class="fas fa-coins"></i>~$${dailyOn500.toFixed(2)}/day on $500 investment
+                    </div>
+                    
+                    <div class="claim-method">
+                        <strong><i class="fas fa-hand-holding-usd"></i> Manual Claim System</strong>
+                        Earnings accumulate daily. Visit your dashboard to claim anytime!
+                    </div>
+                    
                     <ul class="plan-features">
-                        <li><i class="fas fa-check-circle"></i> ${plan.freq} auto-update</li>
-                        <li><i class="fas fa-check-circle"></i> Firestore managed</li>
-                        <li><i class="fas fa-check-circle"></i> Priority support</li>
-                        <li><i class="fas fa-check-circle"></i> 24/7 assistance</li>
+                        <li><i class="fas fa-check-circle"></i> ${plan.duration} days investment period</li>
+                        <li><i class="fas fa-check-circle"></i> Claim earnings anytime</li>
+                        <li><i class="fas fa-check-circle"></i> Real-time earnings tracking</li>
+                        <li><i class="fas fa-check-circle"></i> Instant withdrawals</li>
+                        <li><i class="fas fa-check-circle"></i> 24/7 Priority support</li>
+                        <li><i class="fas fa-check-circle"></i> Secure & transparent</li>
                     </ul>
-                    <button class="purchase-btn" onclick="openModal('${plan.name}')">Select Plan</button>
+                    
+                    <button class="purchase-btn" onclick="openModal('${plan.name}')">
+                        <i class="fas fa-rocket"></i> Start Investing
+                    </button>
                 </div>
             `;
         });
 
         window.openModal = (name) => {
             selectedPlan = plans.find(p => p.name === name);
-            const displayName = selectedPlan.display || name;
+            const displayName = selectedPlan.display || selectedPlan.name;
+            const dailyIncome = (selectedPlan.min * selectedPlan.returns / 100) / selectedPlan.duration;
             
-            document.getElementById('modalTitle').textContent = `Confirm ${displayName}`;
+            document.getElementById('modalTitle').textContent = `Confirm ${displayName} Investment`;
             document.getElementById('confirmAmount').textContent = `$${selectedPlan.min.toFixed(2)}`;
             document.getElementById('sPlan').textContent = displayName;
-            document.getElementById('sDaily').textContent = `$${selectedPlan.daily}/day`;
-            document.getElementById('sReturns').textContent = `${selectedPlan.returns}%`;
-            document.getElementById('sFreq').textContent = selectedPlan.freq;
+            document.getElementById('sDaily').textContent = `$${dailyIncome.toFixed(2)}/day`;
+            document.getElementById('sReturns').textContent = `$${(selectedPlan.min * selectedPlan.returns / 100).toFixed(2)}`;
+            document.getElementById('sDuration').textContent = `${selectedPlan.duration} days`;
+            document.getElementById('sROI').textContent = `${selectedPlan.returns}%`;
             document.getElementById('modal').classList.add('active');
+            document.getElementById('error').classList.remove('show');
         };
 
         window.closeModal = () => {
             document.getElementById('modal').classList.remove('active');
-            document.getElementById('error').classList.remove('show');
+            selectedPlan = null;
         };
-
-        function showError(msg) {
-            const err = document.getElementById('error');
-            err.textContent = msg;
-            err.classList.add('show');
-        }
 
         window.confirmPurchase = async () => {
             if (!currentUser || !selectedPlan) return;
 
+            const amount = selectedPlan.min;
+            if (userBalance < amount) {
+                const errorEl = document.getElementById('error');
+                errorEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Insufficient balance. Please fund your account first.';
+                errorEl.classList.add('show');
+                return;
+            }
+
             const confirmBtn = document.getElementById('confirmBtn');
             confirmBtn.disabled = true;
-            confirmBtn.textContent = 'Processing...';
+            confirmBtn.innerHTML = '<span class="spinner"></span> Processing...';
 
-            const amt = selectedPlan.min;
-            const rtdbRef = ref(database, `users/${currentUser.uid}`);
-            
             try {
-                const snap = await get(rtdbRef);
+                const userRef = ref(database, `users/${currentUser.uid}`);
+                const snap = await get(userRef);
                 const userData = snap.val();
-                const totalBalance = userData?.totalBalance || 0;
-                const available = userData?.available || 0;
-                const invested = userData?.invested || 0;
 
-                if (available < amt) {
-                    showError('Insufficient available balance');
-                    confirmBtn.disabled = false;
-                    confirmBtn.textContent = 'Confirm Investment';
-                    return;
-                }
-
-                const planId = `${selectedPlan.name}_${Date.now()}`;
-                const dailyIncome = (amt / 500) * selectedPlan.daily;
-                const totalReturns = (amt * selectedPlan.returns) / 100;
                 const now = Date.now();
+                const endDate = now + (selectedPlan.duration * 24 * 60 * 60 * 1000);
+                const totalReturns = amount * (selectedPlan.returns / 100);
+                const dailyIncome = totalReturns / selectedPlan.duration;
 
-                // 1. DEDUCT from Realtime Database & create plan entry
-                await update(rtdbRef, {
-                    totalBalance: totalBalance - amt,
-                    available: available - amt,
-                    invested: invested + amt,
-                    updatedAt: new Date().toISOString(),
-                    [`activePlans/${planId}`]: {
-                        type: selectedPlan.name,
-                        amount: amt,
-                        dailyIncome: dailyIncome,
-                        totalReturns: totalReturns,
-                        returnRate: selectedPlan.returns,
-                        startDate: now,
-                        lastUpdate: now,
-                        earnedSoFar: 0
-                    }
-                });
-
-                // 2. Create Firestore document for Cloud Function automation
-                const firestorePlanRef = doc(firestore, 'activeInvestments', planId);
-                await setDoc(firestorePlanRef, {
-                    userId: currentUser.uid,
-                    planId: planId,
-                    planType: selectedPlan.name,
-                    amount: amt,
+                const planId = `plan_${Date.now()}`;
+                const newPlan = {
+                    id: planId,
+                    type: selectedPlan.name,
+                    amount: amount,
+                    returnRate: selectedPlan.returns,
                     dailyIncome: dailyIncome,
                     totalReturns: totalReturns,
-                    returnRate: selectedPlan.returns,
-                    earnedSoFar: 0,
-                    updateIntervalMs: selectedPlan.interval,
-                    lastUpdateTime: serverTimestamp(),
-                    nextUpdateTime: new Date(now + selectedPlan.interval),
-                    startDate: serverTimestamp(),
-                    active: true,
-                    createdAt: serverTimestamp()
+                    startDate: now,
+                    endDate: endDate,
+                    duration: selectedPlan.duration,
+                    isActive: true,
+                    claimedAmount: 0,
+                    lastClaim: now,
+                    createdAt: new Date().toISOString()
+                };
+
+                await update(userRef, {
+                    available: (userData.available || 0) - amount,
+                    invested: (userData.invested || 0) + amount,
+                    totalBalance: (userData.totalBalance || 0) - amount,
+                    [`activePlans/${planId}`]: newPlan,
+                    updatedAt: new Date().toISOString()
                 });
 
-                console.log('✅ RTDB updated - balance deducted');
-                console.log('✅ Firestore document created:', planId);
-                console.log('⏰ Cloud Function will auto-update balance', selectedPlan.freq.toLowerCase());
-
-                closeModal();
-                alert(`✅ Investment successful!\n\nYour balance has been deducted.\nFirestore Cloud Functions will automatically credit income ${selectedPlan.freq.toLowerCase()}.`);
-                
-                confirmBtn.disabled = false;
-                confirmBtn.textContent = 'Confirm Investment';
-
+                alert(`✅ Successfully invested $${amount.toFixed(2)} in ${selectedPlan.display || selectedPlan.name}!\n\n💰 Go to your dashboard to track and claim earnings.`);
+                window.location.href = '/dashboard.html';
             } catch (error) {
-                console.error('Investment error:', error);
-                showError('Failed to process investment. Please try again.');
+                console.error('Purchase error:', error);
+                const errorEl = document.getElementById('error');
+                errorEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Purchase failed. Please try again.';
+                errorEl.classList.add('show');
                 confirmBtn.disabled = false;
                 confirmBtn.textContent = 'Confirm Investment';
             }
         };
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                const userRef = ref(database, `users/${currentUser.uid}`);
+                const userRef = ref(database, `users/${user.uid}`);
+                const snap = await get(userRef);
                 
-                onValue(userRef, (snap) => {
-                    if (snap.exists()) {
-                        const userData = snap.val();
-                        const available = userData.available || 0;
-                        document.getElementById('userBalance').textContent = `$${available.toFixed(2)}`;
-                    }
-                });
+                if (snap.exists()) {
+                    const userData = snap.val();
+                    userBalance = userData.available || 0;
+                    document.getElementById('userBalance').textContent = `$${userBalance.toFixed(2)}`;
+                }
             } else {
                 window.location.href = '/login.html';
             }
