@@ -31,24 +31,44 @@
         .stat-value { color: #0f172a; font-size: 20px; font-weight: 700; }
         .stat-trend { color: #10b981; font-size: 11px; font-weight: 600; margin-top: 4px; }
 
-        .income-section { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); margin-bottom: 20px; }
-        .income-title { font-size: 14px; font-weight: 600; color: #0f172a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-        .income-title i { color: #10b981; font-size: 18px; }
-        .income-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .income-item { background: #f8fafc; border-radius: 12px; padding: 14px; text-align: center; }
-        .income-item-label { color: #64748b; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; }
-        .income-item-value { color: #10b981; font-size: 18px; font-weight: 700; }
+        .pending-section { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); margin-bottom: 20px; }
+        .pending-title { font-size: 14px; font-weight: 600; color: #0f172a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .pending-title i { color: #f59e0b; font-size: 18px; }
+        .pending-amount { text-align: center; padding: 20px; background: #fef3c7; border-radius: 12px; margin-bottom: 16px; }
+        .pending-label { color: #92400e; font-size: 12px; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; }
+        .pending-value { color: #f59e0b; font-size: 32px; font-weight: 700; }
+        .claim-all-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
+        .claim-all-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
+        .claim-all-btn:disabled { opacity: 0.5; cursor: not-allowed; background: #94a3b8; }
 
         .plans-section { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); margin-bottom: 20px; }
         .plans-title { font-size: 14px; font-weight: 600; color: #0f172a; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
         .plans-title i { color: #10b981; }
         .no-plans { text-align: center; padding: 20px; color: #94a3b8; font-size: 14px; }
-        .plan-item { background: #f8fafc; border-left: 4px solid #10b981; border-radius: 8px; padding: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        
+        .plan-item { background: #f8fafc; border-left: 4px solid #10b981; border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+        .plan-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .plan-info h4 { color: #0f172a; font-size: 14px; margin-bottom: 4px; font-weight: 600; }
         .plan-info p { color: #64748b; font-size: 12px; }
         .plan-amount { text-align: right; }
         .plan-amount .value { color: #10b981; font-size: 16px; font-weight: 700; }
         .plan-amount .return { color: #059669; font-size: 12px; margin-top: 4px; }
+        
+        .plan-progress { margin: 10px 0; }
+        .progress-bar { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #10b981, #059669); transition: width 0.5s ease; }
+        .progress-info { display: flex; justify-content: space-between; font-size: 11px; color: #64748b; }
+        
+        .earnings-row { display: flex; justify-content: space-between; margin: 10px 0; padding-top: 10px; border-top: 1px solid #e2e8f0; }
+        .earning-item { text-align: center; flex: 1; }
+        .earning-label { font-size: 10px; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
+        .earning-value { font-size: 14px; font-weight: 700; }
+        .earning-value.pending { color: #f59e0b; }
+        .earning-value.claimed { color: #10b981; }
+        
+        .claim-btn { width: 100%; padding: 10px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .claim-btn:hover:not(:disabled) { opacity: 0.9; }
+        .claim-btn:disabled { opacity: 0.5; cursor: not-allowed; background: #94a3b8; }
 
         .quick-actions { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); }
         .actions-title { font-size: 15px; font-weight: 600; color: #0f172a; margin-bottom: 14px; }
@@ -66,7 +86,6 @@
             .dashboard-card { padding: 20px; }
             .balance-amount { font-size: 32px; }
             .stats-grid { grid-template-columns: 1fr; }
-            .income-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -76,7 +95,7 @@
             <div class="card-content">
                 <div class="top-section">
                     <div class="user-name" id="userName"><span class="spinner"></span> Loading...</div>
-                    <button class="fund-button" id="fundButton">+ Fund</button>
+                    <button class="fund-button" onclick="goToPlans()">+ Invest</button>
                 </div>
                 <div class="balance-section">
                     <div class="balance-label">Total Balance</div>
@@ -98,9 +117,9 @@
                 <div class="stat-trend">Ready to invest</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Total Income</div>
-                <div class="stat-value" id="totalIncome"><span class="spinner"></span></div>
-                <div class="stat-trend" id="incomeTrend"><span class="spinner"></span></div>
+                <div class="stat-label">Total Claimed</div>
+                <div class="stat-value" id="totalClaimed"><span class="spinner"></span></div>
+                <div class="stat-trend" id="claimedTrend"><span class="spinner"></span></div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Total ROI</div>
@@ -109,18 +128,13 @@
             </div>
         </div>
 
-        <div class="income-section">
-            <div class="income-title"><i class="fas fa-money-bill-wave"></i>Current Income</div>
-            <div class="income-grid">
-                <div class="income-item">
-                    <div class="income-item-label">Today's Income</div>
-                    <div class="income-item-value" id="todayIncome">$0</div>
-                </div>
-                <div class="income-item">
-                    <div class="income-item-label">Total Earned</div>
-                    <div class="income-item-value" id="totalEarned">$0</div>
-                </div>
+        <div class="pending-section" id="pendingSection" style="display: none;">
+            <div class="pending-title"><i class="fas fa-hand-holding-usd"></i>Pending Claims</div>
+            <div class="pending-amount">
+                <div class="pending-label">Total Claimable</div>
+                <div class="pending-value" id="totalPending">$0.00</div>
             </div>
+            <button class="claim-all-btn" id="claimAllBtn" onclick="claimAll()">Claim All Earnings</button>
         </div>
 
         <div class="plans-section">
@@ -148,29 +162,220 @@
     </div>
 
     <script type="module">
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-        import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { getDatabase, ref, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
         import { auth, database } from "./lib/firebase.js";
 
         let currentUser = null;
-
-        // Fund button handler
-        document.getElementById('fundButton')?.addEventListener('click', function(e) {
-            e.preventDefault();
-            try {
-                if (window.parent && typeof window.parent.openFundingModal === 'function') {
-                    window.parent.openFundingModal();
-                } else {
-                    window.parent.postMessage({ type: 'OPEN_FUNDING_MODAL' }, '*');
-                }
-            } catch (err) {
-                window.location.href = '/fund.html';
-            }
-        });
+        let allPlans = {};
 
         window.goToPortfolio = () => window.location.href = '/portfolio.html';
         window.goToWithdraw = () => window.location.href = '/withdraw.html';
         window.goToPlans = () => window.location.href = '/plans.html';
+
+        function calculatePendingEarnings(plan) {
+            const now = Date.now();
+            const { startDate, endDate, totalReturns, lastClaim = startDate, claimedAmount = 0 } = plan;
+            const totalDuration = endDate - startDate;
+            const shouldHaveEarned = (totalReturns * (now - startDate)) / totalDuration;
+            return Math.max(0, Math.min(shouldHaveEarned - claimedAmount, totalReturns - claimedAmount));
+        }
+
+        window.claimEarnings = async (planId) => {
+            if (!currentUser) return;
+            const plan = allPlans[planId];
+            if (!plan) return;
+
+            const amount = calculatePendingEarnings(plan);
+            if (amount < 0.01) return;
+
+            const userRef = ref(database, `users/${currentUser.uid}`);
+            try {
+                const snap = await get(userRef);
+                const userData = snap.val();
+                const now = Date.now();
+                const claimedAmount = (plan.claimedAmount || 0) + amount;
+                const isFullyClaimed = claimedAmount >= plan.totalReturns;
+
+                await update(userRef, {
+                    available: (userData.available || 0) + amount,
+                    totalBalance: (userData.totalBalance || 0) + amount,
+                    totalClaimed: (userData.totalClaimed || 0) + amount,
+                    [`activePlans/${planId}/claimedAmount`]: claimedAmount,
+                    [`activePlans/${planId}/lastClaim`]: now,
+                    [`activePlans/${planId}/isActive`]: !isFullyClaimed,
+                    ...(isFullyClaimed && {
+                        invested: Math.max(0, (userData.invested || 0) - plan.amount),
+                        [`activePlans/${planId}/completedAt`]: now
+                    }),
+                    updatedAt: new Date().toISOString()
+                });
+
+                alert(`✅ Successfully claimed $${amount.toFixed(2)}!`);
+            } catch (error) {
+                console.error('Claim error:', error);
+                alert('Failed to claim. Please try again.');
+            }
+        };
+
+        window.claimAll = async () => {
+            if (!currentUser || !allPlans) return;
+            
+            let totalToClaim = 0;
+            const updates = {};
+            const now = Date.now();
+
+            Object.entries(allPlans).forEach(([planId, plan]) => {
+                if (!plan.isActive) return;
+                const pending = calculatePendingEarnings(plan);
+                if (pending >= 0.01) {
+                    totalToClaim += pending;
+                    const claimedAmount = (plan.claimedAmount || 0) + pending;
+                    const isFullyClaimed = claimedAmount >= plan.totalReturns;
+                    
+                    updates[`activePlans/${planId}/claimedAmount`] = claimedAmount;
+                    updates[`activePlans/${planId}/lastClaim`] = now;
+                    updates[`activePlans/${planId}/isActive`] = !isFullyClaimed;
+                    if (isFullyClaimed) {
+                        updates[`activePlans/${planId}/completedAt`] = now;
+                    }
+                }
+            });
+
+            if (totalToClaim < 0.01) {
+                alert('No earnings to claim yet');
+                return;
+            }
+
+            const userRef = ref(database, `users/${currentUser.uid}`);
+            try {
+                const snap = await get(userRef);
+                const userData = snap.val();
+
+                await update(userRef, {
+                    ...updates,
+                    available: (userData.available || 0) + totalToClaim,
+                    totalBalance: (userData.totalBalance || 0) + totalToClaim,
+                    totalClaimed: (userData.totalClaimed || 0) + totalToClaim,
+                    updatedAt: new Date().toISOString()
+                });
+
+                alert(`✅ Successfully claimed $${totalToClaim.toFixed(2)}!`);
+            } catch (error) {
+                console.error('Claim all error:', error);
+                alert('Failed to claim. Please try again.');
+            }
+        };
+
+        function getPlanDisplayName(type) {
+            const names = {
+                'Weekly': 'Weekly Plan',
+                'Monthly-10.5': 'Monthly 10.5%',
+                'Monthly-11.5': 'Monthly Premium',
+                'Yearly': 'Annual Plan'
+            };
+            return names[type] || type;
+        }
+
+        function updateDashboard(userData) {
+            const displayName = userData.fullName || userData.email?.split('@')[0] || 'Investor';
+            document.getElementById('userName').textContent = displayName;
+
+            const totalBalance = userData.totalBalance || 0;
+            const invested = userData.invested || 0;
+            const available = userData.available || 0;
+            const totalClaimed = userData.totalClaimed || 0;
+
+            document.getElementById('totalBalance').textContent = `$${totalBalance.toFixed(2)}`;
+            document.getElementById('balanceChange').textContent = `$${available.toFixed(2)} Available`;
+            document.getElementById('invested').textContent = `$${invested.toFixed(2)}`;
+            document.getElementById('available').textContent = `$${available.toFixed(2)}`;
+            document.getElementById('totalClaimed').textContent = `$${totalClaimed.toFixed(2)}`;
+
+            const activePlansObj = userData.activePlans || {};
+            allPlans = activePlansObj;
+            const activePlansArray = Object.entries(activePlansObj)
+                .map(([id, plan]) => ({ id, ...plan }))
+                .filter(p => p.isActive);
+
+            const planCount = activePlansArray.length;
+            document.getElementById('investedCount').textContent = `${planCount} active ${planCount === 1 ? 'plan' : 'plans'}`;
+            document.getElementById('claimedTrend').textContent = `Total earnings`;
+
+            const totalROI = invested > 0 ? ((totalClaimed / invested) * 100) : 0;
+            document.getElementById('totalROI').textContent = `${totalROI.toFixed(2)}%`;
+
+            // Calculate total pending
+            let totalPending = 0;
+            const plansList = document.getElementById('plansList');
+            
+            if (planCount > 0) {
+                plansList.innerHTML = activePlansArray.map(plan => {
+                    const pending = calculatePendingEarnings(plan);
+                    totalPending += pending;
+                    const claimed = plan.claimedAmount || 0;
+                    const progress = ((claimed + pending) / plan.totalReturns) * 100;
+                    const canClaim = pending >= 0.01;
+
+                    return `
+                        <div class="plan-item">
+                            <div class="plan-header">
+                                <div class="plan-info">
+                                    <h4>${getPlanDisplayName(plan.type)}</h4>
+                                    <p>$${plan.dailyIncome.toFixed(2)}/day • ${plan.returnRate}% ROI</p>
+                                </div>
+                                <div class="plan-amount">
+                                    <div class="value">$${plan.amount.toFixed(2)}</div>
+                                    <div class="return">+$${(claimed + pending).toFixed(2)}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="plan-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${Math.min(100, progress)}%"></div>
+                                </div>
+                                <div class="progress-info">
+                                    <span>${Math.min(100, progress).toFixed(1)}% Complete</span>
+                                    <span>$${(claimed + pending).toFixed(2)} / $${plan.totalReturns.toFixed(2)}</span>
+                                </div>
+                            </div>
+
+                            <div class="earnings-row">
+                                <div class="earning-item">
+                                    <div class="earning-label">Pending</div>
+                                    <div class="earning-value pending">$${pending.toFixed(2)}</div>
+                                </div>
+                                <div class="earning-item">
+                                    <div class="earning-label">Claimed</div>
+                                    <div class="earning-value claimed">$${claimed.toFixed(2)}</div>
+                                </div>
+                                <div class="earning-item">
+                                    <div class="earning-label">Target</div>
+                                    <div class="earning-value">$${plan.totalReturns.toFixed(2)}</div>
+                                </div>
+                            </div>
+
+                            <button class="claim-btn" ${!canClaim ? 'disabled' : ''} 
+                                    onclick="claimEarnings('${plan.id}')">
+                                ${canClaim ? `Claim $${pending.toFixed(2)}` : 'Nothing to Claim'}
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+
+                // Show pending section if there's claimable amount
+                const pendingSection = document.getElementById('pendingSection');
+                if (totalPending >= 0.01) {
+                    pendingSection.style.display = 'block';
+                    document.getElementById('totalPending').textContent = `$${totalPending.toFixed(2)}`;
+                } else {
+                    pendingSection.style.display = 'none';
+                }
+            } else {
+                plansList.innerHTML = '<div class="no-plans">No active investment plans yet</div>';
+                document.getElementById('pendingSection').style.display = 'none';
+            }
+        }
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -180,85 +385,13 @@
                 onValue(userRef, (snap) => {
                     if (snap.exists()) {
                         updateDashboard(snap.val());
+                        setInterval(() => updateDashboard(snap.val()), 5000);
                     }
                 });
             } else {
                 window.location.href = '/login.html';
             }
         });
-
-        function updateDashboard(userData) {
-            // User name
-            const displayName = userData.fullName || userData.email?.split('@')[0] || 'Investor';
-            document.getElementById('userName').textContent = displayName;
-
-            // Balances
-            const totalBalance = userData.totalBalance || 0;
-            const invested = userData.invested || 0;
-            const available = userData.available || 0;
-            const totalIncome = userData.totalIncome || 0;
-            const todayIncome = userData.todayIncome || 0;
-
-            document.getElementById('totalBalance').textContent = `$${totalBalance.toFixed(2)}`;
-            document.getElementById('balanceChange').textContent = `$${(userData.balanceChange || 0).toFixed(2)} Today`;
-            document.getElementById('invested').textContent = `$${invested.toFixed(2)}`;
-            document.getElementById('available').textContent = `$${available.toFixed(2)}`;
-            document.getElementById('totalIncome').textContent = `$${totalIncome.toFixed(2)}`;
-            document.getElementById('todayIncome').textContent = `$${todayIncome.toFixed(2)}`;
-            document.getElementById('totalEarned').textContent = `$${totalIncome.toFixed(2)}`;
-
-            // Active Plans - Read from activePlans object
-            const activePlansObj = userData.activePlans || {};
-            const activePlansArray = Object.entries(activePlansObj).map(([id, plan]) => ({
-                id,
-                ...plan
-            }));
-
-            const planCount = activePlansArray.length;
-            document.getElementById('investedCount').textContent = `${planCount} active ${planCount === 1 ? 'plan' : 'plans'}`;
-            document.getElementById('incomeTrend').textContent = planCount > 0 ? `From ${planCount} ${planCount === 1 ? 'plan' : 'plans'}` : 'No plans yet';
-
-            // Calculate ROI
-            const totalROI = invested > 0 ? ((totalIncome / invested) * 100) : 0;
-            document.getElementById('totalROI').textContent = `${totalROI.toFixed(2)}%`;
-
-            // Display plans
-            const plansList = document.getElementById('plansList');
-            if (planCount > 0) {
-                plansList.innerHTML = activePlansArray.map(plan => {
-                    const planName = getPlanDisplayName(plan.type);
-                    const earnedSoFar = plan.earnedSoFar || 0;
-                    const dailyIncome = plan.dailyIncome || 0;
-                    const totalReturns = plan.totalReturns || 0;
-                    const progressPercent = totalReturns > 0 ? ((earnedSoFar / totalReturns) * 100).toFixed(1) : 0;
-
-                    return `
-                        <div class="plan-item">
-                            <div class="plan-info">
-                                <h4>${planName}</h4>
-                                <p>$${dailyIncome.toFixed(2)}/day • ${progressPercent}% earned</p>
-                            </div>
-                            <div class="plan-amount">
-                                <div class="value">$${(plan.amount || 0).toFixed(2)}</div>
-                                <div class="return">+$${earnedSoFar.toFixed(2)}</div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            } else {
-                plansList.innerHTML = '<div class="no-plans">No active investment plans yet</div>';
-            }
-        }
-
-        function getPlanDisplayName(type) {
-            const names = {
-                'Weekly': 'Weekly Plan',
-                'Monthly-10.5': 'Monthly 10.5%',
-                'Monthly-11.5': 'Monthly Premium 11.5%',
-                'Yearly': 'Annual Plan'
-            };
-            return names[type] || type;
-        }
     </script>
 </body>
-    </html>
+</html> 
