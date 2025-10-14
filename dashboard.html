@@ -70,6 +70,9 @@
         .claim-btn:hover:not(:disabled) { opacity: 0.9; }
         .claim-btn:disabled { opacity: 0.5; cursor: not-allowed; background: #94a3b8; }
 
+        .claim-where { background: #e0f2fe; border: 2px solid #0284c7; color: #075985; padding: 12px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .claim-where i { font-size: 16px; }
+
         .quick-actions { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); }
         .actions-title { font-size: 15px; font-weight: 600; color: #0f172a; margin-bottom: 14px; }
         .action-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
@@ -128,6 +131,11 @@
             </div>
         </div>
 
+        <div class="claim-where">
+            <i class="fas fa-info-circle"></i>
+            <strong>Where to Claim:</strong> Scroll down to your active plans and click the claim button!
+        </div>
+
         <div class="pending-section" id="pendingSection" style="display: none;">
             <div class="pending-title"><i class="fas fa-hand-holding-usd"></i>Pending Claims</div>
             <div class="pending-amount">
@@ -162,7 +170,7 @@
     </div>
 
     <script type="module">
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
         import { getDatabase, ref, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
         import { auth, database } from "./lib/firebase.js";
 
@@ -305,7 +313,6 @@
             const totalROI = invested > 0 ? ((totalClaimed / invested) * 100) : 0;
             document.getElementById('totalROI').textContent = `${totalROI.toFixed(2)}%`;
 
-            // Calculate total pending
             let totalPending = 0;
             const plansList = document.getElementById('plansList');
             
@@ -357,13 +364,12 @@
 
                             <button class="claim-btn" ${!canClaim ? 'disabled' : ''} 
                                     onclick="claimEarnings('${plan.id}')">
-                                ${canClaim ? `Claim $${pending.toFixed(2)}` : 'Nothing to Claim'}
+                                ${canClaim ? `💰 Claim $${pending.toFixed(2)} Now` : 'Nothing to Claim Yet'}
                             </button>
                         </div>
                     `;
                 }).join('');
 
-                // Show pending section if there's claimable amount
                 const pendingSection = document.getElementById('pendingSection');
                 if (totalPending >= 0.01) {
                     pendingSection.style.display = 'block';
@@ -394,4 +400,4 @@
         });
     </script>
 </body>
-</html> 
+</html>
