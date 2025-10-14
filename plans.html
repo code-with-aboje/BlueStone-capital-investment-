@@ -49,22 +49,23 @@
         .modal-content { background: white; border-radius: 16px; padding: 24px; max-width: 450px; width: 90%; }
         .modal h3 { font-size: 20px; color: #0f172a; margin-bottom: 16px; text-align: center; }
         
-        .input-group { margin: 16px 0; }
-        .input-group label { display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 6px; }
-        .input-group input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; font-weight: 600; }
-        .input-group input:focus { outline: none; border-color: #10b981; }
+        .confirm-amount { background: #f8fafc; border: 2px solid #10b981; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0; }
+        .confirm-label { color: #64748b; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; }
+        .confirm-value { color: #10b981; font-size: 32px; font-weight: 700; }
         
         .summary { background: #f8fafc; padding: 12px; border-radius: 10px; margin: 12px 0; font-size: 13px; }
         .summary-row { display: flex; justify-content: space-between; padding: 6px 0; }
-        .summary-row.total { border-top: 2px solid #e2e8f0; margin-top: 8px; padding-top: 8px; font-weight: 700; }
         
         .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
         .modal-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase; }
         .modal-btn.cancel { background: #f1f5f9; color: #475569; }
         .modal-btn.confirm { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
         
         .error { background: #fee2e2; color: #dc2626; padding: 10px; border-radius: 8px; font-size: 12px; margin-top: 10px; display: none; }
         .error.show { display: block; }
+
+        .info-note { background: #dbeafe; border: 2px solid #3b82f6; color: #1e40af; padding: 12px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; text-align: center; }
 
         @media (max-width: 768px) {
             body { padding: 20px 16px; }
@@ -80,6 +81,10 @@
             <p>Start growing your wealth with flexible options</p>
         </div>
 
+        <div class="info-note">
+            ℹ️ Auto income updates handled by Firestore Cloud Functions
+        </div>
+
         <div class="balance-display">
             <div class="balance-label">Available Balance</div>
             <div class="balance-amount" id="userBalance">$0.00</div>
@@ -91,20 +96,24 @@
     <div class="modal" id="modal">
         <div class="modal-content">
             <h3 id="modalTitle">Confirm Investment</h3>
-            <div class="input-group">
-                <label>Investment Amount ($)</label>
-                <input type="number" id="amount" min="0" step="0.01" placeholder="Enter amount">
+            
+            <div class="confirm-amount">
+                <div class="confirm-label">Investment Amount</div>
+                <div class="confirm-value" id="confirmAmount">$0.00</div>
             </div>
+
             <div class="summary">
                 <div class="summary-row"><span>Plan:</span><strong id="sPlan">-</strong></div>
                 <div class="summary-row"><span>Daily Income:</span><strong id="sDaily">-</strong></div>
                 <div class="summary-row"><span>Total Returns:</span><strong id="sReturns">-</strong></div>
-                <div class="summary-row total"><span>Investment:</span><strong id="sAmount">$0.00</strong></div>
+                <div class="summary-row"><span>Update Frequency:</span><strong id="sFreq">-</strong></div>
             </div>
+
             <div class="error" id="error"></div>
+
             <div class="modal-actions">
                 <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
-                <button class="modal-btn confirm" onclick="confirmPurchase()">Confirm</button>
+                <button class="modal-btn confirm" id="confirmBtn" onclick="confirmPurchase()">Confirm Investment</button>
             </div>
         </div>
     </div>
@@ -112,13 +121,17 @@
     <script type="module">
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
         import { getDatabase, ref, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+        import { getFirestore, collection, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
         import { auth, database } from "./lib/firebase.js";
 
+        // Initialize Firestore
+        const firestore = getFirestore();
+
         const plans = [
-            { name: 'Weekly', icon: 'calendar-week', period: 'Short Term', min: 100, returns: 20, daily: 14.30, badge: 'Testing', featured: true, interval: 60000 },
-            { name: 'Monthly-10.5', display: 'Monthly', icon: 'calendar-alt', period: 'Medium Term', min: 500, returns: 10.5, daily: 1.75, interval: 86400000 },
-            { name: 'Monthly-11.5', display: 'Monthly Premium', icon: 'calendar-check', period: 'Medium Term', min: 500, returns: 11.5, daily: 1.92, badge: 'Popular', featured: true, interval: 86400000 },
-            { name: 'Yearly', icon: 'calendar', period: 'Long Term', min: 500, returns: 130, daily: 1.78, interval: 86400000 }
+            { name: 'Weekly', icon: 'calendar-week', period: 'Short Term', min: 100, returns: 20, daily: 14.30, badge: 'Testing', featured: true, interval: 60000, freq: 'Every minute' },
+            { name: 'Monthly-10.5', display: 'Monthly', icon: 'calendar-alt', period: 'Medium Term', min: 500, returns: 10.5, daily: 1.75, interval: 86400000, freq: 'Daily' },
+            { name: 'Monthly-11.5', display: 'Monthly Premium', icon: 'calendar-check', period: 'Medium Term', min: 500, returns: 11.5, daily: 1.92, badge: 'Popular', featured: true, interval: 86400000, freq: 'Daily' },
+            { name: 'Yearly', icon: 'calendar', period: 'Long Term', min: 500, returns: 130, daily: 1.78, interval: 86400000, freq: 'Daily' }
         ];
 
         let currentUser = null;
@@ -139,25 +152,26 @@
                     <div class="plan-interest">${plan.returns}% Total Returns</div>
                     <div class="daily-income">💰 $${plan.daily}/day on $500</div>
                     <ul class="plan-features">
-                        <li><i class="fas fa-check-circle"></i> ${plan.name === 'Weekly' ? 'Per minute (testing)' : 'Daily income'}</li>
+                        <li><i class="fas fa-check-circle"></i> ${plan.freq} income</li>
                         <li><i class="fas fa-check-circle"></i> Auto balance update</li>
                         <li><i class="fas fa-check-circle"></i> Priority support</li>
                         <li><i class="fas fa-check-circle"></i> 24/7 assistance</li>
                     </ul>
-                    <button class="purchase-btn" onclick="openModal('${plan.name}', ${plan.returns}, ${plan.daily}, ${plan.min})">Select Plan</button>
+                    <button class="purchase-btn" onclick="openModal('${plan.name}')">Select Plan</button>
                 </div>
             `;
         });
 
-        window.openModal = (name, returns, daily, min) => {
+        window.openModal = (name) => {
             selectedPlan = plans.find(p => p.name === name);
-            document.getElementById('modalTitle').textContent = selectedPlan.display || name;
-            document.getElementById('sPlan').textContent = selectedPlan.display || name;
-            document.getElementById('sDaily').textContent = `$${daily}/day`;
-            document.getElementById('sReturns').textContent = `${returns}%`;
-            document.getElementById('amount').min = min;
-            document.getElementById('amount').value = min;
-            updateSummary();
+            const displayName = selectedPlan.display || name;
+            
+            document.getElementById('modalTitle').textContent = `Confirm ${displayName}`;
+            document.getElementById('confirmAmount').textContent = `$${selectedPlan.min.toFixed(2)}`;
+            document.getElementById('sPlan').textContent = displayName;
+            document.getElementById('sDaily').textContent = `$${selectedPlan.daily}/day`;
+            document.getElementById('sReturns').textContent = `${selectedPlan.returns}%`;
+            document.getElementById('sFreq').textContent = selectedPlan.freq;
             document.getElementById('modal').classList.add('active');
         };
 
@@ -165,13 +179,6 @@
             document.getElementById('modal').classList.remove('active');
             document.getElementById('error').classList.remove('show');
         };
-
-        document.getElementById('amount').addEventListener('input', updateSummary);
-
-        function updateSummary() {
-            const amt = parseFloat(document.getElementById('amount').value) || 0;
-            document.getElementById('sAmount').textContent = `$${amt.toFixed(2)}`;
-        }
 
         function showError(msg) {
             const err = document.getElementById('error');
@@ -182,48 +189,84 @@
         window.confirmPurchase = async () => {
             if (!currentUser || !selectedPlan) return;
 
-            const amt = parseFloat(document.getElementById('amount').value);
-            if (!amt || amt < selectedPlan.min) {
-                showError(`Minimum investment is $${selectedPlan.min}`);
-                return;
-            }
+            const confirmBtn = document.getElementById('confirmBtn');
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = 'Processing...';
 
-            const userRef = ref(database, `users/${currentUser.uid}`);
-            const snap = await get(userRef);
-            const userData = snap.val();
-            const totalBalance = userData?.totalBalance || 0;
-            const available = userData?.available || 0;
-            const invested = userData?.invested || 0;
+            const amt = selectedPlan.min;
+            const rtdbRef = ref(database, `users/${currentUser.uid}`);
+            
+            try {
+                // Get current Realtime Database data
+                const snap = await get(rtdbRef);
+                const userData = snap.val();
+                const totalBalance = userData?.totalBalance || 0;
+                const available = userData?.available || 0;
+                const invested = userData?.invested || 0;
 
-            if (available < amt) {
-                showError('Insufficient available balance');
-                return;
-            }
+                if (available < amt) {
+                    showError('Insufficient available balance');
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = 'Confirm Investment';
+                    return;
+                }
 
-            const planId = `${selectedPlan.name}_${Date.now()}`;
-            const dailyIncome = (amt / 500) * selectedPlan.daily;
-            const totalReturns = (amt * selectedPlan.returns) / 100;
+                const planId = `${selectedPlan.name}_${Date.now()}`;
+                const dailyIncome = (amt / 500) * selectedPlan.daily;
+                const totalReturns = (amt * selectedPlan.returns) / 100;
 
-            // Update user data structure - deduct from both totalBalance and available
-            await update(userRef, {
-                totalBalance: totalBalance - amt,
-                available: available - amt,
-                invested: invested + amt,
-                updatedAt: new Date().toISOString(),
-                [`activePlans/${planId}`]: {
-                    type: selectedPlan.name,
+                // 1. Update Realtime Database (user balance & plan)
+                await update(rtdbRef, {
+                    totalBalance: totalBalance - amt,
+                    available: available - amt,
+                    invested: invested + amt,
+                    updatedAt: new Date().toISOString(),
+                    [`activePlans/${planId}`]: {
+                        type: selectedPlan.name,
+                        amount: amt,
+                        dailyIncome: dailyIncome,
+                        totalReturns: totalReturns,
+                        returnRate: selectedPlan.returns,
+                        startDate: Date.now(),
+                        lastUpdate: Date.now(),
+                        earnedSoFar: 0
+                    }
+                });
+
+                // 2. Create Firestore document for scheduled updates
+                const firestorePlanRef = doc(firestore, 'scheduledIncome', planId);
+                await setDoc(firestorePlanRef, {
+                    userId: currentUser.uid,
+                    planId: planId,
+                    planType: selectedPlan.name,
                     amount: amt,
                     dailyIncome: dailyIncome,
                     totalReturns: totalReturns,
                     returnRate: selectedPlan.returns,
-                    startDate: Date.now(),
-                    lastUpdate: Date.now(),
-                    earnedSoFar: 0
-                }
-            });
+                    earnedSoFar: 0,
+                    updateInterval: selectedPlan.interval, // 60000 for weekly, 86400000 for others
+                    lastUpdate: serverTimestamp(),
+                    nextUpdate: new Date(Date.now() + selectedPlan.interval),
+                    active: true,
+                    createdAt: serverTimestamp()
+                });
 
-            closeModal();
-            alert('✅ Investment successful! Your earnings will start updating automatically.');
+                closeModal();
+                alert('✅ Investment successful! Firestore will automatically update your balance.');
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = 'Confirm Investment';
+
+                console.log('✅ Created investment:', {
+                    rtdb: `users/${currentUser.uid}/activePlans/${planId}`,
+                    firestore: `scheduledIncome/${planId}`
+                });
+
+            } catch (error) {
+                console.error('Investment error:', error);
+                showError('Failed to process investment. Please try again.');
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = 'Confirm Investment';
+            }
         };
 
         onAuthStateChanged(auth, (user) => {
@@ -239,66 +282,89 @@
                         document.getElementById('userBalance').textContent = `$${totalBalance.toFixed(2)}`;
                     }
                 });
-
-                startIncomeUpdater();
             } else {
                 window.location.href = '/login.html';
             }
         });
-
-        function startIncomeUpdater() {
-            setInterval(async () => {
-                if (!currentUser) return;
-
-                const plansRef = ref(database, `users/${currentUser.uid}/activePlans`);
-                const snap = await get(plansRef);
-                if (!snap.exists()) return;
-
-                const userPlans = snap.val();
-                const userRef = ref(database, `users/${currentUser.uid}`);
-                const userSnap = await get(userRef);
-                const userData = userSnap.val();
-
-                for (const planId in userPlans) {
-                    const plan = userPlans[planId];
-                    const planConfig = plans.find(p => p.name === plan.type);
-                    if (!planConfig) continue;
-
-                    const now = Date.now();
-                    
-                    // Check if it's time to update
-                    if (now - plan.lastUpdate >= planConfig.interval) {
-                        const currentTotalBalance = userData?.totalBalance || 0;
-                        const currentAvailable = userData?.available || 0;
-                        const currentTotalIncome = userData?.totalIncome || 0;
-                        const currentTodayIncome = userData?.todayIncome || 0;
-                        const earnedSoFar = plan.earnedSoFar || 0;
-
-                        // Check if plan has reached max returns
-                        if (earnedSoFar >= plan.totalReturns) {
-                            console.log(`Plan ${planId} has reached maximum returns`);
-                            continue;
-                        }
-
-                        const incomeToAdd = Math.min(plan.dailyIncome, plan.totalReturns - earnedSoFar);
-
-                        // Update all relevant fields
-                        await update(userRef, {
-                            totalBalance: currentTotalBalance + incomeToAdd,
-                            available: currentAvailable + incomeToAdd,
-                            totalIncome: currentTotalIncome + incomeToAdd,
-                            todayIncome: currentTodayIncome + incomeToAdd,
-                            lastIncomeUpdate: new Date().toISOString(),
-                            updatedAt: new Date().toISOString(),
-                            [`activePlans/${planId}/lastUpdate`]: now,
-                            [`activePlans/${planId}/earnedSoFar`]: earnedSoFar + incomeToAdd
-                        });
-
-                        console.log(`✅ Added $${incomeToAdd.toFixed(2)} income from ${plan.type} plan`);
-                    }
-                }
-            }, 5000); // Check every 5 seconds
-        }
     </script>
 </body>
-    </html>
+</html>
+
+<!-- 
+FIREBASE CLOUD FUNCTION NEEDED:
+Deploy this function to handle automatic income updates from Firestore to Realtime Database
+
+==================================================
+functions/index.js:
+==================================================
+
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+admin.initializeApp();
+
+const db = admin.firestore();
+const rtdb = admin.database();
+
+// Scheduled function - runs every minute
+exports.updateIncomes = functions.pubsub.schedule('every 1 minute').onRun(async (context) => {
+  const now = Date.now();
+  
+  // Get all active plans from Firestore
+  const plansSnapshot = await db.collection('scheduledIncome')
+    .where('active', '==', true)
+    .where('nextUpdate', '<=', new Date(now))
+    .get();
+
+  const batch = db.batch();
+  const promises = [];
+
+  plansSnapshot.forEach(doc => {
+    const plan = doc.data();
+    
+    // Check if plan has reached max returns
+    if (plan.earnedSoFar >= plan.totalReturns) {
+      batch.update(doc.ref, { active: false });
+      return;
+    }
+
+    const incomeToAdd = Math.min(plan.dailyIncome, plan.totalReturns - plan.earnedSoFar);
+    const newEarned = plan.earnedSoFar + incomeToAdd;
+
+    // Update Realtime Database
+    const userRef = rtdb.ref(`users/${plan.userId}`);
+    const promise = userRef.once('value').then(snapshot => {
+      const userData = snapshot.val();
+      return userRef.update({
+        totalBalance: (userData.totalBalance || 0) + incomeToAdd,
+        available: (userData.available || 0) + incomeToAdd,
+        totalIncome: (userData.totalIncome || 0) + incomeToAdd,
+        todayIncome: (userData.todayIncome || 0) + incomeToAdd,
+        lastIncomeUpdate: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        [`activePlans/${plan.planId}/lastUpdate`]: now,
+        [`activePlans/${plan.planId}/earnedSoFar`]: newEarned
+      });
+    });
+
+    promises.push(promise);
+
+    // Update Firestore document
+    batch.update(doc.ref, {
+      earnedSoFar: newEarned,
+      lastUpdate: admin.firestore.FieldValue.serverTimestamp(),
+      nextUpdate: new Date(now + plan.updateInterval),
+      active: newEarned < plan.totalReturns
+    });
+  });
+
+  await Promise.all(promises);
+  await batch.commit();
+
+  console.log(`✅ Processed ${plansSnapshot.size} income updates`);
+  return null;
+});
+
+==================================================
+Deploy: firebase deploy --only functions
+==================================================
+-->
