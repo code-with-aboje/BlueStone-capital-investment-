@@ -47,12 +47,17 @@
         .no-plans { text-align: center; padding: 20px; color: #94a3b8; font-size: 14px; }
         
         .plan-item { background: #f8fafc; border-left: 4px solid #10b981; border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+        .plan-item.completed { border-left-color: #64748b; opacity: 0.8; }
         .plan-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .plan-info h4 { color: #0f172a; font-size: 14px; margin-bottom: 4px; font-weight: 600; }
         .plan-info p { color: #64748b; font-size: 12px; }
         .plan-amount { text-align: right; }
         .plan-amount .value { color: #10b981; font-size: 16px; font-weight: 700; }
         .plan-amount .return { color: #059669; font-size: 12px; margin-top: 4px; }
+        
+        .plan-status { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 8px; }
+        .plan-status.active { background: #dcfce7; color: #059669; }
+        .plan-status.completed { background: #f1f5f9; color: #64748b; }
         
         .plan-progress { margin: 10px 0; }
         .progress-bar { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
@@ -69,6 +74,9 @@
         .claim-btn { width: 100%; padding: 10px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; }
         .claim-btn:hover:not(:disabled) { opacity: 0.9; }
         .claim-btn:disabled { opacity: 0.5; cursor: not-allowed; background: #94a3b8; }
+        
+        .reinvest-btn { width: 100%; padding: 10px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .reinvest-btn:hover { opacity: 0.9; }
 
         .claim-where { background: #e0f2fe; border: 2px solid #0284c7; color: #075985; padding: 12px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .claim-where i { font-size: 16px; }
@@ -183,9 +191,16 @@
 
         function calculatePendingEarnings(plan) {
             const now = Date.now();
-            const { startDate, endDate, totalReturns, lastClaim = startDate, claimedAmount = 0 } = plan;
+            const { startDate, endDate, totalReturns, lastClaim = startDate, claimedAmount = 0, type } = plan;
+            
+            // Check if plan has expired
+            if (now >= endDate) {
+                return Math.max(0, totalReturns - claimedAmount);
+            }
+            
             const totalDuration = endDate - startDate;
-            const shouldHaveEarned = (totalReturns * (now - startDate)) / totalDuration;
+            const elapsed = now - startDate;
+            const shouldHaveEarned = (totalReturns * elapsed) / totalDuration;
             return Math.max(0, Math.min(shouldHaveEarned - claimedAmount, totalReturns - claimedAmount));
         }
 
@@ -203,23 +218,25 @@
                 const userData = snap.val();
                 const now = Date.now();
                 const claimedAmount = (plan.claimedAmount || 0) + amount;
-                const isFullyClaimed = claimedAmount >= plan.totalReturns;
+                const isFullyClaimed = claimedAmount >= plan.totalReturns || now >= plan.endDate;
 
-                await update(userRef, {
+                const updates = {
                     available: (userData.available || 0) + amount,
                     totalBalance: (userData.totalBalance || 0) + amount,
                     totalClaimed: (userData.totalClaimed || 0) + amount,
                     [`activePlans/${planId}/claimedAmount`]: claimedAmount,
                     [`activePlans/${planId}/lastClaim`]: now,
                     [`activePlans/${planId}/isActive`]: !isFullyClaimed,
-                    ...(isFullyClaimed && {
-                        invested: Math.max(0, (userData.invested || 0) - plan.amount),
-                        [`activePlans/${planId}/completedAt`]: now
-                    }),
                     updatedAt: new Date().toISOString()
-                });
+                };
 
-                alert(`✅ Successfully claimed $${amount.toFixed(2)}!`);
+                if (isFullyClaimed) {
+                    updates.invested = Math.max(0, (userData.invested || 0) - plan.amount);
+                    updates[`activePlans/${planId}/completedAt`] = now;
+                }
+
+                await update(userRef, updates);
+                alert(`✅ Successfully claimed $${amount.toFixed(2)}!${isFullyClaimed ? '\n\n🎉 Plan completed! You can reinvest to continue earning.' : ''}`);
             } catch (error) {
                 console.error('Claim error:', error);
                 alert('Failed to claim. Please try again.');
@@ -232,6 +249,7 @@
             let totalToClaim = 0;
             const updates = {};
             const now = Date.now();
+            let completedCount = 0;
 
             Object.entries(allPlans).forEach(([planId, plan]) => {
                 if (!plan.isActive) return;
@@ -239,13 +257,14 @@
                 if (pending >= 0.01) {
                     totalToClaim += pending;
                     const claimedAmount = (plan.claimedAmount || 0) + pending;
-                    const isFullyClaimed = claimedAmount >= plan.totalReturns;
+                    const isFullyClaimed = claimedAmount >= plan.totalReturns || now >= plan.endDate;
                     
                     updates[`activePlans/${planId}/claimedAmount`] = claimedAmount;
                     updates[`activePlans/${planId}/lastClaim`] = now;
                     updates[`activePlans/${planId}/isActive`] = !isFullyClaimed;
                     if (isFullyClaimed) {
                         updates[`activePlans/${planId}/completedAt`] = now;
+                        completedCount++;
                     }
                 }
             });
@@ -268,7 +287,7 @@
                     updatedAt: new Date().toISOString()
                 });
 
-                alert(`✅ Successfully claimed $${totalToClaim.toFixed(2)}!`);
+                alert(`✅ Successfully claimed $${totalToClaim.toFixed(2)}!${completedCount > 0 ? `\n\n🎉 ${completedCount} plan(s) completed! Reinvest to keep earning.` : ''}`);
             } catch (error) {
                 console.error('Claim all error:', error);
                 alert('Failed to claim. Please try again.');
@@ -302,11 +321,13 @@
 
             const activePlansObj = userData.activePlans || {};
             allPlans = activePlansObj;
-            const activePlansArray = Object.entries(activePlansObj)
+            const allPlansArray = Object.entries(activePlansObj)
                 .map(([id, plan]) => ({ id, ...plan }))
-                .filter(p => p.isActive);
+                .sort((a, b) => b.isActive - a.isActive);
 
+            const activePlansArray = allPlansArray.filter(p => p.isActive);
             const planCount = activePlansArray.length;
+            
             document.getElementById('investedCount').textContent = `${planCount} active ${planCount === 1 ? 'plan' : 'plans'}`;
             document.getElementById('claimedTrend').textContent = `Total earnings`;
 
@@ -316,20 +337,26 @@
             let totalPending = 0;
             const plansList = document.getElementById('plansList');
             
-            if (planCount > 0) {
-                plansList.innerHTML = activePlansArray.map(plan => {
+            if (allPlansArray.length > 0) {
+                plansList.innerHTML = allPlansArray.map(plan => {
+                    const now = Date.now();
                     const pending = calculatePendingEarnings(plan);
-                    totalPending += pending;
+                    if (plan.isActive) totalPending += pending;
                     const claimed = plan.claimedAmount || 0;
                     const progress = ((claimed + pending) / plan.totalReturns) * 100;
-                    const canClaim = pending >= 0.01;
+                    const canClaim = pending >= 0.01 && plan.isActive;
+                    const isExpired = now >= plan.endDate;
+                    const isCompleted = !plan.isActive;
 
                     return `
-                        <div class="plan-item">
+                        <div class="plan-item ${isCompleted ? 'completed' : ''}">
                             <div class="plan-header">
                                 <div class="plan-info">
                                     <h4>${getPlanDisplayName(plan.type)}</h4>
                                     <p>$${plan.dailyIncome.toFixed(2)}/day • ${plan.returnRate}% ROI</p>
+                                    <span class="plan-status ${plan.isActive ? 'active' : 'completed'}">
+                                        ${plan.isActive ? '● Active' : '✓ Completed'}
+                                    </span>
                                 </div>
                                 <div class="plan-amount">
                                     <div class="value">$${plan.amount.toFixed(2)}</div>
@@ -362,10 +389,16 @@
                                 </div>
                             </div>
 
-                            <button class="claim-btn" ${!canClaim ? 'disabled' : ''} 
-                                    onclick="claimEarnings('${plan.id}')">
-                                ${canClaim ? `💰 Claim $${pending.toFixed(2)} Now` : 'Nothing to Claim Yet'}
-                            </button>
+                            ${plan.isActive ? `
+                                <button class="claim-btn" ${!canClaim ? 'disabled' : ''} 
+                                        onclick="claimEarnings('${plan.id}')">
+                                    ${canClaim ? `💰 Claim $${pending.toFixed(2)} Now` : 'Nothing to Claim Yet'}
+                                </button>
+                            ` : `
+                                <button class="reinvest-btn" onclick="goToPlans()">
+                                    🔄 Reinvest to Continue Earning
+                                </button>
+                            `}
                         </div>
                     `;
                 }).join('');
@@ -378,7 +411,7 @@
                     pendingSection.style.display = 'none';
                 }
             } else {
-                plansList.innerHTML = '<div class="no-plans">No active investment plans yet</div>';
+                plansList.innerHTML = '<div class="no-plans">No investment plans yet</div>';
                 document.getElementById('pendingSection').style.display = 'none';
             }
         }
@@ -391,9 +424,14 @@
                 onValue(userRef, (snap) => {
                     if (snap.exists()) {
                         updateDashboard(snap.val());
-                        setInterval(() => updateDashboard(snap.val()), 5000);
                     }
                 });
+                
+                // Update every 10 seconds (weekly plan updates per minute, others longer)
+                setInterval(async () => {
+                    const snap = await get(userRef);
+                    if (snap.exists()) updateDashboard(snap.val());
+                }, 10000);
             } else {
                 window.location.href = '/login.html';
             }
