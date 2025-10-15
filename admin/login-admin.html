@@ -281,24 +281,36 @@
 
         const switchTab = (tab) => {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            const tabEl = document.querySelector(`[data-tab="${tab}"]`);
+            if (tabEl) tabEl.classList.add('active');
+            
             document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-            $(`${tab}Form`).classList.add('active');
+            const formEl = $(`${tab}Form`);
+            if (formEl) formEl.classList.add('active');
+            
             hideAlert();
         };
 
         const showAlert = (msg, type = 'error') => {
             const a = $('alertMessage');
+            if (!a) return;
             a.textContent = msg;
             a.className = `alert ${type} show`;
         };
 
-        const hideAlert = () => $('alertMessage').classList.remove('show');
+        const hideAlert = () => {
+            const a = $('alertMessage');
+            if (a) a.classList.remove('show');
+        };
 
         const showError = (id, msg) => {
-            $(id).classList.add('error');
-            $(id + 'Error').textContent = msg;
-            $(id + 'Error').classList.add('show');
+            const field = $(id);
+            const error = $(id + 'Error');
+            if (field) field.classList.add('error');
+            if (error) {
+                error.textContent = msg;
+                error.classList.add('show');
+            }
         };
 
         const clearErrors = () => {
@@ -308,29 +320,60 @@
 
         const setLoading = (form, load) => {
             const btn = $(form + 'Btn');
-            const texts = { login: 'Sign In', signup: 'Register', reset: 'Send Link' };
-            btn.disabled = load;
-            btn.innerHTML = load ? `<span class="spinner"></span>${texts[form]}...` : texts[form];
-            $(form + 'Form').style.opacity = load ? '0.7' : '1';
+            const texts = {
+                login: 'Sign In',
+                signup: 'Register',
+                reset: 'Send Link'
+            };
+            if (btn) {
+                btn.disabled = load;
+                btn.innerHTML = load ? `<span class="spinner"></span>${texts[form]}...` : texts[form];
+            }
+            const formEl = $(form + 'Form');
+            if (formEl) formEl.style.opacity = load ? '0.7' : '1';
         };
 
         const validEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
         const validPassword = (p) => p.length >= 8;
 
-        document.querySelectorAll('.auth-tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
-        $('forgotPasswordLink').addEventListener('click', (e) => { e.preventDefault(); switchTab('reset'); });
-        $('backToLoginLink').addEventListener('click', (e) => { e.preventDefault(); switchTab('login'); });
+        document.querySelectorAll('.auth-tab').forEach(t => {
+            t.addEventListener('click', function() {
+                switchTab(this.dataset.tab);
+            });
+        });
+        
+        const forgotLink = $('forgotPasswordLink');
+        if (forgotLink) {
+            forgotLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                switchTab('reset');
+            });
+        }
+        
+        const backLink = $('backToLoginLink');
+        if (backLink) {
+            backLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                switchTab('login');
+            });
+        }
 
         $('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             clearErrors();
             hideAlert();
             
-            const email = $('loginEmail').value.trim();
-            const password = $('loginPassword').value;
+            const email = $('loginEmail')?.value?.trim() || '';
+            const password = $('loginPassword')?.value || '';
             
-            if (!email || !validEmail(email)) { showError('loginEmail', 'Valid email required'); return; }
-            if (!password) { showError('loginPassword', 'Password required'); return; }
+            if (!email || !validEmail(email)) {
+                showError('loginEmail', 'Valid email required');
+                return;
+            }
+            if (!password) {
+                showError('loginPassword', 'Password required');
+                return;
+            }
 
             setLoading('login', true);
             try {
