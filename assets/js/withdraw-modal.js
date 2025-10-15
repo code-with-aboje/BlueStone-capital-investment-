@@ -48,9 +48,7 @@ import { auth, database } from "./firebase.js";
                         <label class="form-label">Withdrawal Method</label>
                         <select class="form-select" id="withdrawMethod" required>
                             <option value="">Select withdrawal method</option>
-                            <option value="bank">Bank Transfer</option>
-                            <option value="crypto">Cryptocurrency</option>
-                            <option value="wallet">E-Wallet</option>
+                            <option value="crypto">BTC wallets Address</option>
                         </select>
                     </div>
 
