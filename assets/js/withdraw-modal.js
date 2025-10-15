@@ -1,39 +1,38 @@
-// Withdraw Modal System - Crest Point
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+// Withdraw Modal System - Firebase Module Version
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 import { getDatabase, ref, get, set, push, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-import firebaseConfig from "./firebase.js";
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const database = getDatabase(app);
+import { auth, database } from "./firebase.js";
 
 (function() {
+    // Create modal HTML
     const modalHTML = `
         <div class="withdraw-modal" id="withdrawModal">
             <div class="withdraw-modal-content">
                 <div class="modal-header">
-                    <h2>Request Withdrawal</h2>
-                    <button class="modal-close" id="withdrawCloseBtn">✕</button>
+                    <h2 class="modal-title">Request Withdrawal</h2>
+                    <button class="modal-close-btn" id="withdrawCloseBtn">✕</button>
                 </div>
 
-                <div class="alert alert-error" id="errorMsg"></div>
-                <div class="alert alert-success" id="successMsg"></div>
+                <div class="error-message" id="errorMessage"></div>
+                <div class="success-message" id="successMessage"></div>
 
                 <form id="withdrawForm">
                     <div class="form-group">
-                        <label>Available Balance</label>
-                        <div class="amount-box">
-                            <span id="availBalance">Loading...</span>
+                        <label class="form-label">Available Balance</label>
+                        <div class="amount-info">
+                            <div class="info-row">
+                                <span class="info-label">Total Available:</span>
+                                <span class="info-value" id="availableBalance">Loading...</span>
+                            </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Withdrawal Amount</label>
+                        <label class="form-label">Withdrawal Amount</label>
                         <input 
                             type="number" 
-                            id="withdrawAmount" 
                             class="form-input" 
+                            id="withdrawAmount" 
                             placeholder="Enter amount" 
                             step="0.01"
                             min="10"
@@ -41,14 +40,14 @@ const database = getDatabase(app);
                         >
                     </div>
 
-                    <div class="fee-box" id="feeBox">
+                    <div class="fee-warning" id="feeWarning">
                         <strong>Processing Fee:</strong> <span id="feeAmount">$0.00</span> (2.5%)
                     </div>
 
                     <div class="form-group">
-                        <label>Withdrawal Method</label>
-                        <select id="withdrawMethod" class="form-input" required>
-                            <option value="">Select method</option>
+                        <label class="form-label">Withdrawal Method</label>
+                        <select class="form-select" id="withdrawMethod" required>
+                            <option value="">Select withdrawal method</option>
                             <option value="bank">Bank Transfer</option>
                             <option value="crypto">Cryptocurrency</option>
                             <option value="wallet">E-Wallet</option>
@@ -56,35 +55,36 @@ const database = getDatabase(app);
                     </div>
 
                     <div class="form-group">
-                        <label>Bank Account / Wallet Address</label>
+                        <label class="form-label">Bank Account / Wallet Address</label>
                         <input 
                             type="text" 
-                            id="withdrawAccount" 
                             class="form-input" 
+                            id="withdrawAccount" 
                             placeholder="Enter account details"
                             required
                         >
                     </div>
 
                     <div class="form-group">
-                        <label>Notes (Optional)</label>
+                        <label class="form-label">Notes (Optional)</label>
                         <input 
                             type="text" 
-                            id="withdrawNotes" 
                             class="form-input" 
-                            placeholder="Additional info..."
+                            id="withdrawNotes" 
+                            placeholder="Any additional information..."
                         >
                     </div>
 
                     <div class="button-group">
                         <button type="button" class="btn btn-cancel" id="withdrawCancelBtn">Cancel</button>
-                        <button type="submit" class="btn btn-submit">Request Withdrawal</button>
+                        <button type="submit" class="btn btn-withdraw" id="submitWithdrawBtn">Request Withdrawal</button>
                     </div>
                 </form>
             </div>
         </div>
     `;
 
+    // Create modal CSS
     const modalCSS = `
         .withdraw-modal {
             display: none;
@@ -116,7 +116,7 @@ const database = getDatabase(app);
 
         .withdraw-modal-content {
             width: 100%;
-            background: #fff;
+            background: white;
             border-radius: 20px 20px 0 0;
             padding: 24px;
             animation: slideUp 0.4s ease;
@@ -127,123 +127,155 @@ const database = getDatabase(app);
 
         .modal-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            margin-bottom: 24px;
         }
 
-        .modal-header h2 {
+        .modal-title {
             font-size: 20px;
             font-weight: 700;
+            color: #0f172a;
         }
 
-        .modal-close {
-            background: #f0fdf4;
-            border: 0;
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #64748b;
+            cursor: pointer;
             width: 32px;
             height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 8px;
-            cursor: pointer;
-            font-size: 20px;
-            transition: 0.2s;
+            transition: background 0.3s ease;
         }
 
-        .modal-close:hover {
-            background: #e5e7eb;
+        .modal-close-btn:hover {
+            background: #f1f5f9;
         }
 
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
 
-        .form-group label {
+        .form-label {
             display: block;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
-            margin-bottom: 6px;
-            color: #333;
+            color: #334155;
+            margin-bottom: 8px;
         }
 
-        .form-input {
+        .form-input,
+        .form-select {
             width: 100%;
             padding: 12px 14px;
-            border: 1px solid #e5e5e5;
+            border: 2px solid #e2e8f0;
             border-radius: 8px;
             font-size: 14px;
             font-family: inherit;
-            transition: 0.2s;
+            transition: all 0.3s ease;
         }
 
-        .form-input:focus {
-            outline: 0;
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
             border-color: #10b981;
-            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
 
-        .amount-box {
+        .form-input::placeholder {
+            color: #cbd5e1;
+        }
+
+        .amount-info {
             background: #f0fdf4;
             border: 1px solid #dcfce7;
-            padding: 12px;
             border-radius: 8px;
-            font-weight: 600;
-            color: #15803d;
-            font-size: 16px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #166534;
         }
 
-        .fee-box {
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+        }
+
+        .info-label {
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-weight: 700;
+            color: #15803d;
+        }
+
+        .fee-warning {
             background: #fef3c7;
             border: 1px solid #fde68a;
-            padding: 12px;
             border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
             font-size: 13px;
             color: #92400e;
-            margin-bottom: 18px;
             display: none;
         }
 
-        .fee-box.show {
+        .fee-warning.show {
             display: block;
         }
 
-        .alert {
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-            font-size: 13px;
-            display: none;
-        }
-
-        .alert.show {
-            display: block;
-        }
-
-        .alert-error {
+        .error-message {
             background: #fee2e2;
             border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
             color: #991b1b;
+            font-size: 14px;
+            display: none;
         }
 
-        .alert-success {
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
             background: #f0fdf4;
             border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
             color: #166534;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
         }
 
         .button-group {
             display: flex;
             gap: 12px;
-            margin-top: 24px;
+            margin-top: 28px;
         }
 
         .btn {
             flex: 1;
-            padding: 12px;
-            border: 0;
+            padding: 14px;
+            border: none;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.3s ease;
         }
 
         .btn-cancel {
@@ -251,17 +283,26 @@ const database = getDatabase(app);
             color: #475569;
         }
 
-        .btn-submit {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: #fff;
+        .btn-cancel:active {
+            background: #e2e8f0;
+        }
+
+        .btn-withdraw {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
-        .btn-submit:hover:not(:disabled) {
-            transform: translateY(-1px);
+        .btn-withdraw:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
         }
 
-        .btn:disabled {
+        .btn-withdraw:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-withdraw:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
@@ -273,130 +314,159 @@ const database = getDatabase(app);
         }
     `;
 
+    // Initialize when DOM is ready
     function init() {
-        const style = document.createElement('style');
-        style.textContent = modalCSS;
-        document.head.appendChild(style);
+        // Inject CSS
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = modalCSS;
+        document.head.appendChild(styleSheet);
 
+        // Inject HTML
         document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-        const modal = document.getElementById('withdrawModal');
-        const form = document.getElementById('withdrawForm');
-        const closeBtn = document.getElementById('withdrawCloseBtn');
-        const cancelBtn = document.getElementById('withdrawCancelBtn');
-        const amountInput = document.getElementById('withdrawAmount');
-        const feeBox = document.getElementById('feeBox');
+        // Get elements
+        const withdrawModal = document.getElementById('withdrawModal');
+        const withdrawForm = document.getElementById('withdrawForm');
+        const withdrawCloseBtn = document.getElementById('withdrawCloseBtn');
+        const withdrawCancelBtn = document.getElementById('withdrawCancelBtn');
+        const withdrawAmount = document.getElementById('withdrawAmount');
+        const feeWarning = document.getElementById('feeWarning');
         const feeAmount = document.getElementById('feeAmount');
-        const availBalance = document.getElementById('availBalance');
-        const errorMsg = document.getElementById('errorMsg');
-        const successMsg = document.getElementById('successMsg');
-        const submitBtn = form.querySelector('button[type="submit"]');
+        const availableBalance = document.getElementById('availableBalance');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const submitWithdrawBtn = document.getElementById('submitWithdrawBtn');
 
         let userData = null;
 
-        const closeModal = () => {
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
-            form.reset();
-            errorMsg.classList.remove('show');
-            successMsg.classList.remove('show');
-            feeBox.classList.remove('show');
-        };
-
-        const loadBalance = async () => {
+        // Load user balance from Firebase Realtime Database
+        async function loadUserBalance() {
             try {
+                // Get current user
                 const user = auth.currentUser;
                 if (!user) {
-                    availBalance.textContent = '$0.00';
-                    errorMsg.textContent = 'Please log in';
-                    errorMsg.classList.add('show');
+                    availableBalance.textContent = '$0.00';
+                    errorMessage.textContent = 'Please log in to view your balance';
+                    errorMessage.classList.add('show');
                     return;
                 }
 
-                const snap = await get(ref(database, `users/${user.uid}`));
-                if (snap.exists()) {
-                    userData = snap.val();
-                    const bal = userData.available || 0;
-                    availBalance.textContent = `$${bal.toFixed(2)}`;
-                    errorMsg.classList.remove('show');
+                // Fetch user data
+                const userRef = ref(database, 'users/' + user.uid);
+                const snapshot = await get(userRef);
+                
+                if (snapshot.exists()) {
+                    userData = snapshot.val();
+                    const balance = userData.available || 0;
+                    availableBalance.textContent = `$${balance.toFixed(2)}`;
+                    errorMessage.classList.remove('show');
                 } else {
-                    availBalance.textContent = '$0.00';
+                    availableBalance.textContent = '$0.00';
+                    errorMessage.textContent = 'User data not found';
+                    errorMessage.classList.add('show');
                 }
-            } catch (err) {
-                console.error('Error:', err);
-                errorMsg.textContent = 'Failed to load balance';
-                errorMsg.classList.add('show');
+            } catch (error) {
+                console.error('Error loading balance:', error);
+                availableBalance.textContent = '$0.00';
+                errorMessage.textContent = `Error loading balance: ${error.message}`;
+                errorMessage.classList.add('show');
             }
-        };
+        }
 
-        window.openWithdrawModal = async () => {
+        // Public function to open modal
+        window.openWithdrawModal = async function() {
             if (window.innerWidth <= 768) {
-                modal.classList.add('active');
+                withdrawModal.classList.add('active');
                 document.body.style.overflow = 'hidden';
-                availBalance.textContent = 'Loading...';
-                await loadBalance();
+                
+                // Load fresh balance every time modal opens
+                availableBalance.textContent = 'Loading...';
+                await loadUserBalance();
             }
         };
 
-        closeBtn.addEventListener('click', closeModal);
-        cancelBtn.addEventListener('click', closeModal);
+        // Close modal function
+        function closeWithdrawModal() {
+            withdrawModal.classList.remove('active');
+            document.body.style.overflow = '';
+            withdrawForm.reset();
+            errorMessage.classList.remove('show');
+            successMessage.classList.remove('show');
+            feeWarning.classList.remove('show');
+        }
 
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
-        });
+        // Close button listeners
+        withdrawCloseBtn.addEventListener('click', closeWithdrawModal);
+        withdrawCancelBtn.addEventListener('click', closeWithdrawModal);
 
-        amountInput.addEventListener('input', () => {
-            const amt = parseFloat(amountInput.value) || 0;
-            if (amt > 0) {
-                feeAmount.textContent = `$${(amt * 0.025).toFixed(2)}`;
-                feeBox.classList.add('show');
-            } else {
-                feeBox.classList.remove('show');
+        // Close when clicking outside
+        withdrawModal.addEventListener('click', (e) => {
+            if (e.target === withdrawModal) {
+                closeWithdrawModal();
             }
         });
 
+        // Calculate fees
+        withdrawAmount.addEventListener('input', () => {
+            const amount = parseFloat(withdrawAmount.value) || 0;
+            if (amount > 0) {
+                const fee = amount * 0.025;
+                feeAmount.textContent = `$${fee.toFixed(2)}`;
+                feeWarning.classList.add('show');
+            } else {
+                feeWarning.classList.remove('show');
+            }
+        });
+
+        // Listen for iframe messages
         window.addEventListener('message', (event) => {
             if (event.data.type === 'OPEN_WITHDRAW_MODAL') {
                 window.openWithdrawModal();
             }
         });
 
-        form.addEventListener('submit', async (e) => {
+        // Form submission
+        withdrawForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const amount = parseFloat(amountInput.value);
+            const amount = parseFloat(withdrawAmount.value);
             const method = document.getElementById('withdrawMethod').value;
             const account = document.getElementById('withdrawAccount').value;
             const notes = document.getElementById('withdrawNotes').value;
 
-            errorMsg.classList.remove('show');
-            successMsg.classList.remove('show');
+            // Clear previous messages
+            errorMessage.classList.remove('show');
+            successMessage.classList.remove('show');
 
+            // Validation
             if (amount < 10) {
-                errorMsg.textContent = 'Minimum withdrawal is $10';
-                errorMsg.classList.add('show');
+                errorMessage.textContent = 'Minimum withdrawal amount is $10';
+                errorMessage.classList.add('show');
                 return;
             }
 
             if (!userData || amount > (userData.available || 0)) {
-                errorMsg.textContent = 'Insufficient balance';
-                errorMsg.classList.add('show');
+                errorMessage.textContent = 'Insufficient balance';
+                errorMessage.classList.add('show');
                 return;
             }
 
             if (!method || !account) {
-                errorMsg.textContent = 'Please fill all required fields';
-                errorMsg.classList.add('show');
+                errorMessage.textContent = 'Please fill in all required fields';
+                errorMessage.classList.add('show');
                 return;
             }
 
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Processing...';
+            submitWithdrawBtn.disabled = true;
+            submitWithdrawBtn.textContent = 'Processing...';
 
             try {
                 const user = auth.currentUser;
-                if (!user) throw new Error('Not authenticated');
+                if (!user) {
+                    throw new Error('User not authenticated');
+                }
 
+                // Create withdrawal request
                 const withdrawalData = {
                     userId: user.uid,
                     userName: userData.name || 'User',
@@ -410,38 +480,45 @@ const database = getDatabase(app);
                     requestDate: new Date().toISOString()
                 };
 
-                const newWithdrawal = push(ref(database, 'pendingWithdrawals'));
-                await set(newWithdrawal, withdrawalData);
+                // Add to pendingWithdrawals in Realtime Database (for admin to see)
+                const withdrawalsRef = ref(database, 'pendingWithdrawals');
+                const newWithdrawalRef = push(withdrawalsRef);
+                await set(newWithdrawalRef, withdrawalData);
 
-                // Deduct from user balance
-                const snap = await get(ref(database, `users/${user.uid}`));
-                const currentData = snap.val();
-                const available = (currentData.available || 0) - amount;
-                const totalBalance = (currentData.totalBalance || 0) - amount;
-
-                await update(ref(database, `users/${user.uid}`), {
-                    'available': Math.max(0, available),
-                    'totalBalance': Math.max(0, totalBalance)
+                // Update user's available and totalBalance
+                const userRef = ref(database, 'users/' + user.uid);
+                const userSnapshot = await get(userRef);
+                const currentAvailable = userSnapshot.val().available || 0;
+                const currentTotalBalance = userSnapshot.val().totalBalance || 0;
+                
+                await update(userRef, {
+                    available: Math.max(0, currentAvailable - amount),
+                    totalBalance: Math.max(0, currentTotalBalance - amount)
                 });
 
-                successMsg.textContent = 'Withdrawal request submitted!';
-                successMsg.classList.add('show');
+                successMessage.textContent = 'Withdrawal request submitted successfully!';
+                successMessage.classList.add('show');
+                errorMessage.classList.remove('show');
 
-                await loadBalance();
+                // Reload balance
+                await loadUserBalance();
 
-                setTimeout(closeModal, 2000);
+                setTimeout(() => {
+                    closeWithdrawModal();
+                }, 2000);
 
-            } catch (err) {
-                console.error('Error:', err);
-                errorMsg.textContent = err.message || 'Request failed';
-                errorMsg.classList.add('show');
+            } catch (error) {
+                console.error('Withdrawal error:', error);
+                errorMessage.textContent = error.message || 'An error occurred while processing your request';
+                errorMessage.classList.add('show');
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Request Withdrawal';
+                submitWithdrawBtn.disabled = false;
+                submitWithdrawBtn.textContent = 'Request Withdrawal';
             }
         });
     }
 
+    // Wait for DOM to be ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
