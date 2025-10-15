@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 import { getDatabase, ref, get, set, push, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-import firebaseConfig from "./firebaseConfig.js";
+import firebaseConfig from "./firebase.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -316,7 +316,7 @@ const database = getDatabase(app);
                 const snap = await get(ref(database, `users/${user.uid}`));
                 if (snap.exists()) {
                     userData = snap.val();
-                    const bal = userData.wallet?.usdBalance || 0;
+                    const bal = userData.available || 0;
                     availBalance.textContent = `$${bal.toFixed(2)}`;
                     errorMsg.classList.remove('show');
                 } else {
@@ -355,6 +355,12 @@ const database = getDatabase(app);
             }
         });
 
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'OPEN_WITHDRAW_MODAL') {
+                window.openWithdrawModal();
+            }
+        });
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -372,7 +378,7 @@ const database = getDatabase(app);
                 return;
             }
 
-            if (!userData || amount > (userData.wallet?.usdBalance || 0)) {
+            if (!userData || amount > (userData.available || 0)) {
                 errorMsg.textContent = 'Insufficient balance';
                 errorMsg.classList.add('show');
                 return;
@@ -409,9 +415,9 @@ const database = getDatabase(app);
 
                 // Deduct from user balance
                 const snap = await get(ref(database, `users/${user.uid}`));
-                const userData = snap.val();
-                const available = (userData.available || 0) - amount;
-                const totalBalance = (userData.totalBalance || 0) - amount;
+                const currentData = snap.val();
+                const available = (currentData.available || 0) - amount;
+                const totalBalance = (currentData.totalBalance || 0) - amount;
 
                 await update(ref(database, `users/${user.uid}`), {
                     'available': Math.max(0, available),
