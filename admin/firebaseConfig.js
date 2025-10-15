@@ -1,49 +1,22 @@
-// firebaseConfig.js
-// Firebase Configuration Keys Only - Import this in any HTML page
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { getDatabase } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
-// Firebase Configuration Object
+// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyBsOwXNtfaWwEh3qaM0suXafOg6CYLzDC8",
-    authDomain: "uamtv-c031c.firebaseapp.com",
-    databaseURL: "https://uamtv-c031c-default-rtdb.firebaseio.com",
-    projectId: "uamtv-c031c",
-    storageBucket: "uamtv-c031c.firebasestorage.app",
-    messagingSenderId: "9790917697",
-    appId: "1:9790917697:web:275c8347b7688e0ac38ac0",
-    measurementId: "G-RSXW1XBVQZ"
+  apiKey: "AIzaSyBSITcz0wWrZuVsSe0njOwB5K_iKuTwjxg",
+  authDomain: "crestpoint-bb103.firebaseapp.com",
+  projectId: "crestpoint-bb103",
+  storageBucket: "crestpoint-bb103.firebasestorage.app",
+  messagingSenderId: "249520798719",
+  appId: "1:249520798719:web:2d83f3cef937c9dc1405ca"
 };
 
-// Export only the configuration
-export default firebaseConfig;
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
-/* 
-USAGE in HTML files:
+// Initialize Firebase Authentication
+export const auth = getAuth(app);
 
-<script type="module">
-    // Import the config
-    import firebaseConfig from './firebaseConfig.js';
-    
-    // Import Firebase SDK modules directly in your HTML
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { 
-        getAuth, 
-        signInWithEmailAndPassword, 
-        createUserWithEmailAndPassword, 
-        onAuthStateChanged 
-    } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { 
-        getDatabase, 
-        ref, 
-        set, 
-        get, 
-        onValue 
-    } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
-    
-    // Initialize Firebase with imported config
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const database = getDatabase(app);
-    
-    // Use Firebase services...
-</script>
-*/
+// Initialize Firebase Realtime Database
+export const database = getDatabase(app);
