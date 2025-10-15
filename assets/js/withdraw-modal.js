@@ -53,7 +53,7 @@ import { auth, database } from "./firebase.js";
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Bank Account / Wallet Address</label>
+                        <label class="form-label">Wallet Address</label>
                         <input 
                             type="text" 
                             class="form-input" 
