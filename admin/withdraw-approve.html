@@ -3,41 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Withdrawal Approvals</title>
+    <title>Withdrawal Approvals - Crest Point</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
         :root {
-            --primary: #ff6b35;
+            --primary: #10b981;
+            --dark: #059669;
+            --light: #d1fae5;
             --success: #22c55e;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --gray: #6b7280;
-            --light-gray: #f9fafb;
-            --border: #e5e7eb;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --gray: #666;
+            --text: #000;
+            --white: #fff;
+            --border: #e5e5e5;
+            --hover: #f0fdf4;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--light-gray);
-            color: #111827;
+            background: #f9fafb;
+            color: var(--text);
             font-size: 14px;
         }
 
         .header {
-            background: linear-gradient(135deg, var(--primary), #e55a2b);
-            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            color: var(--white);
             padding: 24px;
             box-shadow: var(--shadow);
         }
 
-        .header h1 { font-size: 28px; margin-bottom: 8px; }
-        .header p { opacity: 0.9; font-size: 16px; }
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
 
         .stats-bar {
-            background: white;
+            background: var(--white);
             padding: 20px 24px;
             border-bottom: 1px solid var(--border);
             display: flex;
@@ -70,7 +85,7 @@
         }
 
         .controls {
-            background: white;
+            background: var(--white);
             padding: 20px;
             border-radius: 12px;
             margin-bottom: 20px;
@@ -80,7 +95,7 @@
             align-items: center;
         }
 
-        .filter-tabs {
+        .tabs {
             display: flex;
             gap: 8px;
         }
@@ -88,7 +103,7 @@
         .tab {
             padding: 8px 16px;
             border: 1px solid var(--border);
-            background: white;
+            background: var(--white);
             border-radius: 20px;
             cursor: pointer;
             font-size: 12px;
@@ -98,70 +113,86 @@
 
         .tab.active {
             background: var(--primary);
-            color: white;
+            color: var(--white);
             border-color: var(--primary);
         }
 
         .tab:hover:not(.active) {
-            background: var(--light-gray);
+            background: var(--hover);
         }
 
-        .withdrawals-grid {
+        .btn-refresh {
+            background: var(--primary);
+            color: var(--white);
+            border: 0;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            margin-left: auto;
+            transition: 0.2s;
+        }
+
+        .btn-refresh:hover {
+            transform: translateY(-1px);
+        }
+
+        .grid {
             display: grid;
             gap: 16px;
         }
 
-        .withdrawal-card {
-            background: white;
+        .card {
+            background: var(--white);
             border-radius: 12px;
             padding: 24px;
             box-shadow: var(--shadow);
             border-left: 4px solid var(--warning);
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
 
-        .withdrawal-card:hover {
+        .card:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
-        .withdrawal-card.approved {
+        .card.approved {
             border-left-color: var(--success);
         }
 
-        .withdrawal-card.rejected {
+        .card.rejected {
             border-left-color: var(--danger);
         }
 
-        .withdrawal-header {
+        .card-header {
             display: flex;
             justify-content: space-between;
             align-items: start;
             margin-bottom: 16px;
         }
 
-        .user-info h3 {
+        .card-title h3 {
             font-size: 18px;
             margin-bottom: 4px;
-            color: #111827;
         }
 
-        .user-info p {
+        .card-title p {
             color: var(--gray);
             font-size: 13px;
         }
 
-        .amount-badge {
+        .amount {
             background: var(--primary);
-            color: white;
+            color: var(--white);
             padding: 8px 16px;
             border-radius: 20px;
             font-weight: 600;
             font-size: 16px;
         }
 
-        .withdrawal-details {
-            background: var(--light-gray);
+        .details {
+            background: var(--hover);
             padding: 16px;
             border-radius: 8px;
             margin: 16px 0;
@@ -173,7 +204,9 @@
             margin-bottom: 8px;
         }
 
-        .detail-row:last-child { margin-bottom: 0; }
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
 
         .detail-label {
             font-weight: 500;
@@ -184,19 +217,19 @@
         .detail-value {
             font-family: 'Courier New', monospace;
             font-size: 12px;
-            color: #111827;
         }
 
-        .btc-address {
+        .address {
             word-break: break-all;
             background: #f3f4f6;
             padding: 8px;
             border-radius: 4px;
             font-family: 'Courier New', monospace;
             font-size: 11px;
+            margin-top: 4px;
         }
 
-        .status-badge {
+        .badge {
             padding: 6px 12px;
             border-radius: 16px;
             font-size: 11px;
@@ -205,9 +238,20 @@
             letter-spacing: 0.5px;
         }
 
-        .status-pending { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
-        .status-approved { background: rgba(34, 197, 94, 0.15); color: var(--success); }
-        .status-rejected { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .badge-pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .badge-approved {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+
+        .badge-rejected {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
 
         .actions {
             display: flex;
@@ -216,40 +260,33 @@
         }
 
         .btn {
+            flex: 1;
             padding: 10px 20px;
-            border: none;
+            border: 0;
             border-radius: 8px;
             cursor: pointer;
             font-size: 13px;
             font-weight: 500;
             transition: all 0.2s;
-            flex: 1;
         }
 
         .btn-approve {
             background: var(--success);
-            color: white;
-        }
-
-        .btn-approve:hover {
-            background: #16a34a;
-            transform: translateY(-1px);
+            color: var(--white);
         }
 
         .btn-reject {
             background: var(--danger);
-            color: white;
+            color: var(--white);
         }
 
-        .btn-reject:hover {
-            background: #dc2626;
+        .btn:hover:not(:disabled) {
             transform: translateY(-1px);
         }
 
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none !important;
         }
 
         .loading {
@@ -259,43 +296,92 @@
             animation: pulse 2s infinite;
         }
 
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
 
-        .empty-state {
+        .empty {
             text-align: center;
             padding: 60px 20px;
             color: var(--gray);
         }
 
-        .empty-state h3 {
+        .empty h3 {
             font-size: 18px;
             margin-bottom: 8px;
         }
 
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            color: var(--white);
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert.success {
+            background: var(--success);
+        }
+
+        .alert.error {
+            background: var(--danger);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
         @media (max-width: 768px) {
-            .container { padding: 16px; }
-            .stats-bar { 
-                flex-direction: column; 
-                gap: 16px; 
-                text-align: center; 
+            .container {
+                padding: 16px;
             }
-            .controls { 
-                flex-direction: column; 
-                align-items: stretch; 
+
+            .stats-bar {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
             }
-            .withdrawal-header { 
-                flex-direction: column; 
-                gap: 12px; 
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
             }
-            .actions { 
-                flex-direction: column; 
+
+            .btn-refresh {
+                margin-left: 0;
+            }
+
+            .card-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .actions {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>🏦 Withdrawal Approvals</h1>
+        <h1>Withdrawal Approvals</h1>
         <p>Review and approve user withdrawal requests</p>
     </div>
 
@@ -305,29 +391,27 @@
             <div class="stat-label">Pending</div>
         </div>
         <div class="stat">
-            <div class="stat-value" id="totalPendingAmount">$0.00</div>
+            <div class="stat-value" id="totalAmount">$0.00</div>
             <div class="stat-label">Total Pending</div>
         </div>
         <div class="stat">
-            <div class="stat-value" id="processedToday">0</div>
+            <div class="stat-value" id="processedCount">0</div>
             <div class="stat-label">Processed Today</div>
         </div>
     </div>
 
     <div class="container">
         <div class="controls">
-            <div class="filter-tabs">
-                <button class="tab active" onclick="filterWithdrawals('all')">All</button>
-                <button class="tab" onclick="filterWithdrawals('pending')">Pending</button>
-                <button class="tab" onclick="filterWithdrawals('approved')">Approved</button>
-                <button class="tab" onclick="filterWithdrawals('rejected')">Rejected</button>
+            <div class="tabs">
+                <button class="tab active" onclick="filter('all')">All</button>
+                <button class="tab" onclick="filter('pending')">Pending</button>
+                <button class="tab" onclick="filter('approved')">Approved</button>
+                <button class="tab" onclick="filter('rejected')">Rejected</button>
             </div>
-            <button class="btn" style="background: var(--primary); color: white; margin-left: auto;" onclick="refreshData()">
-                🔄 Refresh
-            </button>
+            <button class="btn-refresh" onclick="refresh()">Refresh</button>
         </div>
 
-        <div id="withdrawalsGrid" class="withdrawals-grid">
+        <div id="grid" class="grid">
             <div class="loading">Loading withdrawal requests...</div>
         </div>
     </div>
@@ -343,229 +427,152 @@
         const auth = getAuth(app);
 
         let withdrawals = {};
-        let currentFilter = 'all';
-        let adminUser = null;
+        let filter = 'all';
+        let admin = null;
 
         const $ = id => document.getElementById(id);
-        const formatCurrency = a => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(a);
-        const formatDate = d => new Date(d).toLocaleString();
+        const fmt = a => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(a);
+        const fmtDate = d => new Date(d).toLocaleString();
 
-        const updateStats = () => {
-            const pending = Object.values(withdrawals).filter(w => w.status === 'pending');
-            const totalPending = pending.reduce((sum, w) => sum + w.amount, 0);
+        const stats = () => {
+            const pend = Object.values(withdrawals).filter(w => w.status === 'pending');
+            const total = pend.reduce((sum, w) => sum + (w.amount || 0), 0);
             const today = new Date().toDateString();
-            const processedToday = Object.values(withdrawals).filter(w => 
+            const processed = Object.values(withdrawals).filter(w => 
                 w.processedDate && new Date(w.processedDate).toDateString() === today
             ).length;
 
-            $('pendingCount').textContent = pending.length;
-            $('totalPendingAmount').textContent = formatCurrency(totalPending);
-            $('processedToday').textContent = processedToday;
+            $('pendingCount').textContent = pend.length;
+            $('totalAmount').textContent = fmt(total);
+            $('processedCount').textContent = processed;
         };
 
-        const filterWithdrawals = filter => {
-            currentFilter = filter;
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+        window.filter = (f) => {
+            filter = f;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
-            renderWithdrawals();
+            render();
         };
 
-        const renderWithdrawals = () => {
-            const grid = $('withdrawalsGrid');
-            let filtered = Object.entries(withdrawals);
+        const render = () => {
+            let list = Object.entries(withdrawals);
 
-            if (currentFilter !== 'all') {
-                filtered = filtered.filter(([_, w]) => w.status === currentFilter);
+            if (filter !== 'all') {
+                list = list.filter(([_, w]) => w.status === filter);
             }
 
-            if (!filtered.length) {
-                grid.innerHTML = `
-                    <div class="empty-state">
-                        <h3>No ${currentFilter === 'all' ? '' : currentFilter} withdrawals found</h3>
-                        <p>All withdrawal requests will appear here</p>
-                    </div>
-                `;
+            const grid = $('grid');
+            if (!list.length) {
+                grid.innerHTML = `<div class="empty"><h3>No ${filter} withdrawals</h3></div>`;
                 return;
             }
 
-            grid.innerHTML = filtered
+            grid.innerHTML = list
                 .sort(([,a], [,b]) => new Date(b.requestDate) - new Date(a.requestDate))
-                .map(([id, w]) => `
-                    <div class="withdrawal-card ${w.status}">
-                        <div class="withdrawal-header">
-                            <div class="user-info">
-                                <h3>${w.userName}</h3>
-                                <p>${w.userEmail}</p>
-                                <p>Requested: ${formatDate(w.requestDate)}</p>
+                .map(([id, w]) => {
+                    const st = w.status || 'pending';
+                    return `
+                        <div class="card ${st}">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <h3>${w.userName || 'Unknown'}</h3>
+                                    <p>${w.userEmail || 'No email'}</p>
+                                    <p>Requested: ${fmtDate(w.requestDate)}</p>
+                                </div>
+                                <div class="amount">${fmt(w.amount || 0)}</div>
                             </div>
-                            <div class="amount-badge">${formatCurrency(w.amount)}</div>
-                        </div>
 
-                        <div class="withdrawal-details">
-                            <div class="detail-row">
-                                <span class="detail-label">User ID:</span>
-                                <span class="detail-value">${w.userId.substring(0, 12)}...</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">BTC Address:</span>
-                            </div>
-                            <div class="btc-address">${w.btcAddress}</div>
-                            <div class="detail-row" style="margin-top: 12px;">
-                                <span class="detail-label">Status:</span>
-                                <span class="status-badge status-${w.status}">${w.status}</span>
-                            </div>
-                            ${w.processedDate ? `
+                            <div class="details">
                                 <div class="detail-row">
-                                    <span class="detail-label">Processed:</span>
-                                    <span class="detail-value">${formatDate(w.processedDate)}</span>
+                                    <span class="detail-label">User ID:</span>
+                                    <span class="detail-value">${(w.userId || '').substring(0, 12)}...</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">BTC Address:</span>
+                                </div>
+                                <div class="address">${w.btcAddress || 'N/A'}</div>
+                                <div class="detail-row" style="margin-top: 12px;">
+                                    <span class="detail-label">Status:</span>
+                                    <span class="badge badge-${st}">${st}</span>
+                                </div>
+                                ${w.processedDate ? `<div class="detail-row"><span class="detail-label">Processed:</span><span class="detail-value">${fmtDate(w.processedDate)}</span></div>` : ''}
+                                ${w.processedBy ? `<div class="detail-row"><span class="detail-label">By:</span><span class="detail-value">${w.processedBy}</span></div>` : ''}
+                            </div>
+
+                            ${st === 'pending' ? `
+                                <div class="actions">
+                                    <button class="btn btn-approve" onclick="approve('${id}', ${w.amount}, '${w.userId}')">Approve</button>
+                                    <button class="btn btn-reject" onclick="reject('${id}', ${w.amount}, '${w.userId}')">Reject</button>
                                 </div>
                             ` : ''}
-                            ${w.processedBy ? `
-                                <div class="detail-row">
-                                    <span class="detail-label">Processed By:</span>
-                                    <span class="detail-value">${w.processedBy}</span>
-                                </div>
-                            ` : ''}
                         </div>
-
-                        ${w.status === 'pending' ? `
-                            <div class="actions">
-                                <button class="btn btn-approve" onclick="approveWithdrawal('${id}', ${w.amount}, '${w.userId}')">
-                                    ✅ Approve
-                                </button>
-                                <button class="btn btn-reject" onclick="rejectWithdrawal('${id}', ${w.amount}, '${w.userId}')">
-                                    ❌ Reject
-                                </button>
-                            </div>
-                        ` : ''}
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
         };
 
-        window.approveWithdrawal = async (withdrawalId, amount, userId) => {
-            if (!confirm(`Approve withdrawal of ${formatCurrency(amount)}?`)) return;
-
+        window.approve = async (id, amt, uid) => {
+            if (!confirm(`Approve withdrawal of ${fmt(amt)}?`)) return;
             try {
-                const timestamp = new Date().toISOString();
+                const ts = new Date().toISOString();
                 const updates = {};
+                updates[`pendingWithdrawals/${id}/status`] = 'approved';
+                updates[`pendingWithdrawals/${id}/processedDate`] = ts;
+                updates[`pendingWithdrawals/${id}/processedBy`] = admin.email;
+                updates[`users/${uid}/transactions/${id}/status`] = 'approved';
+                updates[`users/${uid}/transactions/${id}/processedDate`] = ts;
 
-                // Update withdrawal status
-                updates[`pendingWithdrawals/${withdrawalId}/status`] = 'approved';
-                updates[`pendingWithdrawals/${withdrawalId}/processedDate`] = timestamp;
-                updates[`pendingWithdrawals/${withdrawalId}/processedBy`] = adminUser.email;
-
-                // Update user's transaction status
-                updates[`users/${userId}/transactions/${withdrawalId}/status`] = 'approved';
-                updates[`users/${userId}/transactions/${withdrawalId}/processedDate`] = timestamp;
-                updates[`users/${userId}/transactions/${withdrawalId}/description`] = 'Withdrawal approved and processed';
-
-                // Deduct amount from user balance
-                const userRef = ref(db, `users/${userId}`);
-                const userSnapshot = await get(userRef);
-                
-                if (userSnapshot.exists()) {
-                    const userData = userSnapshot.val();
-                    const currentBalance = userData.wallet?.usdBalance || 0;
-                    const newBalance = Math.max(0, currentBalance - amount);
-                    updates[`users/${userId}/wallet/usdBalance`] = newBalance;
+                const snap = await get(ref(db, `users/${uid}`));
+                if (snap.exists()) {
+                    const bal = (snap.val().wallet?.usdBalance || 0) - amt;
+                    updates[`users/${uid}/wallet/usdBalance`] = Math.max(0, bal);
                 }
 
                 await update(ref(db), updates);
-                
-                showAlert(`Withdrawal of ${formatCurrency(amount)} approved successfully!`, 'success');
-            } catch (error) {
-                console.error('Approval error:', error);
-                showAlert('Failed to approve withdrawal');
+                alert(`Approved ${fmt(amt)}!`, 'success');
+            } catch (err) {
+                alert('Failed to approve');
             }
         };
 
-        window.rejectWithdrawal = async (withdrawalId, amount, userId) => {
-            if (!confirm(`Reject withdrawal of ${formatCurrency(amount)}?`)) return;
-
+        window.reject = async (id, amt, uid) => {
+            if (!confirm(`Reject withdrawal of ${fmt(amt)}?`)) return;
             try {
-                const timestamp = new Date().toISOString();
-                const updates = {};
-
-                // Update withdrawal status
-                updates[`pendingWithdrawals/${withdrawalId}/status`] = 'rejected';
-                updates[`pendingWithdrawals/${withdrawalId}/processedDate`] = timestamp;
-                updates[`pendingWithdrawals/${withdrawalId}/processedBy`] = adminUser.email;
-
-                // Update user's transaction status
-                updates[`users/${userId}/transactions/${withdrawalId}/status`] = 'rejected';
-                updates[`users/${userId}/transactions/${withdrawalId}/processedDate`] = timestamp;
-                updates[`users/${userId}/transactions/${withdrawalId}/description`] = 'Withdrawal request rejected';
-
-                await update(ref(db), updates);
-                
-                showAlert(`Withdrawal of ${formatCurrency(amount)} rejected`, 'success');
-            } catch (error) {
-                console.error('Rejection error:', error);
-                showAlert('Failed to reject withdrawal');
+                const ts = new Date().toISOString();
+                await update(ref(db), {
+                    [`pendingWithdrawals/${id}/status`]: 'rejected',
+                    [`pendingWithdrawals/${id}/processedDate`]: ts,
+                    [`pendingWithdrawals/${id}/processedBy`]: admin.email,
+                    [`users/${uid}/transactions/${id}/status`]: 'rejected',
+                    [`users/${uid}/transactions/${id}/processedDate`]: ts
+                });
+                alert(`Rejected ${fmt(amt)}!`, 'success');
+            } catch (err) {
+                alert('Failed to reject');
             }
         };
 
-        window.filterWithdrawals = filterWithdrawals;
-
-        window.refreshData = () => {
-            $('withdrawalsGrid').innerHTML = '<div class="loading">Refreshing data...</div>';
-            renderWithdrawals();
+        window.refresh = () => {
+            $('grid').innerHTML = '<div class="loading">Refreshing...</div>';
+            render();
         };
 
-        const showAlert = (message, type = 'error') => {
-            const alertDiv = document.createElement('div');
-            alertDiv.style.cssText = `
-                position: fixed; top: 20px; right: 20px; z-index: 1000;
-                padding: 16px 20px; border-radius: 8px; font-weight: 500;
-                background: ${type === 'success' ? 'var(--success)' : 'var(--danger)'};
-                color: white; box-shadow: var(--shadow);
-                animation: slideIn 0.3s ease;
-            `;
-            alertDiv.textContent = message;
-            document.body.appendChild(alertDiv);
-            
-            setTimeout(() => {
-                alertDiv.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => alertDiv.remove(), 300);
-            }, 4000);
+        const alert = (msg, type = 'error') => {
+            const div = document.createElement('div');
+            div.className = `alert ${type}`;
+            div.textContent = msg;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 4000);
         };
 
-        // Load pending withdrawals
-        onValue(ref(db, 'pendingWithdrawals'), snapshot => {
-            withdrawals = snapshot.val() || {};
-            updateStats();
-            renderWithdrawals();
-        });
-
-        // Auth check for admin access
         onAuthStateChanged(auth, user => {
-            if (user) {
-                adminUser = user;
-                // You can add admin role check here if needed
-                // if (!user.customClaims?.admin) { /* redirect or show error */ }
-            } else {
-                $('withdrawalsGrid').innerHTML = `
-                    <div class="empty-state">
-                        <h3>Access Denied</h3>
-                        <p>Please sign in with admin credentials</p>
-                    </div>
-                `;
-            }
+            if (user) admin = user;
         });
 
-        // Add CSS animations
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            @keyframes slideOut {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
+        onValue(ref(db, 'pendingWithdrawals'), snap => {
+            withdrawals = snap.val() || {};
+            stats();
+            render();
+        });
     </script>
 </body>
-</html>
+            </html>
