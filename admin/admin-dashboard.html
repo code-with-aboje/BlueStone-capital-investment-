@@ -3,113 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard - Crest Point</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --geist-background: #ffffff;
-            --geist-foreground: #000000;
-            --geist-gray: #666666;
-            --geist-light-gray: #999999;
-            --geist-border: #e5e5e5;
-            --geist-hover: #f5f5f5;
-            --orange-primary: #ff6b35;
-            --orange-secondary: #e55a2b;
-            --orange-light: #ff8c5a;
+            --primary: #10b981;
+            --dark: #059669;
+            --light: #d1fae5;
+            --bg: #fff;
+            --text: #000;
+            --gray: #666;
+            --border: #e5e5e5;
+            --hover: #f0fdf4;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--geist-background);
-            color: var(--geist-foreground);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
             font-size: 14px;
-            line-height: 1.5;
-            padding: 24px;
+            padding: 20px;
         }
 
-        .welcome-section {
-            background: var(--orange-primary);
-            border: 1px solid var(--orange-secondary);
-            border-radius: 16px;
-            padding: 24px;
+        .welcome {
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            border-radius: 12px;
+            padding: 28px 24px;
             margin-bottom: 24px;
             position: relative;
             overflow: hidden;
+            color: var(--bg);
         }
 
-        .welcome-section::before {
+        .welcome::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            inset: 0;
+            background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
             pointer-events: none;
         }
 
-        .welcome-content {
-            position: relative;
-            z-index: 1;
+        .welcome-content { position: relative; z-index: 1; }
+        .welcome h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+        .welcome p { font-size: 15px; opacity: 0.95; }
+
+        .error-msg {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+            font-size: 13px;
         }
 
-        .welcome-message {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 4px;
-            color: white;
-        }
+        .error-msg.show { display: block; }
 
-        .user-name {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 16px;
-        }
-
-        .dashboard-grid {
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
             margin-bottom: 24px;
         }
 
-        .dashboard-card {
-            background: var(--geist-background);
-            border: 1px solid var(--geist-border);
-            border-radius: 8px;
-            padding: 24px;
-            transition: all 0.2s ease;
+        .card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.2s;
         }
 
-        .dashboard-card:hover {
-            border-color: var(--orange-primary);
-            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.15);
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(16,185,129,0.15);
         }
 
-        .stat-item {
+        .stat {
             text-align: center;
-            padding: 24px;
-            background: var(--geist-hover);
+            padding: 20px;
+            background: var(--hover);
             border-radius: 8px;
         }
 
-        .stat-value {
+        .stat-val {
             font-size: 32px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-family: 'Courier New', monospace;
-            color: var(--orange-primary);
+            color: var(--primary);
         }
 
         .stat-label {
-            font-size: 14px;
-            color: var(--geist-gray);
+            font-size: 13px;
+            color: var(--gray);
             font-weight: 500;
         }
 
@@ -122,225 +114,172 @@
             50% { opacity: 0.5; }
         }
 
-        .connection-status {
+        .status {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            padding: 8px 16px;
+            padding: 10px 14px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 500;
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: all 0.3s ease;
         }
 
-        .connection-online {
-            background: rgba(34, 197, 94, 0.1);
+        .status.online {
+            background: #f0fdf4;
             color: #22c55e;
-            border: 1px solid rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34,197,94,0.2);
         }
 
-        .connection-offline {
-            background: rgba(239, 68, 68, 0.1);
+        .status.offline {
+            background: #fef2f2;
             color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239,68,68,0.2);
         }
 
-        .status-dot {
+        .dot {
             width: 6px;
             height: 6px;
             border-radius: 50%;
             background: currentColor;
         }
 
-        .error-message {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 24px;
-            text-align: center;
-        }
-
         @media (max-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
+            .grid { grid-template-columns: 1fr; }
+            body { padding: 16px; }
+            .welcome { padding: 20px 16px; }
+            .welcome h1 { font-size: 20px; }
         }
     </style>
 </head>
 <body>
-    <div class="welcome-section">
+    <div class="welcome">
         <div class="welcome-content">
-            <div class="welcome-message">Admin Dashboard</div>
-            <div class="user-name"><span>Godwin</span> - Super Admin</div>
+            <h1>Admin Dashboard</h1>
+            <p><span id="userName">Admin</span> - Super Admin</p>
         </div>
     </div>
 
-    <div id="errorMessage" class="error-message" style="display: none;">
-        <strong>Connection Error:</strong> Unable to connect to Firebase. Please check your configuration.
-    </div>
+    <div id="errorMsg" class="error-msg"></div>
 
-    <div class="dashboard-grid">
-        <div class="dashboard-card">
-            <div class="stat-item">
-                <div id="totalUsers" class="stat-value loading">...</div>
+    <div class="grid">
+        <div class="card">
+            <div class="stat">
+                <div id="totalUsers" class="stat-val loading">...</div>
                 <div class="stat-label">Total Users</div>
             </div>
         </div>
 
-        <div class="dashboard-card">
-            <div class="stat-item">
-                <div id="totalBalance" class="stat-value loading">...</div>
+        <div class="card">
+            <div class="stat">
+                <div id="totalBalance" class="stat-val loading">...</div>
                 <div class="stat-label">Users Total Balance</div>
             </div>
         </div>
 
-        <div class="dashboard-card">
-            <div class="stat-item">
-                <div id="withdrawalRequests" class="stat-value loading">...</div>
+        <div class="card">
+            <div class="stat">
+                <div id="withdrawalReq" class="stat-val loading">...</div>
                 <div class="stat-label">Withdrawal Requests</div>
             </div>
         </div>
     </div>
 
-    <div id="connectionStatus" class="connection-status connection-offline">
-        <div class="status-dot"></div>
-        <span id="connectionText">Connecting...</span>
+    <div id="status" class="status offline">
+        <div class="dot"></div>
+        <span id="statusText">Connecting...</span>
     </div>
 
     <script type="module">
-        name.innerHTML = signupName;
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import firebaseConfig from './firebaseConfig.js';
 
         const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
+        const db = getDatabase(app);
         const auth = getAuth(app);
 
-        const totalUsersEl = document.getElementById('totalUsers');
-        const totalBalanceEl = document.getElementById('totalBalance');
-        const withdrawalRequestsEl = document.getElementById('withdrawalRequests');
-        const connectionStatusEl = document.getElementById('connectionStatus');
-        const connectionTextEl = document.getElementById('connectionText');
-        const errorMessageEl = document.getElementById('errorMessage');
+        const $ = id => document.getElementById(id);
+        let connected = false;
 
-        let isConnected = false;
+        const format = (num, currency = false) => {
+            const opts = currency ? { style: 'currency', currency: 'USD', maximumFractionDigits: 0 } : {};
+            return new Intl.NumberFormat('en-US', opts).format(num);
+        };
 
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(amount);
-        }
+        const setStatus = (isOnline) => {
+            connected = isOnline;
+            const el = $('status');
+            el.className = `status ${isOnline ? 'online' : 'offline'}`;
+            $('statusText').textContent = isOnline ? 'Connected' : 'Offline';
+            if (isOnline) $('errorMsg').classList.remove('show');
+        };
 
-        function formatNumber(num) {
-            return new Intl.NumberFormat('en-US').format(num);
-        }
+        const showError = (msg) => {
+            $('errorMsg').textContent = msg;
+            $('errorMsg').classList.add('show');
+            setStatus(false);
+        };
 
-        function updateConnectionStatus(connected) {
-            isConnected = connected;
-            if (connected) {
-                connectionStatusEl.className = 'connection-status connection-online';
-                connectionTextEl.textContent = 'Firebase Connected';
-                errorMessageEl.style.display = 'none';
-            } else {
-                connectionStatusEl.className = 'connection-status connection-offline';
-                connectionTextEl.textContent = 'Connection Lost';
-            }
-        }
+        const clearLoading = () => {
+            document.querySelectorAll('.loading').forEach(el => el.classList.remove('loading'));
+        };
 
-        function showError(message) {
-            errorMessageEl.innerHTML = '<strong>Error:</strong> ' + message;
-            errorMessageEl.style.display = 'block';
-            updateConnectionStatus(false);
-        }
-
-        function removeLoadingState() {
-            document.querySelectorAll('.loading').forEach(el => {
-                el.classList.remove('loading');
-            });
-        }
-
-        function calculateStats(users) {
-            const stats = {
-                totalUsers: 0,
-                totalBalance: 0,
-                withdrawalRequests: 0
-            };
-
-            if (!users) return stats;
-
-            Object.values(users).forEach(user => {
-                stats.totalUsers++;
-                
-                if (user.wallet && typeof user.wallet.usdBalance === 'number') {
-                    stats.totalBalance += user.wallet.usdBalance;
-                }
-
-                if (user.withdrawalRequests) {
-                    if (Array.isArray(user.withdrawalRequests)) {
-                        stats.withdrawalRequests += user.withdrawalRequests.length;
-                    } else if (typeof user.withdrawalRequests === 'object') {
-                        stats.withdrawalRequests += Object.keys(user.withdrawalRequests).length;
-                    }
-                }
-            });
-
-            return stats;
-        }
-
-        function updateDashboard(stats) {
-            totalUsersEl.textContent = formatNumber(stats.totalUsers);
-            totalBalanceEl.textContent = formatCurrency(stats.totalBalance);
-            withdrawalRequestsEl.textContent = formatNumber(stats.withdrawalRequests);
-            removeLoadingState();
-        }
-
-        function setupUserDataListener() {
-            const usersRef = ref(database, 'users');
+        const calcStats = (users) => {
+            let total = 0, balance = 0, withdrawals = 0;
+            if (!users) return { total, balance, withdrawals };
             
-            onValue(usersRef, (snapshot) => {
-                try {
-                    const users = snapshot.val();
-                    const stats = calculateStats(users);
-                    updateDashboard(stats);
-                    
-                    if (!isConnected) {
-                        updateConnectionStatus(true);
-                    }
-                } catch (error) {
-                    console.error('Error processing user data:', error);
-                    showError('Failed to process user data');
+            Object.values(users).forEach(user => {
+                total++;
+                if (user.wallet?.usdBalance) balance += user.wallet.usdBalance;
+                if (user.withdrawalRequests) {
+                    withdrawals += Array.isArray(user.withdrawalRequests) 
+                        ? user.withdrawalRequests.length 
+                        : Object.keys(user.withdrawalRequests).length;
                 }
-            }, (error) => {
-                console.error('Database error:', error);
-                showError('Failed to connect to database');
             });
-        }
+            
+            return { total, balance, withdrawals };
+        };
+
+        const updateDash = (stats) => {
+            $('totalUsers').textContent = format(stats.total);
+            $('totalBalance').textContent = format(stats.balance, true);
+            $('withdrawalReq').textContent = format(stats.withdrawals);
+            clearLoading();
+        };
+
+        const setupData = () => {
+            onValue(ref(db, 'users'), (snap) => {
+                try {
+                    const stats = calcStats(snap.val());
+                    updateDash(stats);
+                    if (!connected) setStatus(true);
+                } catch (err) {
+                    console.error('Error:', err);
+                    showError('Failed to load data');
+                }
+            }, (err) => {
+                console.error('DB error:', err);
+                showError('Database connection failed');
+            });
+        };
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                console.log('Admin authenticated:', user.uid);
-                setupUserDataListener();
+                $('userName').textContent = user.displayName || 'Admin';
+                setupData();
             } else {
-                console.log('Admin not authenticated');
-                showError('Please sign in to access the admin dashboard');
+                showError('Please sign in');
             }
         });
 
-        const testRef = ref(database, '.info/connected');
-        onValue(testRef, (snapshot) => {
-            const connected = snapshot.val();
-            updateConnectionStatus(connected);
+        onValue(ref(db, '.info/connected'), (snap) => {
+            setStatus(snap.val());
         });
     </script>
 </body>
-</html>
+    </html>
