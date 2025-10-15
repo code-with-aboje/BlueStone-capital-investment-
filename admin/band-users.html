@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - User Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #ff6b35;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray: #6b7280;
+            --light-gray: #f9fafb;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light-gray);
+            color: #111827;
+            font-size: 14px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), #e55a2b);
+            color: white;
+            padding: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 { font-size: 28px; margin-bottom: 8px; }
+        .header p { opacity: 0.9; font-size: 16px; }
+
+        .stats-bar {
+            background: white;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .tab:hover:not(.active) {
+            background: var(--light-gray);
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 300px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .users-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .user-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--success);
+            transition: all 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-card.suspended {
+            border-left-color: var(--warning);
+        }
+
+        .user-card.banned {
+            border-left-color: var(--danger);
+        }
+
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .user-info h3 {
+            font-size: 18px;
+            margin-bottom: 4px;
+            color: #111827;
+        }
+
+        .user-info p {
+            color: var(--gray);
+            font-size: 13px;
+        }
+
+        .user-details {
+            background: var(--light-gray);
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .detail-row:last-child { margin-bottom: 0; }
+
+        .detail-label {
+            font-weight: 500;
+            color: var(--gray);
+            font-size: 12px;
+        }
+
+        .detail-value {
+            font-size: 12px;
+            color: #111827;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+        .status-suspended { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .status-banned { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        .btn-suspend {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-ban {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-unban {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            .stats-bar { 
+                flex-direction: column; 
+                gap: 16px; 
+                text-align: center; 
+            }
+            .controls { 
+                flex-direction: column; 
+                align-items: stretch; 
+            }
+            .user-header { 
+                flex-direction: column; 
+                gap: 12px; 
+            }
+            .actions { 
+                flex-direction: column; 
+            }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>👥 User Management</h1>
+        <p>Manage user accounts, suspensions, and bans</p>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat">
+            <div class="stat-value" id="totalUsers">0</div>
+            <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="activeUsers">0</div>
+            <div class="stat-label">Active</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="suspendedUsers">0</div>
+            <div class="stat-label">Suspended</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="bannedUsers">0</div>
+            <div class="stat-label">Banned</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="controls">
+            <div class="filter-tabs">
+                <button class="tab active" onclick="filterUsers('all')">All Users</button>
+                <button class="tab" onclick="filterUsers('active')">Active</button>
+                <button class="tab" onclick="filterUsers('suspended')">Suspended</button>
+                <button class="tab" onclick="filterUsers('banned')">Banned</button>
+            </div>
+            <input type="text" class="search-box" placeholder="Search users..." id="searchBox" oninput="searchUsers()">
+            <button class="btn" style="background: var(--primary); color: white;" onclick="refreshData()">
+                🔄 Refresh
+            </button>
+        </div>
+
+        <div id="usersGrid" class="users-grid">
+            <div class="loading">Loading users...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, onValue, update, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import firebaseConfig from './firebaseConfig.js';
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+
+        let users = {};
+        let currentFilter = 'all';
+        let searchQuery = '';
+        let adminUser = null;
+
+        const $ = id => document.getElementById(id);
+        const formatDate = d => new Date(d).toLocaleString();
+
+        const updateStats = () => {
+            const userList = Object.values(users);
+            const active = userList.filter(u => u.status !== 'suspended' && u.status !== 'banned');
+            const suspended = userList.filter(u => u.status === 'suspended');
+            const banned = userList.filter(u => u.status === 'banned');
+
+            $('totalUsers').textContent = userList.length;
+            $('activeUsers').textContent = active.length;
+            $('suspendedUsers').textContent = suspended.length;
+            $('bannedUsers').textContent = banned.length;
+        };
+
+        const filterUsers = filter => {
+            currentFilter = filter;
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            renderUsers();
+        };
+
+        const searchUsers = () => {
+            searchQuery = $('searchBox').value.toLowerCase();
+            renderUsers();
+        };
+
+        const renderUsers = () => {
+            const grid = $('usersGrid');
+            let filtered = Object.entries(users);
+
+            // Filter by status
+            if (currentFilter === 'active') {
+                filtered = filtered.filter(([_, u]) => u.status !== 'suspended' && u.status !== 'banned');
+            } else if (currentFilter !== 'all') {
+                filtered = filtered.filter(([_, u]) => u.status === currentFilter);
+            }
+
+            // Filter by search
+            if (searchQuery) {
+                filtered = filtered.filter(([_, u]) => 
+                    u.name?.toLowerCase().includes(searchQuery) ||
+                    u.email?.toLowerCase().includes(searchQuery) ||
+                    u.userId?.toLowerCase().includes(searchQuery)
+                );
+            }
+
+            if (!filtered.length) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No ${currentFilter === 'all' ? '' : currentFilter} users found</h3>
+                        <p>Try adjusting your search or filter</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered
+                .sort(([,a], [,b]) => new Date(b.joinDate || 0) - new Date(a.joinDate || 0))
+                .map(([id, u]) => {
+                    const status = u.status || 'active';
+                    const balance = u.wallet?.usdBalance || 0;
+                    
+                    return `
+                        <div class="user-card ${status}">
+                            <div class="user-header">
+                                <div class="user-info">
+                                    <h3>${u.name || 'Unknown User'}</h3>
+                                    <p>${u.email || 'No email'}</p>
+                                    <p>Joined: ${u.joinDate ? formatDate(u.joinDate) : 'Unknown'}</p>
+                                </div>
+                                <span class="status-badge status-${status}">${status}</span>
+                            </div>
+
+                            <div class="user-details">
+                                <div class="detail-row">
+                                    <span class="detail-label">User ID:</span>
+                                    <span class="detail-value">${id.substring(0, 12)}...</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Balance:</span>
+                                    <span class="detail-value">$${balance.toFixed(2)}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Last Login:</span>
+                                    <span class="detail-value">${u.lastLogin ? formatDate(u.lastLogin) : 'Never'}</span>
+                                </div>
+                                ${u.suspendedUntil ? `
+                                    <div class="detail-row">
+                                        <span class="detail-label">Suspended Until:</span>
+                                        <span class="detail-value">${formatDate(u.suspendedUntil)}</span>
+                                    </div>
+                                ` : ''}
+                                ${u.bannedDate ? `
+                                    <div class="detail-row">
+                                        <span class="detail-label">Banned Date:</span>
+                                        <span class="detail-value">${formatDate(u.bannedDate)}</span>
+                                    </div>
+                                ` : ''}
+                                ${u.actionReason ? `
+                                    <div class="detail-row">
+                                        <span class="detail-label">Reason:</span>
+                                        <span class="detail-value">${u.actionReason}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                            <div class="actions">
+                                ${status === 'active' ? `
+                                    <button class="btn btn-suspend" onclick="suspendUser('${id}', '${u.name}')">
+                                        ⏸️ Suspend
+                                    </button>
+                                    <button class="btn btn-ban" onclick="banUser('${id}', '${u.name}')">
+                                        🚫 Ban
+                                    </button>
+                                ` : ''}
+                                
+                                ${status === 'suspended' ? `
+                                    <button class="btn btn-unban" onclick="unbanUser('${id}', '${u.name}')">
+                                        ✅ Unsuspend
+                                    </button>
+                                    <button class="btn btn-ban" onclick="banUser('${id}', '${u.name}')">
+                                        🚫 Ban
+                                    </button>
+                                ` : ''}
+                                
+                                ${status === 'banned' ? `
+                                    <button class="btn btn-unban" onclick="unbanUser('${id}', '${u.name}')">
+                                        ✅ Unban
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+        };
+
+        window.suspendUser = async (userId, userName) => {
+            const reason = prompt(`Reason for suspending ${userName}:`);
+            if (!reason) return;
+
+            const days = prompt('Suspend for how many days?', '7');
+            if (!days || isNaN(days)) return;
+
+            if (!confirm(`Suspend ${userName} for ${days} days?`)) return;
+
+            try {
+                const suspendUntil = new Date(Date.now() + (days * 24 * 60 * 60 * 1000)).toISOString();
+                const updates = {
+                    [`users/${userId}/status`]: 'suspended',
+                    [`users/${userId}/suspendedUntil`]: suspendUntil,
+                    [`users/${userId}/actionReason`]: reason,
+                    [`users/${userId}/actionDate`]: new Date().toISOString(),
+                    [`users/${userId}/actionBy`]: adminUser.email
+                };
+
+                await update(ref(db), updates);
+                showAlert(`${userName} suspended for ${days} days`, 'success');
+            } catch (error) {
+                console.error('Suspension error:', error);
+                showAlert('Failed to suspend user');
+            }
+        };
+
+        window.banUser = async (userId, userName) => {
+            const reason = prompt(`Reason for banning ${userName}:`);
+            if (!reason) return;
+
+            if (!confirm(`Permanently ban ${userName}?`)) return;
+
+            try {
+                const updates = {
+                    [`users/${userId}/status`]: 'banned',
+                    [`users/${userId}/bannedDate`]: new Date().toISOString(),
+                    [`users/${userId}/actionReason`]: reason,
+                    [`users/${userId}/actionDate`]: new Date().toISOString(),
+                    [`users/${userId}/actionBy`]: adminUser.email,
+                    [`users/${userId}/suspendedUntil`]: null
+                };
+
+                await update(ref(db), updates);
+                showAlert(`${userName} has been banned`, 'success');
+            } catch (error) {
+                console.error('Ban error:', error);
+                showAlert('Failed to ban user');
+            }
+        };
+
+        window.unbanUser = async (userId, userName) => {
+            if (!confirm(`Remove all restrictions from ${userName}?`)) return;
+
+            try {
+                const updates = {
+                    [`users/${userId}/status`]: null,
+                    [`users/${userId}/suspendedUntil`]: null,
+                    [`users/${userId}/bannedDate`]: null,
+                    [`users/${userId}/actionReason`]: null,
+                    [`users/${userId}/unbannedDate`]: new Date().toISOString(),
+                    [`users/${userId}/unbannedBy`]: adminUser.email
+                };
+
+                await update(ref(db), updates);
+                showAlert(`${userName} has been unbanned`, 'success');
+            } catch (error) {
+                console.error('Unban error:', error);
+                showAlert('Failed to unban user');
+            }
+        };
+
+        window.filterUsers = filterUsers;
+        window.searchUsers = searchUsers;
+
+        window.refreshData = () => {
+            $('usersGrid').innerHTML = '<div class="loading">Refreshing data...</div>';
+            renderUsers();
+        };
+
+        const showAlert = (message, type = 'error') => {
+            const alertDiv = document.createElement('div');
+            alertDiv.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 1000;
+                padding: 16px 20px; border-radius: 8px; font-weight: 500;
+                background: ${type === 'success' ? 'var(--success)' : 'var(--danger)'};
+                color: white; box-shadow: var(--shadow);
+                animation: slideIn 0.3s ease;
+            `;
+            alertDiv.textContent = message;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => alertDiv.remove(), 300);
+            }, 4000);
+        };
+
+        // Load users data
+        onValue(ref(db, 'users'), snapshot => {
+            users = snapshot.val() || {};
+            updateStats();
+            renderUsers();
+        });
+
+        // Auth check for admin access
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                adminUser = user;
+            } else {
+                $('usersGrid').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Access Denied</h3>
+                        <p>Please sign in with admin credentials</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --orange: #ff6b35;
+            --orange-light: rgba(255, 107, 53, 0.1);
+            --gray: #666;
+            --border: #e5e5e5;
+            --hover: #f5f5f5;
+            --green: #22c55e;
+            --red: #ef4444;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --search-height: 60px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fafafa;
+            color: #000;
+            font-size: 14px;
+            padding-top: calc(var(--search-height) + 20px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--orange), #e55a2b);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 20px 20px;
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 { font-size: 24px; margin-bottom: 4px; }
+        .header p { opacity: 0.9; }
+
+        /* Modern Fixed Search Bar */
+        .search-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .search-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 12px 20px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            width: 16px;
+            height: 16px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px 12px 10px 40px;
+            border: 2px solid transparent;
+            border-radius: 25px;
+            font-size: 14px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--orange);
+            box-shadow: 0 4px 12px var(--orange-light);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary { 
+            background: var(--orange); 
+            color: white; 
+        }
+        .btn-primary:hover { 
+            background: #e55a2b; 
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-success { background: var(--green); color: white; }
+        .btn-success:hover { 
+            background: #16a34a; 
+            transform: translateY(-1px);
+        }
+
+        .content {
+            padding: 0 20px 20px;
+        }
+
+        .users-grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        }
+
+        .user-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            background: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .user-card:hover {
+            border-color: var(--orange);
+            box-shadow: 0 8px 25px var(--orange-light);
+            transform: translateY(-2px);
+        }
+
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .user-info h3 {
+            font-size: 16px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .user-info p {
+            color: var(--gray);
+            font-size: 12px;
+        }
+
+        .user-status {
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .status-active { background: rgba(34, 197, 94, 0.15); color: var(--green); }
+        .status-inactive { background: rgba(107, 114, 128, 0.15); color: var(--gray); }
+
+        .user-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 12px;
+            background: var(--hover);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .stat:hover { background: #f0f0f0; }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--orange);
+            font-size: 14px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: var(--gray);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-actions button {
+            width: 100%;
+            padding: 10px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn { 
+            from { transform: translate(-50%, -60%); opacity: 0; } 
+            to { transform: translate(-50%, -50%); opacity: 1; } 
+        }
+
+        .modal h3 { margin-bottom: 20px; font-weight: 600; }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 12px;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--orange);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .modal-actions .btn {
+            flex: 1;
+            padding: 12px;
+        }
+
+        .btn-cancel {
+            background: #f3f4f6;
+            color: var(--gray);
+        }
+
+        .btn-cancel:hover {
+            background: #e5e7eb;
+        }
+
+        .loading { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body { padding-top: calc(var(--search-height) + 10px); }
+            .header { margin: 10px; }
+            .content { padding: 0 10px 10px; }
+            .users-grid { grid-template-columns: 1fr; }
+            .search-content { padding: 8px 10px; }
+            .search-wrapper { max-width: none; }
+            .user-stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>User Management</h1>
+        <p>Manage users and credit their accounts</p>
+    </div>
+
+    <!-- Fixed Modern Search Bar -->
+    <div class="search-container">
+        <div class="search-content">
+            <div class="search-wrapper">
+                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" id="searchBox" class="search-box" placeholder="Search users by name or email...">
+            </div>
+            <button class="btn btn-primary" onclick="refreshUsers()">Refresh</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <div id="usersGrid" class="users-grid loading">
+            <p style="text-align: center; color: var(--gray);">Loading users...</p>
+        </div>
+    </div>
+
+    <!-- Credit Modal -->
+    <div id="creditModal" class="modal">
+        <div class="modal-content">
+            <h3>Credit User Account</h3>
+            <div class="form-group">
+                <label>User Name</label>
+                <input type="text" id="creditUserName" readonly>
+            </div>
+            <div class="form-group">
+                <label>Amount (USD)</label>
+                <input type="number" id="creditAmount" placeholder="Enter amount" min="0" step="0.01">
+            </div>
+            <div class="form-group">
+                <label>Reason</label>
+                <input type="text" id="creditReason" placeholder="Credit reason (optional)">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-success" onclick="processCreditUser()">Credit Account</button>
+                <button class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, onValue, update, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import firebaseConfig from './firebaseConfig.js';
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+
+        let users = {};
+        let creditUid = null;
+
+        const $ = id => document.getElementById(id);
+        const formatDate = d => new Date(d).toLocaleDateString();
+        const formatCurrency = a => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(a);
+
+        const filterUsers = term => {
+            if (!term) return users;
+            return Object.fromEntries(
+                Object.entries(users).filter(([_, u]) => 
+                    (u.profile?.name || '').toLowerCase().includes(term.toLowerCase()) ||
+                    (u.profile?.email || '').toLowerCase().includes(term.toLowerCase())
+                )
+            );
+        };
+
+        const renderUsers = (userList = users) => {
+            const grid = $('usersGrid');
+            grid.classList.remove('loading');
+            
+            if (!Object.keys(userList).length) {
+                grid.innerHTML = '<p style="text-align: center; color: var(--gray);">No users found</p>';
+                return;
+            }
+
+            grid.innerHTML = Object.entries(userList).map(([uid, u]) => {
+                const { profile = {}, wallet = {}, level = 1, totalMined = 0, sessions = 0 } = u;
+                const { name = 'No Name', email = 'No Email', joinDate = '' } = profile;
+                const balance = wallet.usdBalance || 0;
+                
+                return `
+                    <div class="user-card">
+                        <div class="user-header">
+                            <div class="user-info">
+                                <h3>${name}</h3>
+                                <p>${email}</p>
+                                <p>Joined: ${formatDate(joinDate)}</p>
+                            </div>
+                            <div class="user-status ${balance > 0 ? 'status-active' : 'status-inactive'}">
+                                Level ${level}
+                            </div>
+                        </div>
+                        
+                        <div class="user-stats">
+                            <div class="stat">
+                                <div class="stat-value">${formatCurrency(balance)}</div>
+                                <div class="stat-label">Balance</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">${totalMined.toFixed(4)}</div>
+                                <div class="stat-label">Total Mined</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">${sessions}</div>
+                                <div class="stat-label">Sessions</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">${uid.substring(0, 8)}...</div>
+                                <div class="stat-label">User ID</div>
+                            </div>
+                        </div>
+                        
+                        <div class="user-actions">
+                            <button class="btn btn-success" onclick="openCreditModal('${uid}', '${name}')">
+                                Credit Account
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        window.openCreditModal = (uid, name) => {
+            creditUid = uid;
+            $('creditUserName').value = name;
+            $('creditAmount').value = '';
+            $('creditReason').value = '';
+            $('creditModal').style.display = 'block';
+        };
+
+        window.closeModal = () => {
+            $('creditModal').style.display = 'none';
+            creditUid = null;
+        };
+
+        window.processCreditUser = async () => {
+            if (!creditUid) return;
+            
+            const amount = parseFloat($('creditAmount').value);
+            const reason = $('creditReason').value;
+            
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+
+            try {
+                const userRef = ref(db, `users/${creditUid}`);
+                const snapshot = await get(userRef);
+                
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    const currentBalance = userData.wallet?.usdBalance || 0;
+                    const newBalance = currentBalance + amount;
+                    
+                    await update(userRef, { 'wallet/usdBalance': newBalance });
+                    
+                    if (reason) {
+                        await update(ref(db, `users/${creditUid}/transactions`), {
+                            [Date.now()]: {
+                                type: 'admin_credit',
+                                amount,
+                                reason,
+                                timestamp: new Date().toISOString(),
+                                previousBalance: currentBalance,
+                                newBalance
+                            }
+                        });
+                    }
+                    
+                    alert(`Successfully credited $${amount.toFixed(2)}`);
+                    window.closeModal();
+                } else {
+                    alert('User not found');
+                }
+            } catch (error) {
+                console.error('Credit error:', error);
+                alert('Failed to credit user account');
+            }
+        };
+
+        window.refreshUsers = () => {
+            $('usersGrid').classList.add('loading');
+            renderUsers();
+        };
+
+        // Setup listeners
+        $('searchBox').oninput = e => renderUsers(filterUsers(e.target.value));
+        
+        onValue(ref(db, 'users'), snapshot => {
+            users = snapshot.val() || {};
+            renderUsers();
+        });
+
+        onAuthStateChanged(auth, user => {
+            if (!user) {
+                $('usersGrid').innerHTML = '<p style="text-align: center; color: var(--red);">Please sign in to access user management</p>';
+            }
+        });
+
+        // Close modal on outside click
+        $('creditModal').onclick = e => e.target === $('creditModal') && window.closeModal();
+    </script>
+</body>
+</html>
