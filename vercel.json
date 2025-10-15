@@ -1,0 +1,28 @@
+{
+  "rewrites": [
+    {
+      "source": "/login",
+      "destination": "/login.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin-panel.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/admin-dashboard.html"
+    },
+    {
+      "source": "/users",
+      "destination": "/user-management.html"
+    },
+    {
+      "source": "/withdrawals",
+      "destination": "/withdrawal-approvals.html"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/:path*.html"
+    }
+  ]
+    }
