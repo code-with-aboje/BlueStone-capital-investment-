@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', system-ui; background: #fafafa; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; }
+        body { font-family: 'Inter', system-ui; background: #fafafa; padding: 20px; margin-bottom: 60px; }
+        .container { max-width: 900px; margin: 0 auto; padding-bottom: 60px; }
         
         .page-header { margin-bottom: 32px; }
         .page-header h1 { font-size: 28px; color: #0f172a; margin-bottom: 8px; font-weight: 700; }
@@ -24,7 +24,7 @@
         .info-banner i { color: #0284c7; flex-shrink: 0; margin-top: 2px; }
         
         .content-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-        .section { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.05); border: 1px solid #e5e7eb; }
+        .section { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.05); border: 1px solid #e5e7eb; overflow: hidden; }
         
         .section-title { font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
         .section-title i { color: #10b981; font-size: 20px; }
@@ -56,10 +56,10 @@
         .btn-secondary { flex: 1; background: #f1f5f9; color: #475569; }
         .btn-secondary:active { background: #e2e8f0; }
         
-        .history-table { width: 100%; border-collapse: collapse; }
+        .history-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         .history-table thead { background: #f8fafc; border-bottom: 2px solid #e2e8f0; }
         .history-table th { padding: 10px 12px; text-align: left; font-weight: 600; color: #475569; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
-        .history-table td { padding: 12px; border-bottom: 1px solid #e5e7eb; font-size: 13px; color: #334155; }
+        .history-table td { padding: 12px; border-bottom: 1px solid #e5e7eb; font-size: 13px; color: #334155; overflow: hidden; text-overflow: ellipsis; }
         .history-table tbody tr:hover { background: #f8fafc; }
         
         .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; text-transform: capitalize; }
@@ -294,6 +294,9 @@
         document.getElementById('openModal').onclick = () => {
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+            if (userData) {
+                document.getElementById('modalAvail').textContent = `$${userData.available.toFixed(2)}`;
+            }
         };
 
         document.getElementById('closeModal').onclick = closeModal;
@@ -339,7 +342,7 @@
             }
         });
 
-        
+    
         // Handle Submissions
         const handleSubmit = async (e, isModal) => {
             e.preventDefault();
