@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Withdrawal Approvals - Crest Point</title>
+    <title>Withdrawal Approvals - Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -12,6 +12,7 @@
             --primary: #10b981;
             --success: #22c55e;
             --danger: #ef4444;
+            --warning: #f59e0b;
             --gray-dark: #1f2937;
             --gray-light: #9ca3af;
             --bg: #f9fafb;
@@ -23,7 +24,6 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg);
             color: var(--gray-dark);
-            font-size: 14px;
         }
 
         .header {
@@ -364,18 +364,22 @@
 
                             <div class="details">
                                 <div class="detail-row">
-                                    <span class="detail-label">ID:</span>
+                                    <span class="detail-label">User ID:</span>
                                     <span class="detail-value">${(w.userId || '').substring(0, 12)}...</span>
                                 </div>
                                 <div class="detail-row">
-                                    <span class="detail-label">Address:</span>
-                                    <span class="detail-value">${(w.btcAddress || 'N/A').substring(0, 30)}${(w.btcAddress || '').length > 30 ? '...' : ''}</span>
+                                    <span class="detail-label">BTC Address:</span>
+                                </div>
+                                <div style="font-family: monospace; font-size: 12px; margin: 4px 0;">${w.btcAddress || 'N/A'}</div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Fee (2.5%):</span>
+                                    <span class="detail-value">${fmt(w.fee || 0)}</span>
                                 </div>
                                 <div class="detail-row">
                                     <span class="detail-label">Status:</span>
                                     <span class="badge badge-${st}">${st}</span>
                                 </div>
-                                ${w.processedBy ? `<div class="detail-row"><span class="detail-label">By:</span><span class="detail-value">${w.processedBy}</span></div>` : ''}
+                                ${w.processedBy ? `<div class="detail-row"><span class="detail-label">Processed By:</span><span class="detail-value">${w.processedBy}</span></div>` : ''}
                             </div>
 
                             ${st === 'pending' ? `
@@ -393,15 +397,25 @@
             if (!confirm(`Approve ${fmt(amt)}?`)) return;
             try {
                 const ts = new Date().toISOString();
-                await update(ref(db), {
-                    [`pendingWithdrawals/${id}/status`]: 'approved',
-                    [`pendingWithdrawals/${id}/processedDate`]: ts,
-                    [`pendingWithdrawals/${id}/processedBy`]: admin.email,
-                    [`users/${uid}/transactions/${id}/status`]: 'approved',
-                    [`users/${uid}/transactions/${id}/processedDate`]: ts
-                });
-                showAlert(`Approved ${fmt(amt)}!`, 'success');
+                
+                const pendingSnap = await get(ref(db, `pendingWithdrawals/${id}`));
+                if (!pendingSnap.exists()) {
+                    showAlert('Withdrawal not found', 'error');
+                    return;
+                }
+
+                const updates = {};
+                updates[`pendingWithdrawals/${id}/status`] = 'approved';
+                updates[`pendingWithdrawals/${id}/processedDate`] = ts;
+                updates[`pendingWithdrawals/${id}/processedBy`] = admin.email;
+                updates[`users/${uid}/transactions/${id}/status`] = 'approved';
+                updates[`users/${uid}/transactions/${id}/processedDate`] = ts;
+                updates[`users/${uid}/transactions/${id}/processedBy`] = admin.email;
+
+                await update(ref(db), updates);
+                showAlert(`✓ Approved ${fmt(amt)}!`, 'success');
             } catch (err) {
+                console.error('Approval error:', err);
                 showAlert('Failed to approve', 'error');
             }
         };
@@ -409,23 +423,32 @@
         window.rejectWithdrawal = async (id, amt, uid) => {
             if (!confirm(`Reject ${fmt(amt)}?`)) return;
             try {
-                const userSnap = await get(ref(db, `users/${uid}`));
-                if (!userSnap.exists()) return showAlert('User not found', 'error');
-
-                const userData = userSnap.val();
                 const ts = new Date().toISOString();
                 
-                await update(ref(db), {
-                    [`pendingWithdrawals/${id}/status`]: 'rejected',
-                    [`pendingWithdrawals/${id}/processedDate`]: ts,
-                    [`pendingWithdrawals/${id}/processedBy`]: admin.email,
-                    [`users/${uid}/transactions/${id}/status`]: 'rejected',
-                    [`users/${uid}/transactions/${id}/processedDate`]: ts,
-                    [`users/${uid}/available`]: (userData.available || 0) + amt,
-                    [`users/${uid}/totalBalance`]: (userData.totalBalance || 0) + amt
-                });
-                showAlert(`Rejected and refunded ${fmt(amt)}!`, 'success');
+                const userSnap = await get(ref(db, `users/${uid}`));
+                if (!userSnap.exists()) {
+                    showAlert('User not found', 'error');
+                    return;
+                }
+
+                const userData = userSnap.val();
+                const currentAvailable = userData.available || 0;
+                const currentTotalBalance = userData.totalBalance || 0;
+
+                const updates = {};
+                updates[`pendingWithdrawals/${id}/status`] = 'rejected';
+                updates[`pendingWithdrawals/${id}/processedDate`] = ts;
+                updates[`pendingWithdrawals/${id}/processedBy`] = admin.email;
+                updates[`users/${uid}/transactions/${id}/status`] = 'rejected';
+                updates[`users/${uid}/transactions/${id}/processedDate`] = ts;
+                updates[`users/${uid}/transactions/${id}/processedBy`] = admin.email;
+                updates[`users/${uid}/available`] = currentAvailable + amt;
+                updates[`users/${uid}/totalBalance`] = currentTotalBalance + amt;
+
+                await update(ref(db), updates);
+                showAlert(`✓ Rejected and refunded ${fmt(amt)}!`, 'success');
             } catch (err) {
+                console.error('Rejection error:', err);
                 showAlert('Failed to reject', 'error');
             }
         };
@@ -440,10 +463,13 @@
             div.className = `alert ${type}`;
             div.textContent = msg;
             document.body.appendChild(div);
-            setTimeout(() => div.remove(), 4000);
+            setTimeout(() => div.remove(), 3000);
         };
 
-        onAuthStateChanged(auth, user => { if (user) admin = user; });
+        onAuthStateChanged(auth, user => {
+            if (user) admin = user;
+        });
+
         onValue(ref(db, 'pendingWithdrawals'), snap => {
             withdrawals = snap.val() || {};
             updateStats();
