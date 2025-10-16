@@ -124,9 +124,35 @@
     </div>
 
     <script type="module">
-        
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
         import { getDatabase, ref, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-        import { database } from "./firebaseConfig.js";
+
+        // IMPORTANT: Replace with your actual Firebase config
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+            projectId: "YOUR_PROJECT",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        let app, database;
+        
+        try {
+            app = initializeApp(firebaseConfig);
+            database = getDatabase(app);
+            console.log('Firebase initialized successfully');
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+            document.getElementById('requestsList').innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p style="color: #ef4444;">Firebase configuration error. Please check console.</p>
+                </div>
+            `;
+        }
 
         let allRequests = [];
         let currentFilter = 'all';
@@ -275,15 +301,21 @@
         }
 
         onValue(ref(database, 'fundingRequests'), (snapshot) => {
+            console.log('Checking funding requests...', snapshot.exists());
+            
             if (snapshot.exists()) {
                 allRequests = Object.entries(snapshot.val())
                     .map(([id, data]) => ({ id, ...data }))
                     .sort((a, b) => b.timestamp - a.timestamp);
+                console.log('Found requests:', allRequests.length);
                 updateStats();
                 renderRequests();
             } else {
+                console.log('No funding requests found');
                 allRequests = [];
-                updateStats();
+                document.getElementById('pendingCount').textContent = '0';
+                document.getElementById('approvedCount').textContent = '0';
+                document.getElementById('totalAmount').textContent = '$0.00';
                 document.getElementById('requestsList').innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-inbox"></i>
@@ -291,7 +323,15 @@
                     </div>
                 `;
             }
+        }, (error) => {
+            console.error('Database error:', error);
+            document.getElementById('requestsList').innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p style="color: #ef4444;">Error loading data. Check console for details.</p>
+                </div>
+            `;
         });
     </script>
 </body>
-                </html>
+    </html>
