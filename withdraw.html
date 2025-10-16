@@ -234,23 +234,27 @@
             margin-top: 2px;
         }
 
-        /* Modal */
+        /* Modal - Centered */
         .withdraw-modal {
             display: none;
             position: fixed;
-            bottom: 0;
+            top: 0;
             left: 0;
             right: 0;
+            bottom: 0;
             width: 100%;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
             z-index: 10000;
             animation: fadeIn 0.3s ease;
+            overflow-y: auto;
+            padding: 20px;
         }
 
         .withdraw-modal.active {
             display: flex;
-            align-items: flex-end;
+            align-items: center;
+            justify-content: center;
         }
 
         @keyframes fadeIn {
@@ -258,32 +262,41 @@
             to { opacity: 1; }
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
+        @keyframes scaleIn {
+            from { 
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to { 
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .withdraw-modal-content {
             width: 100%;
+            max-width: 480px;
             background: white;
-            border-radius: 20px 20px 0 0;
-            padding: 24px;
-            padding-bottom: 60px;
-            animation: slideUp 0.4s ease;
-            max-height: 90vh;
+            border-radius: 16px;
+            padding: 20px;
+            animation: scaleIn 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.15);
         }
-            
+
         .modal-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e5e7eb;
         }
 
         .modal-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             color: #0f172a;
         }
@@ -291,16 +304,17 @@
         .modal-close-btn {
             background: none;
             border: none;
-            font-size: 28px;
+            font-size: 24px;
             color: #64748b;
             cursor: pointer;
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
+            border-radius: 6px;
             transition: background 0.3s ease;
+            line-height: 1;
         }
 
         .modal-close-btn:hover {
@@ -308,23 +322,23 @@
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .form-label {
             display: block;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: #334155;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .form-input, .form-select {
             width: 100%;
-            padding: 12px 14px;
+            padding: 10px 12px;
             border: 2px solid #e2e8f0;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
             font-family: inherit;
             transition: all 0.3s ease;
         }
@@ -343,34 +357,36 @@
             background: #f0fdf4;
             border: 1px solid #dcfce7;
             border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 20px;
-            font-size: 14px;
+            padding: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
             color: #166534;
         }
 
         .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 6px 0;
+            padding: 4px 0;
         }
 
         .info-label {
             font-weight: 500;
+            font-size: 12px;
         }
 
         .info-value {
             font-weight: 700;
             color: #15803d;
+            font-size: 13px;
         }
 
         .fee-warning {
             background: #fef3c7;
             border: 1px solid #fde68a;
             border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 20px;
-            font-size: 13px;
+            padding: 10px;
+            margin-bottom: 16px;
+            font-size: 12px;
             color: #92400e;
             display: none;
         }
@@ -383,10 +399,10 @@
             background: #fee2e2;
             border: 1px solid #fecaca;
             border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 20px;
+            padding: 10px;
+            margin-bottom: 16px;
             color: #991b1b;
-            font-size: 14px;
+            font-size: 13px;
             display: none;
         }
 
@@ -398,10 +414,10 @@
             background: #f0fdf4;
             border: 1px solid #86efac;
             border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 20px;
+            padding: 10px;
+            margin-bottom: 16px;
             color: #166534;
-            font-size: 14px;
+            font-size: 13px;
             display: none;
         }
 
@@ -411,17 +427,16 @@
 
         .button-group {
             display: flex;
-            gap: 12px;
-            margin-top: 28px;
-            margin-bottom: 40px;
+            gap: 10px;
+            margin-top: 20px;
         }
 
         .btn {
             flex: 1;
-            padding: 14px;
+            padding: 11px;
             border: none;
             border-radius: 8px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -487,13 +502,18 @@
                 margin-bottom: 24px;
                 display: block;
             }
+
+            .withdraw-modal {
+                padding: 10px;
+            }
+
+            .withdraw-modal-content {
+                max-width: 100%;
+                padding: 16px;
+            }
         }
 
         @media (min-width: 769px) {
-            .withdraw-modal {
-                display: none !important;
-            }
-
             .withdraw-button {
                 display: none;
             }
@@ -612,7 +632,14 @@
                     <strong>Processing Fee:</strong> <span id="feeAmount">$0.00</span> (2.5%)
                 </div>
 
-            
+                <div class="form-group">
+                    <label class="form-label">Withdrawal Method</label>
+                    <select class="form-select" id="withdrawMethod" required>
+                        <option value="">Select withdrawal method</option>
+                        <option value="btc">BTC Wallet Address</option>
+                    </select>
+                </div>
+
                 <div class="form-group">
                     <label class="form-label">Wallet Address</label>
                     <input 
@@ -624,7 +651,16 @@
                     >
                 </div>
 
-                
+                <div class="form-group">
+                    <label class="form-label">Notes (Optional)</label>
+                    <input 
+                        type="text" 
+                        class="form-input" 
+                        id="withdrawNotes" 
+                        placeholder="Any additional information..."
+                    >
+                </div>
+
                 <div class="button-group">
                     <button type="button" class="btn btn-cancel" id="withdrawCancelBtn">Cancel</button>
                     <button type="submit" class="btn btn-withdraw" id="submitWithdrawBtn">Request Withdrawal</button>
@@ -632,7 +668,6 @@
             </form>
         </div>
     </div>
-
     <script type="module">
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
         import { getDatabase, ref, get, set, push, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
