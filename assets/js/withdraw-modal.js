@@ -4,7 +4,6 @@ import { getDatabase, ref, get, set, push, update } from "https://www.gstatic.co
 import { auth, database } from "./firebase.js";
 
 (function() {
-    // Create modal HTML
     const modalHTML = `
         <div class="withdraw-modal" id="withdrawModal">
             <div class="withdraw-modal-content">
@@ -48,7 +47,7 @@ import { auth, database } from "./firebase.js";
                         <label class="form-label">Withdrawal Method</label>
                         <select class="form-select" id="withdrawMethod" required>
                             <option value="">Select withdrawal method</option>
-                            <option value="crypto">BTC wallets Address</option>
+                            <option value="btc">BTC Wallet Address</option>
                         </select>
                     </div>
 
@@ -58,7 +57,7 @@ import { auth, database } from "./firebase.js";
                             type="text" 
                             class="form-input" 
                             id="withdrawAccount" 
-                            placeholder="Enter account details"
+                            placeholder="Enter wallet address"
                             required
                         >
                     </div>
@@ -82,7 +81,6 @@ import { auth, database } from "./firebase.js";
         </div>
     `;
 
-    // Create modal CSS
     const modalCSS = `
         .withdraw-modal {
             display: none;
@@ -312,17 +310,13 @@ import { auth, database } from "./firebase.js";
         }
     `;
 
-    // Initialize when DOM is ready
     function init() {
-        // Inject CSS
         const styleSheet = document.createElement('style');
         styleSheet.textContent = modalCSS;
         document.head.appendChild(styleSheet);
 
-        // Inject HTML
         document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-        // Get elements
         const withdrawModal = document.getElementById('withdrawModal');
         const withdrawForm = document.getElementById('withdrawForm');
         const withdrawCloseBtn = document.getElementById('withdrawCloseBtn');
@@ -337,10 +331,8 @@ import { auth, database } from "./firebase.js";
 
         let userData = null;
 
-        // Load user balance from Firebase Realtime Database
         async function loadUserBalance() {
             try {
-                // Get current user
                 const user = auth.currentUser;
                 if (!user) {
                     availableBalance.textContent = '$0.00';
@@ -349,7 +341,6 @@ import { auth, database } from "./firebase.js";
                     return;
                 }
 
-                // Fetch user data
                 const userRef = ref(database, 'users/' + user.uid);
                 const snapshot = await get(userRef);
                 
@@ -371,19 +362,15 @@ import { auth, database } from "./firebase.js";
             }
         }
 
-        // Public function to open modal
         window.openWithdrawModal = async function() {
             if (window.innerWidth <= 768) {
                 withdrawModal.classList.add('active');
                 document.body.style.overflow = 'hidden';
-                
-                // Load fresh balance every time modal opens
                 availableBalance.textContent = 'Loading...';
                 await loadUserBalance();
             }
         };
 
-        // Close modal function
         function closeWithdrawModal() {
             withdrawModal.classList.remove('active');
             document.body.style.overflow = '';
@@ -393,18 +380,13 @@ import { auth, database } from "./firebase.js";
             feeWarning.classList.remove('show');
         }
 
-        // Close button listeners
         withdrawCloseBtn.addEventListener('click', closeWithdrawModal);
         withdrawCancelBtn.addEventListener('click', closeWithdrawModal);
 
-        // Close when clicking outside
         withdrawModal.addEventListener('click', (e) => {
-            if (e.target === withdrawModal) {
-                closeWithdrawModal();
-            }
+            if (e.target === withdrawModal) closeWithdrawModal();
         });
 
-        // Calculate fees
         withdrawAmount.addEventListener('input', () => {
             const amount = parseFloat(withdrawAmount.value) || 0;
             if (amount > 0) {
@@ -416,14 +398,12 @@ import { auth, database } from "./firebase.js";
             }
         });
 
-        // Listen for iframe messages
         window.addEventListener('message', (event) => {
             if (event.data.type === 'OPEN_WITHDRAW_MODAL') {
                 window.openWithdrawModal();
             }
         });
 
-        // Form submission
         withdrawForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -432,11 +412,9 @@ import { auth, database } from "./firebase.js";
             const account = document.getElementById('withdrawAccount').value;
             const notes = document.getElementById('withdrawNotes').value;
 
-            // Clear previous messages
             errorMessage.classList.remove('show');
             successMessage.classList.remove('show');
 
-            // Validation
             if (amount < 10) {
                 errorMessage.textContent = 'Minimum withdrawal amount is $10';
                 errorMessage.classList.add('show');
@@ -460,45 +438,59 @@ import { auth, database } from "./firebase.js";
 
             try {
                 const user = auth.currentUser;
-                if (!user) {
-                    throw new Error('User not authenticated');
-                }
+                if (!user) throw new Error('User not authenticated');
 
-                // Create withdrawal request
+                const fee = amount * 0.025;
+                const ts = new Date().toISOString();
+                
                 const withdrawalData = {
                     userId: user.uid,
                     userName: userData.name || 'User',
                     userEmail: user.email || '',
                     amount: amount,
-                    fee: amount * 0.025,
+                    fee: fee,
                     method: method,
                     btcAddress: account,
                     notes: notes,
                     status: 'pending',
-                    requestDate: new Date().toISOString()
+                    requestDate: ts
                 };
 
-                // Add to pendingWithdrawals in Realtime Database (for admin to see)
+                // Create new withdrawal in pendingWithdrawals
                 const withdrawalsRef = ref(database, 'pendingWithdrawals');
                 const newWithdrawalRef = push(withdrawalsRef);
+                const withdrawalId = newWithdrawalRef.key;
+                
                 await set(newWithdrawalRef, withdrawalData);
 
-                // Update user's available and totalBalance
+                // Create transaction history under user (status: pending)
+                const transactionData = {
+                    type: 'withdrawal',
+                    amount: amount,
+                    fee: fee,
+                    status: 'pending',
+                    btcAddress: account,
+                    method: method,
+                    requestDate: ts
+                };
+
+                // Deduct from user's available and totalBalance
                 const userRef = ref(database, 'users/' + user.uid);
                 const userSnapshot = await get(userRef);
                 const currentAvailable = userSnapshot.val().available || 0;
                 const currentTotalBalance = userSnapshot.val().totalBalance || 0;
                 
-                await update(userRef, {
-                    available: Math.max(0, currentAvailable - amount),
-                    totalBalance: Math.max(0, currentTotalBalance - amount)
-                });
+                const updates = {};
+                updates[`users/${user.uid}/available`] = Math.max(0, currentAvailable - amount);
+                updates[`users/${user.uid}/totalBalance`] = Math.max(0, currentTotalBalance - amount);
+                updates[`users/${user.uid}/transactions/${withdrawalId}`] = transactionData;
+                
+                await update(ref(database), updates);
 
                 successMessage.textContent = 'Withdrawal request submitted successfully!';
                 successMessage.classList.add('show');
                 errorMessage.classList.remove('show');
 
-                // Reload balance
                 await loadUserBalance();
 
                 setTimeout(() => {
@@ -516,7 +508,6 @@ import { auth, database } from "./firebase.js";
         });
     }
 
-    // Wait for DOM to be ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
