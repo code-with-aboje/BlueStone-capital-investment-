@@ -4,79 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Withdrawal Approvals - Crest Point</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
             --primary: #10b981;
-            --dark: #059669;
-            --light: #d1fae5;
             --success: #22c55e;
-            --warning: #f59e0b;
             --danger: #ef4444;
-            --gray: #666;
-            --text: #000;
+            --gray-dark: #1f2937;
+            --gray-light: #9ca3af;
+            --bg: #f9fafb;
             --white: #fff;
-            --border: #e5e5e5;
-            --hover: #f0fdf4;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border: #e5e7eb;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: #f9fafb;
-            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--gray-dark);
             font-size: 14px;
         }
 
         .header {
-            background: linear-gradient(135deg, var(--primary), var(--dark));
-            color: var(--white);
-            padding: 24px;
-            box-shadow: var(--shadow);
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 32px 24px;
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .header h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
         }
 
         .header p {
-            opacity: 0.9;
-            font-size: 16px;
+            color: var(--gray-light);
+            font-size: 14px;
         }
 
         .stats-bar {
             background: var(--white);
-            padding: 20px 24px;
             border-bottom: 1px solid var(--border);
-            display: flex;
-            gap: 32px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 20px 24px;
         }
 
-        .stat {
-            text-align: center;
+        .stats-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 24px;
         }
 
-        .stat-value {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--gray);
-            margin-top: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        .stat { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 12px; color: var(--gray-light); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
 
         .container {
             max-width: 1200px;
@@ -85,235 +73,159 @@
         }
 
         .controls {
-            background: var(--white);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
             display: flex;
             gap: 16px;
+            margin-bottom: 24px;
             align-items: center;
         }
 
         .tabs {
             display: flex;
             gap: 8px;
+            border-radius: 8px;
+            background: var(--white);
+            padding: 4px;
+            border: 1px solid var(--border);
         }
 
         .tab {
-            padding: 8px 16px;
-            border: 1px solid var(--border);
-            background: var(--white);
-            border-radius: 20px;
+            padding: 8px 14px;
+            background: transparent;
+            border: none;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 500;
+            border-radius: 6px;
+            color: var(--gray-light);
             transition: all 0.2s;
         }
 
         .tab.active {
             background: var(--primary);
             color: var(--white);
-            border-color: var(--primary);
-        }
-
-        .tab:hover:not(.active) {
-            background: var(--hover);
         }
 
         .btn-refresh {
             background: var(--primary);
             color: var(--white);
-            border: 0;
+            border: none;
             padding: 8px 16px;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 13px;
             font-weight: 500;
             margin-left: auto;
-            transition: 0.2s;
+            transition: all 0.2s;
         }
 
         .btn-refresh:hover {
-            transform: translateY(-1px);
+            opacity: 0.9;
         }
 
-        .grid {
-            display: grid;
-            gap: 16px;
-        }
+        .grid { display: grid; gap: 16px; }
 
         .card {
             background: var(--white);
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: var(--shadow);
-            border-left: 4px solid var(--warning);
-            transition: all 0.3s;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
         }
 
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .card.approved {
-            border-left-color: var(--success);
-        }
-
-        .card.rejected {
-            border-left-color: var(--danger);
-        }
+        .card:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
 
         .card-header {
             display: flex;
             justify-content: space-between;
-            align-items: start;
+            align-items: flex-start;
             margin-bottom: 16px;
         }
 
-        .card-title h3 {
-            font-size: 18px;
-            margin-bottom: 4px;
+        .card-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
         }
 
-        .card-title p {
-            color: var(--gray);
+        .card-info p {
             font-size: 13px;
+            color: var(--gray-light);
+            margin: 2px 0;
         }
 
         .amount {
             background: var(--primary);
             color: var(--white);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 700;
             font-size: 16px;
+            white-space: nowrap;
         }
 
         .details {
-            background: var(--hover);
-            padding: 16px;
-            border-radius: 8px;
-            margin: 16px 0;
+            background: var(--bg);
+            padding: 12px;
+            border-radius: 6px;
+            margin: 12px 0;
+            font-size: 13px;
+            display: grid;
+            gap: 8px;
         }
 
         .detail-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
+            gap: 8px;
         }
 
-        .detail-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .detail-label {
-            font-weight: 500;
-            color: var(--gray);
-            font-size: 12px;
-        }
-
-        .detail-value {
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-        }
-
-        .address {
-            word-break: break-all;
-            background: #f3f4f6;
-            padding: 8px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
-            margin-top: 4px;
-        }
+        .detail-label { font-weight: 500; color: var(--gray-light); }
+        .detail-value { font-family: monospace; word-break: break-all; }
 
         .badge {
-            padding: 6px 12px;
-            border-radius: 16px;
+            padding: 4px 10px;
+            border-radius: 4px;
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            width: fit-content;
         }
 
-        .badge-pending {
-            background: rgba(245, 158, 11, 0.15);
-            color: var(--warning);
-        }
-
-        .badge-approved {
-            background: rgba(34, 197, 94, 0.15);
-            color: var(--success);
-        }
-
-        .badge-rejected {
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--danger);
-        }
+        .badge-pending { background: #fef3c7; color: #92400e; }
+        .badge-approved { background: #dcfce7; color: #166534; }
+        .badge-rejected { background: #fee2e2; color: #991b1b; }
 
         .actions {
             display: flex;
             gap: 12px;
-            margin-top: 20px;
+            margin-top: 16px;
         }
 
         .btn {
             flex: 1;
-            padding: 10px 20px;
-            border: 0;
-            border-radius: 8px;
+            padding: 9px 16px;
+            border: none;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 13px;
             font-weight: 500;
             transition: all 0.2s;
         }
 
-        .btn-approve {
-            background: var(--success);
-            color: var(--white);
-        }
+        .btn-approve { background: var(--success); color: var(--white); }
+        .btn-reject { background: var(--danger); color: var(--white); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .btn-reject {
-            background: var(--danger);
-            color: var(--white);
-        }
-
-        .btn:hover:not(:disabled) {
-            transform: translateY(-1px);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .loading {
+        .loading, .empty {
             text-align: center;
-            padding: 40px;
-            color: var(--gray);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
-
-        .empty {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--gray);
+            padding: 48px 20px;
+            color: var(--gray-light);
         }
 
         .empty h3 {
-            font-size: 18px;
-            margin-bottom: 8px;
+            font-size: 16px;
+            margin-bottom: 6px;
+            color: var(--gray-dark);
         }
 
         .alert {
@@ -321,96 +233,69 @@
             top: 20px;
             right: 20px;
             z-index: 1000;
-            padding: 16px 20px;
-            border-radius: 8px;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 13px;
             font-weight: 500;
             color: var(--white);
-            box-shadow: var(--shadow);
             animation: slideIn 0.3s ease;
         }
 
-        .alert.success {
-            background: var(--success);
-        }
-
-        .alert.error {
-            background: var(--danger);
-        }
+        .alert.success { background: var(--success); }
+        .alert.error { background: var(--danger); }
 
         @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 16px;
-            }
-
-            .stats-bar {
-                flex-direction: column;
-                gap: 16px;
-                text-align: center;
-            }
-
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .btn-refresh {
-                margin-left: 0;
-            }
-
-            .card-header {
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .actions {
-                flex-direction: column;
-            }
+        @media (max-width: 640px) {
+            .header { padding: 20px 16px; }
+            .header h1 { font-size: 20px; }
+            .stats-inner { grid-template-columns: 1fr; gap: 16px; }
+            .container { padding: 16px; }
+            .controls { flex-direction: column; }
+            .btn-refresh { margin-left: 0; }
+            .card-header { flex-direction: column; }
+            .actions { flex-direction: column; }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Withdrawal Approvals</h1>
-        <p>Review and approve user withdrawal requests</p>
+        <div class="header-inner">
+            <h1>Withdrawal Approvals</h1>
+            <p>Review and manage user withdrawal requests</p>
+        </div>
     </div>
 
     <div class="stats-bar">
-        <div class="stat">
-            <div class="stat-value" id="pendingCount">0</div>
-            <div class="stat-label">Pending</div>
-        </div>
-        <div class="stat">
-            <div class="stat-value" id="totalAmount">$0.00</div>
-            <div class="stat-label">Total Pending</div>
-        </div>
-        <div class="stat">
-            <div class="stat-value" id="processedCount">0</div>
-            <div class="stat-label">Processed Today</div>
+        <div class="stats-inner">
+            <div class="stat">
+                <div class="stat-value" id="pendingCount">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="totalAmount">$0</div>
+                <div class="stat-label">Total Pending</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="processedCount">0</div>
+                <div class="stat-label">Processed Today</div>
+            </div>
         </div>
     </div>
 
     <div class="container">
         <div class="controls">
             <div class="tabs">
-                <button class="tab active" onclick="filter('all')">All</button>
-                <button class="tab" onclick="filter('pending')">Pending</button>
-                <button class="tab" onclick="filter('approved')">Approved</button>
-                <button class="tab" onclick="filter('rejected')">Rejected</button>
+                <button class="tab active" onclick="filterWithdrawals('all')">All</button>
+                <button class="tab" onclick="filterWithdrawals('pending')">Pending</button>
+                <button class="tab" onclick="filterWithdrawals('approved')">Approved</button>
+                <button class="tab" onclick="filterWithdrawals('rejected')">Rejected</button>
             </div>
-            <button class="btn-refresh" onclick="refresh()">Refresh</button>
+            <button class="btn-refresh" onclick="refreshWithdrawals()">Refresh</button>
         </div>
-
         <div id="grid" class="grid">
             <div class="loading">Loading withdrawal requests...</div>
         </div>
@@ -426,44 +311,39 @@
         const db = getDatabase(app);
         const auth = getAuth(app);
 
-        let withdrawals = {};
-        let filter = 'all';
-        let admin = null;
+        let withdrawals = {}, currentFilter = 'all', admin = null;
 
         const $ = id => document.getElementById(id);
-        const fmt = a => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(a);
+        const fmt = a => `$${a.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
         const fmtDate = d => new Date(d).toLocaleString();
 
-        const stats = () => {
-            const pend = Object.values(withdrawals).filter(w => w.status === 'pending');
-            const total = pend.reduce((sum, w) => sum + (w.amount || 0), 0);
+        const updateStats = () => {
+            const pending = Object.values(withdrawals).filter(w => w.status === 'pending');
+            const total = pending.reduce((sum, w) => sum + (w.amount || 0), 0);
             const today = new Date().toDateString();
             const processed = Object.values(withdrawals).filter(w => 
                 w.processedDate && new Date(w.processedDate).toDateString() === today
             ).length;
 
-            $('pendingCount').textContent = pend.length;
+            $('pendingCount').textContent = pending.length;
             $('totalAmount').textContent = fmt(total);
             $('processedCount').textContent = processed;
         };
 
-        window.filter = (f) => {
-            filter = f;
+        window.filterWithdrawals = (f) => {
+            currentFilter = f;
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
-            render();
+            renderWithdrawals();
         };
 
-        const render = () => {
+        const renderWithdrawals = () => {
             let list = Object.entries(withdrawals);
-
-            if (filter !== 'all') {
-                list = list.filter(([_, w]) => w.status === filter);
-            }
+            if (currentFilter !== 'all') list = list.filter(([_, w]) => w.status === currentFilter);
 
             const grid = $('grid');
             if (!list.length) {
-                grid.innerHTML = `<div class="empty"><h3>No ${filter} withdrawals</h3></div>`;
+                grid.innerHTML = `<div class="empty"><h3>No ${currentFilter} withdrawals</h3></div>`;
                 return;
             }
 
@@ -472,37 +352,36 @@
                 .map(([id, w]) => {
                     const st = w.status || 'pending';
                     return `
-                        <div class="card ${st}">
+                        <div class="card">
                             <div class="card-header">
-                                <div class="card-title">
-                                    <h3>${w.userName || 'Unknown'}</h3>
+                                <div class="card-info">
+                                    <h3>${w.userName || 'Unknown User'}</h3>
                                     <p>${w.userEmail || 'No email'}</p>
-                                    <p>Requested: ${fmtDate(w.requestDate)}</p>
+                                    <p>${fmtDate(w.requestDate)}</p>
                                 </div>
                                 <div class="amount">${fmt(w.amount || 0)}</div>
                             </div>
 
                             <div class="details">
                                 <div class="detail-row">
-                                    <span class="detail-label">User ID:</span>
+                                    <span class="detail-label">ID:</span>
                                     <span class="detail-value">${(w.userId || '').substring(0, 12)}...</span>
                                 </div>
                                 <div class="detail-row">
-                                    <span class="detail-label">BTC Address:</span>
+                                    <span class="detail-label">Address:</span>
+                                    <span class="detail-value">${(w.btcAddress || 'N/A').substring(0, 30)}${(w.btcAddress || '').length > 30 ? '...' : ''}</span>
                                 </div>
-                                <div class="address">${w.btcAddress || 'N/A'}</div>
-                                <div class="detail-row" style="margin-top: 12px;">
+                                <div class="detail-row">
                                     <span class="detail-label">Status:</span>
                                     <span class="badge badge-${st}">${st}</span>
                                 </div>
-                                ${w.processedDate ? `<div class="detail-row"><span class="detail-label">Processed:</span><span class="detail-value">${fmtDate(w.processedDate)}</span></div>` : ''}
                                 ${w.processedBy ? `<div class="detail-row"><span class="detail-label">By:</span><span class="detail-value">${w.processedBy}</span></div>` : ''}
                             </div>
 
                             ${st === 'pending' ? `
                                 <div class="actions">
-                                    <button class="btn btn-approve" onclick="approve('${id}', ${w.amount}, '${w.userId}')">Approve</button>
-                                    <button class="btn btn-reject" onclick="reject('${id}', ${w.amount}, '${w.userId}')">Reject</button>
+                                    <button class="btn btn-approve" onclick="approveWithdrawal('${id}', ${w.amount}, '${w.userId}')">Approve</button>
+                                    <button class="btn btn-reject" onclick="rejectWithdrawal('${id}', ${w.amount}, '${w.userId}')">Reject</button>
                                 </div>
                             ` : ''}
                         </div>
@@ -510,53 +389,53 @@
                 }).join('');
         };
 
-        window.approve = async (id, amt, uid) => {
-            if (!confirm(`Approve withdrawal of ${fmt(amt)}?`)) return;
+        window.approveWithdrawal = async (id, amt, uid) => {
+            if (!confirm(`Approve ${fmt(amt)}?`)) return;
             try {
                 const ts = new Date().toISOString();
-                const updates = {};
-                updates[`pendingWithdrawals/${id}/status`] = 'approved';
-                updates[`pendingWithdrawals/${id}/processedDate`] = ts;
-                updates[`pendingWithdrawals/${id}/processedBy`] = admin.email;
-                updates[`users/${uid}/transactions/${id}/status`] = 'approved';
-                updates[`users/${uid}/transactions/${id}/processedDate`] = ts;
-
-                const snap = await get(ref(db, `users/${uid}`));
-                if (snap.exists()) {
-                    const bal = (snap.val().wallet?.usdBalance || 0) - amt;
-                    updates[`users/${uid}/wallet/usdBalance`] = Math.max(0, bal);
-                }
-
-                await update(ref(db), updates);
-                alert(`Approved ${fmt(amt)}!`, 'success');
+                await update(ref(db), {
+                    [`pendingWithdrawals/${id}/status`]: 'approved',
+                    [`pendingWithdrawals/${id}/processedDate`]: ts,
+                    [`pendingWithdrawals/${id}/processedBy`]: admin.email,
+                    [`users/${uid}/transactions/${id}/status`]: 'approved',
+                    [`users/${uid}/transactions/${id}/processedDate`]: ts
+                });
+                showAlert(`Approved ${fmt(amt)}!`, 'success');
             } catch (err) {
-                alert('Failed to approve');
+                showAlert('Failed to approve', 'error');
             }
         };
 
-        window.reject = async (id, amt, uid) => {
-            if (!confirm(`Reject withdrawal of ${fmt(amt)}?`)) return;
+        window.rejectWithdrawal = async (id, amt, uid) => {
+            if (!confirm(`Reject ${fmt(amt)}?`)) return;
             try {
+                const userSnap = await get(ref(db, `users/${uid}`));
+                if (!userSnap.exists()) return showAlert('User not found', 'error');
+
+                const userData = userSnap.val();
                 const ts = new Date().toISOString();
+                
                 await update(ref(db), {
                     [`pendingWithdrawals/${id}/status`]: 'rejected',
                     [`pendingWithdrawals/${id}/processedDate`]: ts,
                     [`pendingWithdrawals/${id}/processedBy`]: admin.email,
                     [`users/${uid}/transactions/${id}/status`]: 'rejected',
-                    [`users/${uid}/transactions/${id}/processedDate`]: ts
+                    [`users/${uid}/transactions/${id}/processedDate`]: ts,
+                    [`users/${uid}/available`]: (userData.available || 0) + amt,
+                    [`users/${uid}/totalBalance`]: (userData.totalBalance || 0) + amt
                 });
-                alert(`Rejected ${fmt(amt)}!`, 'success');
+                showAlert(`Rejected and refunded ${fmt(amt)}!`, 'success');
             } catch (err) {
-                alert('Failed to reject');
+                showAlert('Failed to reject', 'error');
             }
         };
 
-        window.refresh = () => {
+        window.refreshWithdrawals = () => {
             $('grid').innerHTML = '<div class="loading">Refreshing...</div>';
-            render();
+            renderWithdrawals();
         };
 
-        const alert = (msg, type = 'error') => {
+        const showAlert = (msg, type = 'error') => {
             const div = document.createElement('div');
             div.className = `alert ${type}`;
             div.textContent = msg;
@@ -564,15 +443,12 @@
             setTimeout(() => div.remove(), 4000);
         };
 
-        onAuthStateChanged(auth, user => {
-            if (user) admin = user;
-        });
-
+        onAuthStateChanged(auth, user => { if (user) admin = user; });
         onValue(ref(db, 'pendingWithdrawals'), snap => {
             withdrawals = snap.val() || {};
-            stats();
-            render();
+            updateStats();
+            renderWithdrawals();
         });
     </script>
 </body>
-            </html>
+    </html>
