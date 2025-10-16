@@ -235,17 +235,13 @@
             Object.values(users).forEach(user => {
                 total++;
                 
-                // Try multiple possible balance paths
+                // Use available or totalBalance from user object
                 const userBalance = 
-                    user.balance || 
-                    user.usdBalance || 
-                    user.accountBalance ||
-                    user.wallet?.balance || 
-                    user.wallet?.usdBalance ||
-                    user.wallet?.accountBalance ||
+                    parseFloat(user.available) || 
+                    parseFloat(user.totalBalance) || 
                     0;
                 
-                balance += parseFloat(userBalance) || 0;
+                balance += userBalance;
                 
                 if (user.withdrawalRequests) {
                     withdrawals += Array.isArray(user.withdrawalRequests) 
@@ -294,4 +290,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
