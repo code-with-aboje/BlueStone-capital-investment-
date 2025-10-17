@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - Crest Point</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Crest Point - Sign Up</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
     <style>
         * {
             margin: 0;
@@ -14,7 +14,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #4caf50 0%, #43a047 100%);
+            background: #fafafa;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -22,146 +22,163 @@
             padding: 20px;
         }
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+        .main-container {
+            max-width: 400px;
             width: 100%;
-            max-width: 420px;
-            padding: 48px 40px;
-            animation: fadeIn 0.5s ease;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .logo {
+        .logo-section {
             text-align: center;
-            margin-bottom: 32px;
-            display: flex;
+            margin-bottom: 40px;
+        }
+
+        .logo-wrapper {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 12px;
+            margin-bottom: 8px;
         }
 
         .logo-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+        }
+
+        .logo-icon img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .logo-text {
             font-size: 24px;
-            box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3);
+            font-weight: 600;
+            color: #000;
+            letter-spacing: -0.5px;
         }
 
-        .logo-text h1 {
-            color: #2e7d32;
-            font-size: 32px;
-            font-weight: 700;
-            margin: 0;
-            text-align: left;
+        .card {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
-        .logo-text p {
-            color: #66bb6a;
+        .card-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 8px;
+        }
+
+        .card-subtitle {
             font-size: 14px;
-            font-weight: 500;
-            margin: 0;
-            text-align: left;
+            color: #666;
         }
 
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            color: #333;
+            color: #000;
             font-size: 14px;
             font-weight: 500;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         input, select {
             width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 15px;
-            transition: all 0.3s ease;
+            padding: 10px 12px;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s ease;
             outline: none;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
             font-family: inherit;
+            background: white;
         }
 
         input:focus, select:focus {
-            border-color: #66bb6a;
-            box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.1), 0 4px 8px rgba(0, 0, 0, 0.08);
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        select {
+            cursor: pointer;
         }
 
         .password-toggle {
             position: relative;
         }
 
+        .password-toggle input {
+            padding-right: 40px;
+        }
+
         .toggle-btn {
             position: absolute;
-            right: 16px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
             color: #666;
             cursor: pointer;
-            font-size: 18px;
-            padding: 0;
-            width: 24px;
-            height: 24px;
+            font-size: 16px;
+            padding: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: color 0.3s ease;
+            transition: color 0.2s ease;
         }
 
         .toggle-btn:hover {
-            color: #2e7d32;
+            color: #10b981;
         }
 
         .checkbox-group {
             display: flex;
             align-items: flex-start;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 24px;
         }
 
         .checkbox-group input[type="checkbox"] {
             width: auto;
-            margin-top: 4px;
+            margin: 0;
+            margin-top: 2px;
             cursor: pointer;
+            accent-color: #10b981;
             flex-shrink: 0;
         }
 
         .checkbox-group label {
             margin: 0;
-            font-size: 14px;
             font-weight: 400;
             color: #666;
             cursor: pointer;
+            font-size: 14px;
             line-height: 1.5;
         }
 
         .checkbox-group a {
-            color: #2e7d32;
+            color: #10b981;
             text-decoration: none;
             font-weight: 500;
         }
@@ -172,55 +189,74 @@
 
         .submit-btn {
             width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+            padding: 10px;
+            background: #10b981;
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: wave 2s infinite;
+        }
+
+        @keyframes wave {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
         }
 
         .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(102, 187, 106, 0.4), 0 4px 8px rgba(0, 0, 0, 0.15);
+            background: #059669;
         }
 
         .submit-btn:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(102, 187, 106, 0.3), 0 1px 2px rgba(0, 0, 0, 0.1);
+            transform: scale(0.98);
         }
 
         .submit-btn:disabled {
-            opacity: 0.7;
+            opacity: 0.5;
             cursor: not-allowed;
         }
 
         .divider {
             display: flex;
             align-items: center;
-            margin: 32px 0;
+            text-align: center;
+            margin: 24px 0;
             color: #999;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .divider::before,
         .divider::after {
             content: '';
             flex: 1;
-            height: 1px;
-            background: #e0e0e0;
+            border-bottom: 1px solid #e5e5e5;
         }
 
         .divider::before {
-            margin-right: 16px;
+            margin-right: 12px;
         }
 
         .divider::after {
-            margin-left: 16px;
+            margin-left: 12px;
         }
 
         .signin-link {
@@ -230,26 +266,24 @@
         }
 
         .signin-link a {
-            color: #2e7d32;
+            color: #10b981;
             text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
+            font-weight: 500;
         }
 
         .signin-link a:hover {
-            color: #1b5e20;
+            text-decoration: underline;
         }
 
         .error-message {
-            display: none;
-            background: #ffebee;
-            border: 2px solid #ef5350;
-            border-radius: 8px;
-            padding: 12px 16px;
+            color: #ef4444;
+            font-size: 13px;
             margin-bottom: 20px;
-            color: #c62828;
-            font-size: 14px;
-            animation: slideDown 0.3s ease;
+            padding: 10px 12px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            display: none;
         }
 
         .error-message.show {
@@ -257,107 +291,129 @@
         }
 
         .success-message {
-            display: none;
-            background: #e8f5e9;
-            border: 2px solid #4caf50;
-            border-radius: 8px;
-            padding: 12px 16px;
+            color: #10b981;
+            font-size: 13px;
             margin-bottom: 20px;
-            color: #2e7d32;
-            font-size: 14px;
-            animation: slideDown 0.3s ease;
+            padding: 10px 12px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            display: none;
         }
 
         .success-message.show {
             display: block;
         }
 
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .eye-icon {
+            width: 16px;
+            height: 16px;
         }
 
         @media (max-width: 480px) {
-            .container {
-                padding: 36px 28px;
+            .card {
+                padding: 24px;
             }
 
-            .logo-text h1 {
-                font-size: 28px;
+            .card-title {
+                font-size: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">
-            <div class="logo-icon">
-                <i class="fas fa-map-pin"></i>
-            </div>
-            <div class="logo-text">
-                <h1>Crest Point</h1>
-                <p>Create Account</p>
+    <div class="main-container">
+        <div class="logo-section">
+            <div class="logo-wrapper">
+                <div class="logo-icon">
+                    <img src="favicon.png" alt="Crest Point Logo">
+                </div>
+                <span class="logo-text">Crest Point</span>
             </div>
         </div>
 
-        <div class="error-message" id="errorMessage"></div>
-        <div class="success-message" id="successMessage"></div>
-
-        <form id="signupForm">
-            <div class="form-group">
-                <label for="fullName">Full Name</label>
-                <input type="text" id="fullName" placeholder="John Doe" required>
+        <div class="card">
+            <div class="card-header">
+                <h1 class="card-title">Create your account</h1>
+                <p class="card-subtitle">Get started with Crest Point</p>
             </div>
 
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" placeholder="john.doe@example.com" required>
-            </div>
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
 
-            <div class="form-group">
-                <label for="country">Country</label>
-                <select id="country" required>
-                    <option value="">Select Country</option>
-                    <option value="us">United States</option>
-                    <option value="uk">United Kingdom</option>
-                    <option value="ca">Canada</option>
-                    <option value="au">Australia</option>
-                    <option value="ng">Nigeria</option>
-                    <option value="za">South Africa</option>
-                    <option value="gh">Ghana</option>
-                    <option value="ke">Kenya</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input 
+                        type="text" 
+                        id="fullName" 
+                        placeholder="John Doe" 
+                        required
+                        autocomplete="name"
+                    >
+                </div>
 
-            <div class="form-group password-toggle">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Create a strong password" required>
-                <button type="button" class="toggle-btn" onclick="togglePassword()">
-                    <i class="fas fa-eye"></i>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        placeholder="name@example.com" 
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <select id="country" required>
+                        <option value="">Select Country</option>
+                        <option value="us">United States</option>
+                        <option value="uk">United Kingdom</option>
+                        <option value="ca">Canada</option>
+                        <option value="au">Australia</option>
+                        <option value="ng">Nigeria</option>
+                        <option value="za">South Africa</option>
+                        <option value="gh">Ghana</option>
+                        <option value="ke">Kenya</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group password-toggle">
+                    <label for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        placeholder="••••••••" 
+                        required
+                        autocomplete="new-password"
+                    >
+                    <button type="button" class="toggle-btn" onclick="togglePassword()">
+                        <svg class="eye-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path id="eyeOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path id="eyeOpen2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">
+                        I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Create Account
                 </button>
+            </form>
+
+            <div class="divider">or</div>
+
+            <div class="signin-link">
+                Already have an account? <a href="/login.html">Sign in</a>
             </div>
-
-            <div class="checkbox-group">
-                <input type="checkbox" id="terms" required>
-                <label for="terms">
-                    I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
-                </label>
-            </div>
-
-            <button type="submit" class="submit-btn" id="submitBtn">Create Account</button>
-        </form>
-
-        <div class="divider">or</div>
-
-        <div class="signin-link">
-            Already have an account? <a href="/login.html">Sign in</a>
         </div>
     </div>
 
@@ -366,18 +422,19 @@
         import { ref, set } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
         import { auth, database } from "./lib/firebase.js";
 
-        const eyeIcon = document.querySelector('.toggle-btn i');
-
         window.togglePassword = function() {
             const field = document.getElementById('password');
-            field.type = field.type === 'password' ? 'text' : 'password';
+            const eyeOpen = document.getElementById('eyeOpen');
+            const eyeOpen2 = document.getElementById('eyeOpen2');
             
             if (field.type === 'password') {
-                eyeIcon.classList.remove('fa-eye-slash');
-                eyeIcon.classList.add('fa-eye');
+                field.type = 'text';
+                eyeOpen.setAttribute('d', 'M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21');
+                eyeOpen2.setAttribute('d', '');
             } else {
-                eyeIcon.classList.remove('fa-eye');
-                eyeIcon.classList.add('fa-eye-slash');
+                field.type = 'password';
+                eyeOpen.setAttribute('d', 'M15 12a3 3 0 11-6 0 3 3 0 016 0z');
+                eyeOpen2.setAttribute('d', 'M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z');
             }
         }
 
@@ -397,7 +454,7 @@
             successMessage.classList.remove('show');
             
             if (password.length < 8) {
-                errorMessage.textContent = 'Password must be at least 8 characters long!';
+                errorMessage.textContent = 'Password must be at least 8 characters long.';
                 errorMessage.classList.add('show');
                 return;
             }
@@ -415,47 +472,34 @@
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
 
-                // Update user profile with display name
                 await updateProfile(user, {
                     displayName: fullName
                 });
 
-                // Create comprehensive user data in Realtime Database
                 const now = new Date().toISOString();
                 const userData = {
                     uid: user.uid,
                     fullName: fullName,
                     email: email,
                     country: country,
-                    
-                    // Financial Data
                     totalBalance: 0,
                     invested: 0,
                     available: 0,
-                    
-                    // Income & Returns
                     totalIncome: 0,
                     todayIncome: 0,
                     totalReturn: 0,
                     totalROI: 0,
-                    
-                    // Performance
                     todayPL: 0,
                     todayTrend: 0,
                     balanceChange: 0,
                     changePercent: 0,
-                    
-                    // Investment Plans
                     activePlans: [],
                     planHistory: [],
-                    
-                    // Tracking
                     createdAt: now,
                     updatedAt: now,
                     lastIncomeUpdate: now
                 };
 
-                // Store user data in Realtime Database
                 const userRef = ref(database, 'users/' + user.uid);
                 await set(userRef, userData);
 
@@ -470,7 +514,17 @@
                 }, 2000);
             } catch (error) {
                 console.error('Registration error:', error);
-                errorMessage.textContent = error.message;
+                
+                let errorText = 'Failed to create account. Please try again.';
+                if (error.code === 'auth/email-already-in-use') {
+                    errorText = 'An account with this email already exists.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorText = 'Invalid email address.';
+                } else if (error.code === 'auth/weak-password') {
+                    errorText = 'Password is too weak. Please use a stronger password.';
+                }
+                
+                errorMessage.textContent = errorText;
                 errorMessage.classList.add('show');
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Create Account';
@@ -478,4 +532,4 @@
         });
     </script>
 </body>
-    </html>
+                </html>
