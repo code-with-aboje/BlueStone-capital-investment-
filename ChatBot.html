@@ -112,6 +112,11 @@
         const send = document.getElementById('send');
         const welcome = document.getElementById('welcome');
 
+        // Show welcome screen on load
+        window.addEventListener('load', () => {
+            console.log('ChatBot loaded successfully');
+        });
+
         input.oninput = function() { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'; };
         send.onclick = () => { if (input.value.trim()) ask(input.value.trim()); };
         input.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (input.value.trim()) ask(input.value.trim()); } };
@@ -185,4 +190,4 @@
         }
     </script>
 </body>
-  </html>
+    </html>
