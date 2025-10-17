@@ -410,6 +410,12 @@ const db = database;
         return;
       }
 
+      // Only show modal for banned or suspended users
+      if (this.userData.status !== 'banned' && this.userData.status !== 'suspended') {
+        console.log('User is active, modal not shown');
+        return;
+      }
+
       let modal = document.getElementById('statusModal');
       if (!modal) {
         modal = document.createElement('div');
@@ -422,8 +428,7 @@ const db = database;
       await this.refresh();
 
       const content = this.userData.status === 'banned' ? renderBanned(this.userData)
-                    : this.userData.status === 'suspended' ? renderSuspended(this.userData)
-                    : renderActive(this.userData);
+                    : renderSuspended(this.userData);
 
       modal.innerHTML = `<div class="status-card">${content}</div>`;
       modal.classList.add('active');
