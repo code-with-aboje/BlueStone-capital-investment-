@@ -1,13 +1,10 @@
 // userStatusDisplay.js - Firebase Real-time Database ban/suspension checking
 
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getDatabase, ref, get, set, update } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
-import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import firebase from './firebase.js';
+import { getDatabase, ref, get, set, update } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+import { auth, database } from './firebase.js';
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
+const db = database;
 
 (function() {
   const style = `
@@ -421,12 +418,16 @@ const auth = getAuth(app);
         document.body.appendChild(modal);
       }
 
+      // Refresh data before showing
+      await this.refresh();
+
       const content = this.userData.status === 'banned' ? renderBanned(this.userData)
                     : this.userData.status === 'suspended' ? renderSuspended(this.userData)
                     : renderActive(this.userData);
 
       modal.innerHTML = `<div class="status-card">${content}</div>`;
       modal.classList.add('active');
+      console.log('Status shown:', this.userData.status);
     },
 
     hide() {
@@ -472,6 +473,8 @@ const auth = getAuth(app);
     if (user) {
       console.log('User authenticated:', user.uid);
       await window.UserStatus.init(user.uid);
+      // Auto-show status on page load
+      setTimeout(() => window.UserStatus.show(), 1000);
     }
   });
 })();
