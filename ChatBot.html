@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BluStone Support</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); height: 100vh; overflow: hidden; }
+        
+        .chat-container { display: flex; flex-direction: column; height: 100%; background: white; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+        .chat-messages::-webkit-scrollbar { width: 6px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        
+        .message { display: flex; gap: 12px; max-width: 85%; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .message.user { align-self: flex-end; flex-direction: row-reverse; }
+        .message.bot { align-self: flex-start; }
+        
+        .message-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; font-weight: 600; color: white; }
+        .message.bot .message-avatar { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .message.user .message-avatar { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+        
+        .message-content { display: flex; flex-direction: column; gap: 4px; }
+        .message-bubble { padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.5; }
+        .message.bot .message-bubble { background: #f1f5f9; color: #0f172a; border-bottom-left-radius: 4px; }
+        .message.user .message-bubble { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-bottom-right-radius: 4px; }
+        .message-time { font-size: 11px; color: #94a3b8; padding: 0 4px; }
+        .message.user .message-time { text-align: right; }
+        
+        .typing-indicator { display: flex; gap: 4px; padding: 12px 16px; background: #f1f5f9; border-radius: 16px; border-bottom-left-radius: 4px; }
+        .typing-dot { width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; animation: bounce 1.4s infinite; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-8px); } }
+        
+        .welcome-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; gap: 24px; }
+        .welcome-screen.hidden { display: none; }
+        .welcome-icon { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 36px; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .welcome-title { font-size: 24px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+        .welcome-subtitle { font-size: 15px; color: #64748b; max-width: 320px; }
+        
+        .quick-questions { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 400px; }
+        .quick-question-btn { padding: 14px 20px; background: white; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 500; color: #475569; cursor: pointer; transition: all 0.3s ease; text-align: left; display: flex; align-items: center; gap: 12px; }
+        .quick-question-btn:hover { border-color: #10b981; background: #f0fdf4; color: #059669; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15); }
+        .quick-question-btn i { font-size: 16px; color: #10b981; }
+        
+        .chat-input-container { padding: 20px 24px; background: white; border-top: 1px solid #e5e7eb; }
+        .chat-input-wrapper { display: flex; gap: 12px; align-items: flex-end; max-width: 1000px; margin: 0 auto; }
+        .chat-input { flex: 1; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-family: 'Inter', sans-serif; resize: none; max-height: 120px; min-height: 44px; transition: all 0.3s ease; }
+        .chat-input:focus { outline: none; border-color: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
+        .chat-input::placeholder { color: #94a3b8; }
+        
+        .send-button { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.3s ease; }
+        .send-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+        .send-button:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .suggested-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+        .suggested-action { padding: 8px 14px; background: white; border: 1px solid #e2e8f0; border-radius: 20px; font-size: 13px; color: #475569; cursor: pointer; transition: all 0.3s ease; }
+        .suggested-action:hover { border-color: #10b981; background: #f0fdf4; color: #059669; transform: translateY(-1px); }
+        
+        @media (max-width: 768px) {
+            .chat-messages { padding: 16px; }
+            .message { max-width: 90%; }
+            .welcome-icon { width: 64px; height: 64px; font-size: 28px; }
+            .welcome-title { font-size: 20px; }
+            .chat-input-container { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="welcome-screen" id="welcome">
+            <div class="welcome-icon"><i class="fas fa-robot"></i></div>
+            <div>
+                <div class="welcome-title">Hi! I'm BluStone Assistant</div>
+                <div class="welcome-subtitle">I'm here to help you with your investment questions and account management</div>
+            </div>
+            <div class="quick-questions">
+                <button class="quick-question-btn" onclick="ask('How do I start investing?')">
+                    <i class="fas fa-chart-line"></i><span>How do I start investing?</span>
+                </button>
+                <button class="quick-question-btn" onclick="ask('What are the investment plans?')">
+                    <i class="fas fa-coins"></i><span>What are the investment plans?</span>
+                </button>
+                <button class="quick-question-btn" onclick="ask('How do I withdraw my funds?')">
+                    <i class="fas fa-wallet"></i><span>How do I withdraw my funds?</span>
+                </button>
+                <button class="quick-question-btn" onclick="ask('Tell me about account security')">
+                    <i class="fas fa-shield-halved"></i><span>Tell me about account security</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="msgs"></div>
+
+        <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+                <textarea class="chat-input" id="input" placeholder="Type your message here..." rows="1"></textarea>
+                <button class="send-button" id="send"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const msgs = document.getElementById('msgs');
+        const input = document.getElementById('input');
+        const send = document.getElementById('send');
+        const welcome = document.getElementById('welcome');
+
+        input.oninput = function() { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'; };
+        send.onclick = () => { if (input.value.trim()) ask(input.value.trim()); };
+        input.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (input.value.trim()) ask(input.value.trim()); } };
+
+        function ask(txt) {
+            welcome.classList.add('hidden');
+            addMsg(txt, 'user');
+            input.value = '';
+            input.style.height = 'auto';
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                const res = getRes(txt);
+                addMsg(res.msg, 'bot');
+                if (res.sug) addSug(res.sug);
+            }, 1000 + Math.random() * 1000);
+        }
+
+        function addMsg(txt, type) {
+            const m = document.createElement('div');
+            m.className = `message ${type}`;
+            m.innerHTML = `
+                <div class="message-avatar"><i class="fas fa-${type === 'bot' ? 'robot' : 'user'}"></i></div>
+                <div class="message-content">
+                    <div class="message-bubble">${txt}</div>
+                    <div class="message-time">${new Date().toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true})}</div>
+                </div>`;
+            msgs.appendChild(m);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        function showTyping() {
+            const t = document.createElement('div');
+            t.className = 'message bot';
+            t.id = 'typing';
+            t.innerHTML = `
+                <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+                </div>`;
+            msgs.appendChild(t);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        function hideTyping() { document.getElementById('typing')?.remove(); }
+
+        function addSug(arr) {
+            const d = document.createElement('div');
+            d.className = 'suggested-actions';
+            arr.forEach(s => {
+                const b = document.createElement('button');
+                b.className = 'suggested-action';
+                b.textContent = s;
+                b.onclick = () => { d.remove(); ask(s); };
+                d.appendChild(b);
+            });
+            msgs.appendChild(d);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        function getRes(txt) {
+            const l = txt.toLowerCase();
+            if (l.includes('invest') || l.includes('start')) return {msg: "Great! Starting your investment journey is easy. You can browse our investment plans in the 'Invest' section. We offer various plans with different durations and returns to match your financial goals.", sug: ["Show me plans", "What's the minimum investment?", "How do returns work?"]};
+            if (l.includes('plan') || l.includes('package')) return {msg: "We offer multiple investment plans ranging from short-term to long-term options. Each plan has different minimum investments and expected returns. Would you like to see our available plans?", sug: ["View all plans", "Best plan for beginners", "Compare plans"]};
+            if (l.includes('withdraw') || l.includes('funds')) return {msg: "Withdrawing your funds is simple! Go to the 'Withdraw' section, enter the amount you'd like to withdraw, and provide your payment details. Withdrawals are typically processed within 24-48 hours.", sug: ["Withdrawal process", "Minimum withdrawal amount", "Payment methods"]};
+            if (l.includes('security') || l.includes('safe')) return {msg: "Your security is our top priority. We use bank-level encryption, two-factor authentication, and regular security audits. Your funds are stored securely and we never share your personal information.", sug: ["Enable 2FA", "Account settings", "Privacy policy"]};
+            if (l.includes('profit') || l.includes('return')) return {msg: "Returns vary by investment plan. Our plans offer competitive returns ranging from 5% to 25% depending on the plan duration and investment amount. All returns are calculated transparently and paid on schedule.", sug: ["Calculate my returns", "View plans", "Payment schedule"]};
+            if (l.includes('account') || l.includes('profile')) return {msg: "You can manage your account from the 'Profile' section. There you can update your personal information, view your investment history, and track your portfolio performance.", sug: ["View my profile", "Investment history", "Update information"]};
+            if (l.includes('help') || l.includes('support')) return {msg: "I'm here to help! You can ask me about investments, withdrawals, account management, or any other questions you have. Our support team is also available 24/7 if you need additional assistance.", sug: ["Contact support", "FAQ", "Investment guide"]};
+            return {msg: "I'm here to assist you! I can help with questions about investments, withdrawals, account management, and more. What would you like to know?", sug: ["Investment plans", "How to withdraw", "Account security", "Contact support"]};
+        }
+    </script>
+</body>
+  </html>
