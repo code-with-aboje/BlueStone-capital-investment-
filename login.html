@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crest Point - Login</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
     <style>
         * {
             margin: 0;
@@ -13,7 +14,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #4caf50 0%, #43a047 100%);
+            background: #fafafa;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -22,281 +23,242 @@
         }
 
         .main-container {
-            text-align: center;
-            max-width: 500px;
+            max-width: 400px;
             width: 100%;
         }
 
-        .welcome-section {
-            color: white;
-            margin-bottom: 48px;
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
         }
 
-        .logo {
-            display: flex;
+        .logo-wrapper {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 16px;
-            margin-bottom: 32px;
+            gap: 12px;
+            margin-bottom: 8px;
         }
 
         .logo-icon {
-            width: 64px;
-            height: 64px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            backdrop-filter: blur(10px);
-        }
-
-        .logo-text h1 {
-            font-size: 40px;
-            font-weight: 700;
-            margin: 0;
-        }
-
-        .welcome-section h2 {
-            font-size: 42px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            line-height: 1.2;
-        }
-
-        .welcome-section p {
-            font-size: 18px;
-            opacity: 0.95;
-            margin-bottom: 24px;
-        }
-
-        .button-group {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .auth-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 16px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            width: 100%;
-            background: white;
-            color: #2e7d32;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .auth-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-        }
-
-        .auth-btn:active {
-            transform: translateY(0);
-        }
-
-        .auth-btn.login-btn {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .auth-btn.login-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-
-        .btn-icon {
-            font-size: 20px;
-        }
-
-        /* Modal Overlay */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: flex-end;
-            justify-content: center;
-            z-index: 999;
-            backdrop-filter: blur(4px);
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            width: 100vw;
-            height: 50vh;
-            padding: 48px 40px;
-            position: relative;
-            animation: slideIn 0.3s ease;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(50px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #f0f0f0;
-            border: none;
             width: 40px;
             height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 24px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
         }
 
-        .close-btn:hover {
-            background: #e0e0e0;
-            transform: rotate(90deg);
+        .logo-icon img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
         }
 
-        .form-title {
-            font-size: 26px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 8px;
-            text-align: center;
+        .logo-text {
+            font-size: 24px;
+            font-weight: 600;
+            color: #000;
+            letter-spacing: -0.5px;
         }
 
-        .form-subtitle {
-            font-size: 14px;
-            color: #999;
+        .card {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
             text-align: center;
             margin-bottom: 32px;
         }
 
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            color: #333;
+            color: #000;
             font-size: 14px;
             font-weight: 500;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         input {
             width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 15px;
-            transition: all 0.3s ease;
+            padding: 10px 12px;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s ease;
             outline: none;
             font-family: inherit;
+            background: white;
         }
 
         input:focus {
-            border-color: #66bb6a;
-            box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.1);
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
 
-        .modal-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 8px;
-            box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3);
+        input::placeholder {
+            color: #999;
         }
 
-        .modal-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(102, 187, 106, 0.4);
-        }
-
-        .modal-btn:active {
-            transform: translateY(0);
-        }
-
-        .modal-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            font-size: 14px;
         }
 
         .checkbox-group {
             display: flex;
             align-items: center;
-            margin-top: 16px;
+            gap: 6px;
         }
 
         .checkbox-group input[type="checkbox"] {
             width: auto;
-            margin-right: 8px;
+            margin: 0;
             cursor: pointer;
+            accent-color: #10b981;
         }
 
         .checkbox-group label {
             margin: 0;
-            font-size: 14px;
             font-weight: 400;
             color: #666;
             cursor: pointer;
         }
 
-        .forgot-password {
-            text-align: right;
-            margin-top: 8px;
-        }
-
-        .forgot-password a {
-            color: #2e7d32;
-            font-size: 13px;
+        .forgot-link {
+            color: #10b981;
             text-decoration: none;
             font-weight: 500;
         }
 
-        .error-message {
-            color: #d32f2f;
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 6px;
             font-size: 14px;
-            margin-bottom: 16px;
-            padding: 12px;
-            background: #ffebee;
-            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: wave 2s infinite;
+        }
+
+        @keyframes wave {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        .submit-btn:hover {
+            background: #059669;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 24px 0;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .divider::before {
+            margin-right: 12px;
+        }
+
+        .divider::after {
+            margin-left: 12px;
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 10px;
+            background: white;
+            color: #000;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .register-btn:hover {
+            background: #fafafa;
+            border-color: #d4d4d4;
+        }
+
+        .register-btn:active {
+            transform: scale(0.98);
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 13px;
+            margin-bottom: 20px;
+            padding: 10px 12px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
             display: none;
         }
 
@@ -304,130 +266,79 @@
             display: block;
         }
 
-        .hidden {
-            display: none;
-        }
-
-        /* Mobile adjustments */
-        @media (max-width: 768px) {
-            .welcome-section h2 {
-                font-size: 32px;
+        @media (max-width: 480px) {
+            .card {
+                padding: 24px;
             }
 
-            .welcome-section p {
-                font-size: 16px;
-            }
-
-            .modal-overlay {
-                align-items: flex-end;
-                padding: 0;
-            }
-
-            .modal-content {
-                border-radius: 24px 24px 0 0;
-                width: 100vw;
-                height: 90vh;
-                max-height: 90vh;
-                animation: slideUpMobile 0.4s ease;
-                padding: 24px 20px;
-                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
-            }
-
-            @keyframes slideUpMobile {
-                from {
-                    transform: translateY(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
-            }
-
-            .form-title {
-                font-size: 22px;
-            }
-
-            .form-subtitle {
-                margin-bottom: 24px;
+            .card-title {
+                font-size: 20px;
             }
         }
     </style>
 </head>
 <body>
     <div class="main-container">
-        <div class="welcome-section">
-            <div class="logo">
-                <div class="logo-icon">📍</div>
-                <div class="logo-text">
-                    <h1>Crest Point</h1>
+        <div class="logo-section">
+            <div class="logo-wrapper">
+                <div class="logo-icon">
+                    <img src="favicon.png" alt="Crest Point Logo">
                 </div>
+                <span class="logo-text">Crest Point</span>
             </div>
-            <h2>Manage Your Locations</h2>
-            <p>Track, monitor, and optimize your business locations all in one platform.</p>
         </div>
 
-        <div class="button-group">
-            <button class="auth-btn" onclick="window.location.href='register.html'">
-                <span class="btn-icon">✓</span>
-                <span>Register with Crest Point</span>
-            </button>
-            <button class="auth-btn login-btn" onclick="openLoginModal()">
-                <span class="btn-icon">🔐</span>
-                <span>Login with Crest Point</span>
-            </button>
-        </div>
-    </div>
+        <div class="card">
+            <div class="card-header">
+                <h1 class="card-title">Welcome back</h1>
+                <p class="card-subtitle">Sign in to your account</p>
+            </div>
 
-    <!-- Modal Overlay -->
-    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <button class="close-btn" onclick="closeModal()">×</button>
+            <div class="error-message" id="errorMessage"></div>
 
-            <!-- Login Form -->
-            <div id="loginForm">
-                <div class="form-title">Welcome back</div>
-                <div class="form-subtitle">Sign in to your account</div>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        placeholder="name@example.com" 
+                        required
+                        autocomplete="email"
+                    >
+                </div>
 
-                <div class="error-message" id="errorMessage"></div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        placeholder="••••••••" 
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
 
-                <form id="loginFormEl" onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label for="loginEmail">Email Address</label>
-                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="loginPassword">Password</label>
-                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
-                        <div class="forgot-password">
-                            <a href="#">Forgot password?</a>
-                        </div>
-                    </div>
-
+                <div class="form-footer">
                     <div class="checkbox-group">
                         <input type="checkbox" id="remember">
                         <label for="remember">Remember me</label>
                     </div>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
 
-                    <button type="submit" class="modal-btn" id="loginBtn">Sign In</button>
-                </form>
-            </div>
+                <button type="submit" class="submit-btn" id="loginBtn">
+                    Sign in
+                </button>
+            </form>
+
+            <div class="divider">or</div>
+
+            <button class="register-btn" onclick="window.location.href='register.html'">
+                Create an account
+            </button>
         </div>
     </div>
-
-    <script>
-        function openLoginModal() {
-            document.getElementById('modalOverlay').classList.add('active');
-        }
-
-        function closeModal(event) {
-            if (event && event.target !== document.getElementById('modalOverlay')) {
-                return;
-            }
-            document.getElementById('modalOverlay').classList.remove('active');
-        }
-    </script>
 
     <script type="module">
         import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
@@ -436,8 +347,8 @@
         async function handleLogin(event) {
             event.preventDefault();
             
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('remember').checked;
             const loginBtn = document.getElementById('loginBtn');
             const errorMessage = document.getElementById('errorMessage');
@@ -448,24 +359,32 @@
 
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                console.log('Login successful:', userCredential.user);
                 
                 if (rememberMe) {
                     localStorage.setItem('userEmail', email);
                 }
                 
-                // Redirect to dashboard or home page
                 window.location.href = '/invest.html';
             } catch (error) {
                 console.error('Login error:', error);
-                errorMessage.textContent = error.message;
+                
+                let errorText = 'Failed to sign in. Please check your credentials.';
+                if (error.code === 'auth/user-not-found') {
+                    errorText = 'No account found with this email.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorText = 'Incorrect password.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorText = 'Invalid email address.';
+                }
+                
+                errorMessage.textContent = errorText;
                 errorMessage.classList.add('show');
                 loginBtn.disabled = false;
-                loginBtn.textContent = 'Sign In';
+                loginBtn.textContent = 'Sign in';
             }
         }
 
         window.handleLogin = handleLogin;
     </script>
 </body>
-    </html>
+                    </html>
