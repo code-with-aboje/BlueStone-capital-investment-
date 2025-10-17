@@ -314,25 +314,45 @@
             display: block;
         }
 
-        /* Chat Frame */
-        .chat-frame {
+        /* Chat Modal */
+        .chat-modal {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 380px;
-            height: 500px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .chat-modal.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .chat-modal-content {
+            width: 90%;
+            max-width: 500px;
+            height: 80%;
+            max-height: 600px;
             background: white;
             border-radius: 16px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-            display: none;
-            flex-direction: column;
-            z-index: 1000;
-            border: 1px solid #e5e7eb;
-            animation: slideUp 0.3s ease;
-        }
-
-        .chat-frame.active {
             display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease;
         }
 
         @keyframes slideUp {
@@ -380,76 +400,16 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        .chat-messages {
+        .chat-iframe-container {
             flex: 1;
-            padding: 16px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+            overflow: hidden;
         }
 
-        .message {
-            padding: 10px 14px;
-            border-radius: 12px;
-            max-width: 80%;
-            font-size: 13px;
-            line-height: 1.4;
-        }
-
-        .message.bot {
-            background: #f1f5f9;
-            color: #0f172a;
-            align-self: flex-start;
-        }
-
-        .message.user {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            align-self: flex-end;
-        }
-
-        .chat-input-area {
-            padding: 16px;
-            border-top: 1px solid #e5e7eb;
-            display: flex;
-            gap: 10px;
-        }
-
-        .chat-input {
-            flex: 1;
-            padding: 10px 14px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 13px;
-            font-family: inherit;
-            transition: all 0.3s ease;
-        }
-
-        .chat-input:focus {
-            outline: none;
-            border-color: #10b981;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-        }
-
-        .chat-send-btn {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
+        .chat-iframe {
+            width: 100%;
+            height: 100%;
             border: none;
-            border-radius: 8px;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 18px;
-            transition: all 0.3s ease;
-        }
-
-        .chat-send-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            border-radius: 0 0 16px 16px;
         }
 
         /* Chat Button */
@@ -476,10 +436,6 @@
         .chat-button:hover {
             transform: scale(1.1);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .chat-button.hidden {
-            display: none;
         }
 
         /* Bottom Navigation - Mobile Only */
@@ -620,16 +576,23 @@
                 font-size: 16px;
             }
 
-            .chat-frame {
-                width: 100%;
-                height: 100%;
-                bottom: 0;
-                right: 0;
-                border-radius: 0;
+            .chat-button {
+                bottom: 90px;
             }
 
-            .chat-frame.active {
-                display: flex;
+            .chat-modal-content {
+                width: 95%;
+                height: 90%;
+                max-height: none;
+                border-radius: 12px;
+            }
+
+            .chat-header {
+                border-radius: 12px 12px 0 0;
+            }
+
+            .chat-iframe {
+                border-radius: 0 0 12px 12px;
             }
         }
 
@@ -723,27 +686,22 @@
                 <i class="fas fa-comments"></i>
             </button>
 
-            <!-- Chat Frame -->
-            <div class="chat-frame" id="chatFrame">
-                <div class="chat-header">
-                    <span class="chat-title">BluStone Support</span>
-                    <button class="chat-close-btn" id="chatCloseBtn">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="chat-messages" id="chatMessages">
-                    <div class="message bot">
-                        Hello! How can we help you today?
+            <!-- Chat Modal -->
+            <div class="chat-modal" id="chatModal">
+                <div class="chat-modal-content">
+                    <div class="chat-header">
+                        <span class="chat-title">BluStone Support</span>
+                        <button class="chat-close-btn" id="chatCloseBtn">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
-                </div>
-                <div class="chat-input-area">
-                    <input type="text" class="chat-input" id="chatInput" placeholder="Type a message...">
-                    <button class="chat-send-btn" id="chatSendBtn">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
+                    <div class="chat-iframe-container">
+                        <iframe class="chat-iframe" id="chatIframe" src=""></iframe>
+                    </div>
                 </div>
             </div>
 
+            
             <!-- iFrame Container -->
             <div class="iframe-container">
                 <iframe class="content-frame" id="contentFrame" src="./dashboard.html"></iframe>
@@ -794,11 +752,9 @@
         const headerUserName = document.getElementById('headerUserName');
         const avatarText = document.getElementById('avatarText');
         const chatButton = document.getElementById('chatButton');
-        const chatFrame = document.getElementById('chatFrame');
+        const chatModal = document.getElementById('chatModal');
+        const chatIframe = document.getElementById('chatIframe');
         const chatCloseBtn = document.getElementById('chatCloseBtn');
-        const chatInput = document.getElementById('chatInput');
-        const chatSendBtn = document.getElementById('chatSendBtn');
-        const chatMessages = document.getElementById('chatMessages');
         const sidebarNavItems = document.querySelectorAll('.sidebar .nav-item');
         const bottomNavItems = document.querySelectorAll('.bottom-nav .nav-item');
         const allNavItems = [...sidebarNavItems, ...bottomNavItems];
@@ -894,42 +850,21 @@
 
         // Chat functionality
         chatButton.addEventListener('click', () => {
-            chatFrame.classList.toggle('active');
-            chatButton.classList.toggle('hidden');
-            if (chatFrame.classList.contains('active')) {
-                chatInput.focus();
+            chatModal.classList.add('active');
+            // Load the chatbot iframe only when opened
+            if (!chatIframe.src) {
+                chatIframe.src = 'ChatBot.html';
             }
         });
 
         chatCloseBtn.addEventListener('click', () => {
-            chatFrame.classList.remove('active');
-            chatButton.classList.remove('hidden');
+            chatModal.classList.remove('active');
         });
 
-        function sendMessage() {
-            const message = chatInput.value.trim();
-            if (message) {
-                const userMsg = document.createElement('div');
-                userMsg.className = 'message user';
-                userMsg.textContent = message;
-                chatMessages.appendChild(userMsg);
-                chatInput.value = '';
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-
-                setTimeout(() => {
-                    const botMsg = document.createElement('div');
-                    botMsg.className = 'message bot';
-                    botMsg.textContent = 'Thank you for your message. Our support team will get back to you shortly.';
-                    chatMessages.appendChild(botMsg);
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }, 1000);
-            }
-        }
-
-        chatSendBtn.addEventListener('click', sendMessage);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
+        // Close modal when clicking outside
+        chatModal.addEventListener('click', (e) => {
+            if (e.target === chatModal) {
+                chatModal.classList.remove('active');
             }
         });
 
