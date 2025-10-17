@@ -3,347 +3,460 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Management - Crest Point</title>
+    <title>User Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
-            --primary: #10b981;
-            --dark: #059669;
-            --light: #d1fae5;
-            --success: #22c55e;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --gray: #666;
-            --text: #000;
-            --bg: #fff;
-            --hover: #f0fdf4;
-            --border: #e5e5e5;
-            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --green: #00c06b;
+            --green-light: #00e87d;
+            --green-dark: #00a35e;
+            --red: #ff4444;
+            --orange: #f5a623;
+            --gray-1: #fafafa;
+            --gray-2: #eaeaea;
+            --gray-3: #666;
+            --black: #000;
+            --white: #fff;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #f9fafb;
-            color: var(--text);
+            background: linear-gradient(180deg, var(--gray-1) 0%, var(--white) 100%);
+            color: var(--black);
             font-size: 14px;
+            min-height: 100vh;
         }
 
         .header {
-            background: linear-gradient(135deg, var(--primary), var(--dark));
-            color: var(--bg);
-            padding: 24px;
-            box-shadow: var(--shadow);
+            background: linear-gradient(135deg, var(--green), var(--green-dark));
+            padding: 80px 24px 40px;
+            border-bottom: 1px solid var(--gray-2);
+            position: relative;
+            overflow: hidden;
         }
 
-        .header h1 { font-size: 28px; margin-bottom: 4px; }
-        .header p { opacity: 0.9; font-size: 14px; }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-20px, 20px); }
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .header h1 { 
+            font-size: 48px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 8px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .header p { 
+            color: rgba(255,255,255,0.9);
+            font-size: 16px;
+            animation: slideDown 0.6s ease-out 0.1s backwards;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         .stats {
-            background: var(--bg);
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            gap: 32px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
         }
 
-        .stat {
-            text-align: center;
+        .stat-card {
+            background: var(--white);
+            border: 1px solid var(--gray-2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            animation: scaleIn 0.5s ease-out backwards;
+            position: relative;
         }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--green), var(--green-light));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .stat-card:hover {
+            border-color: var(--green);
+            box-shadow: 0 8px 30px rgba(0,192,107,0.12);
+            transform: translateY(-4px);
+        }
+
+        .stat-card:hover::before { transform: scaleX(1); }
         
         .stat-val {
-            font-size: 24px;
+            font-size: 32px;
             font-weight: 600;
-            color: var(--primary);
+            color: var(--green);
+            transition: transform 0.3s ease;
         }
+
+        .stat-card:hover .stat-val { transform: scale(1.05); }
         
         .stat-label {
-            font-size: 11px;
-            color: var(--gray);
+            font-size: 13px;
+            color: var(--gray-3);
             margin-top: 4px;
-            text-transform: uppercase;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 24px;
+            padding: 0 24px 80px;
         }
 
         .controls {
-            background: var(--bg);
-            padding: 16px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
             display: flex;
             gap: 12px;
-            align-items: center;
             flex-wrap: wrap;
+            margin-bottom: 24px;
+            animation: slideDown 0.6s ease-out 0.5s backwards;
         }
 
         .tabs {
             display: flex;
-            gap: 6px;
+            gap: 8px;
+            background: var(--white);
+            padding: 6px;
+            border-radius: 16px;
+            border: 1px solid var(--gray-2);
         }
 
         .tab {
-            padding: 8px 14px;
-            border: 1px solid var(--border);
-            background: var(--bg);
-            border-radius: 16px;
+            padding: 10px 18px;
+            border: 0;
+            background: transparent;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 500;
-            transition: 0.2s;
+            color: var(--gray-3);
+            transition: all 0.3s ease;
+            border-radius: 12px;
         }
 
         .tab.active {
-            background: var(--primary);
-            color: var(--bg);
-            border-color: var(--primary);
+            background: var(--green);
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,192,107,0.3);
         }
 
         .tab:hover:not(.active) {
-            background: var(--hover);
+            background: var(--gray-1);
+            transform: translateY(-1px);
         }
 
         .search {
             flex: 1;
             min-width: 200px;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
+            padding: 11px 16px;
+            border: 1px solid var(--gray-2);
+            border-radius: 16px;
+            background: var(--white);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(0,192,107,0.1);
         }
 
         .btn-refresh {
-            background: var(--primary);
-            color: var(--bg);
+            background: linear-gradient(135deg, var(--green), var(--green-dark));
+            color: white;
             border: 0;
-            padding: 10px 16px;
-            border-radius: 6px;
+            padding: 11px 20px;
+            border-radius: 16px;
             cursor: pointer;
             font-weight: 500;
-            transition: 0.2s;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,192,107,0.2);
         }
 
         .btn-refresh:hover {
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,192,107,0.3);
         }
 
-        .grid {
-            display: grid;
-            gap: 16px;
-        }
+        .grid { display: grid; gap: 20px; }
 
         .card {
-            background: var(--bg);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-            border-left: 4px solid var(--success);
-            transition: 0.3s;
+            background: var(--white);
+            border: 1px solid var(--gray-2);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.4s ease;
+            animation: fadeInUp 0.5s ease-out backwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--green), var(--green-light));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: var(--green);
+            box-shadow: 0 30px 60px rgba(0,192,107,0.15);
+            transform: translateY(-6px);
         }
 
-        .card.suspended {
-            border-left-color: var(--warning);
-        }
+        .card:hover::after { opacity: 1; }
 
-        .card.banned {
-            border-left-color: var(--danger);
-        }
+        .card.suspended::after { background: linear-gradient(90deg, var(--orange), #ffb84d); }
+        .card.banned::after { background: linear-gradient(90deg, var(--red), #ff6b6b); }
 
         .card-header {
             display: flex;
             justify-content: space-between;
-            align-items: start;
-            margin-bottom: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--gray-2);
         }
 
         .card-title h3 {
-            font-size: 16px;
-            margin-bottom: 2px;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            transition: color 0.3s ease;
         }
 
+        .card:hover .card-title h3 { color: var(--green); }
+
         .card-title p {
-            color: var(--gray);
-            font-size: 12px;
+            color: var(--gray-3);
+            font-size: 13px;
+            margin-bottom: 3px;
         }
 
         .badge {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 10px;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
         }
 
-        .badge-active {
-            background: rgba(34,197,94,0.15);
-            color: var(--success);
-        }
-
-        .badge-suspended {
-            background: rgba(245,158,11,0.15);
-            color: var(--warning);
-        }
-
-        .badge-banned {
-            background: rgba(239,68,68,0.15);
-            color: var(--danger);
-        }
+        .badge-active { background: rgba(0,192,107,0.15); color: var(--green); }
+        .badge-suspended { background: rgba(245,166,35,0.15); color: var(--orange); }
+        .badge-banned { background: rgba(255,68,68,0.15); color: var(--red); }
 
         .details {
-            background: var(--hover);
-            padding: 12px;
-            border-radius: 6px;
-            margin: 12px 0;
-            font-size: 12px;
+            display: grid;
+            gap: 14px;
+            margin: 20px 0;
+            font-size: 13px;
         }
 
         .detail-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 6px;
+            padding: 10px 0;
+            transition: padding 0.3s ease;
         }
 
-        .detail-row:last-child {
-            margin-bottom: 0;
-        }
+        .detail-row:hover { padding-left: 8px; }
 
         .detail-label {
-            color: var(--gray);
+            color: var(--gray-3);
             font-weight: 500;
+        }
+
+        .detail-value {
+            color: var(--black);
+            font-family: monospace;
+            font-size: 12px;
+            background: var(--gray-1);
+            padding: 4px 8px;
+            border-radius: 6px;
         }
 
         .actions {
             display: flex;
             gap: 10px;
-            margin-top: 16px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-2);
         }
 
         .btn {
             flex: 1;
-            padding: 9px 14px;
-            border: 0;
-            border-radius: 6px;
+            padding: 10px 18px;
+            border: 2px solid var(--gray-2);
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            transition: 0.2s;
-            color: var(--bg);
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: var(--white);
         }
 
-        .btn-suspend {
-            background: var(--warning);
-        }
+        .btn-suspend { border-color: var(--orange); color: var(--orange); }
+        .btn-suspend:hover { background: var(--orange); color: white; transform: translateY(-2px); }
 
-        .btn-ban {
-            background: var(--danger);
-        }
+        .btn-ban { border-color: var(--red); color: var(--red); }
+        .btn-ban:hover { background: var(--red); color: white; transform: translateY(-2px); }
 
-        .btn-unban {
-            background: var(--success);
-        }
+        .btn-unban { border-color: var(--green); color: var(--green); }
+        .btn-unban:hover { background: var(--green); color: white; transform: translateY(-2px); }
 
-        .btn:hover {
-            transform: translateY(-1px);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
         .loading {
             text-align: center;
-            padding: 40px;
-            color: var(--gray);
-            animation: pulse 2s infinite;
+            padding: 80px;
+            color: var(--gray-3);
         }
 
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--gray-2);
+            border-top-color: var(--green);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 8px;
+            vertical-align: middle;
         }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .empty {
             text-align: center;
-            padding: 60px 20px;
-            color: var(--gray);
+            padding: 80px 20px;
+            color: var(--gray-3);
         }
 
         .empty h3 {
-            font-size: 16px;
-            margin-bottom: 6px;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
         }
 
         .alert {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 16px;
-            border-radius: 6px;
-            font-size: 13px;
+            top: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 500;
             z-index: 1000;
-            animation: slideIn 0.3s ease;
+            animation: slideInRight 0.4s ease;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            border: 2px solid;
         }
 
         .alert.success {
-            background: #f0fdf4;
-            color: var(--success);
-            border: 1px solid rgba(34,197,94,0.3);
+            background: linear-gradient(135deg, rgba(0,192,107,0.95), rgba(0,232,125,0.95));
+            color: white;
+            border-color: var(--green-light);
         }
 
         .alert.error {
-            background: #fef2f2;
-            color: var(--danger);
-            border: 1px solid rgba(239,68,68,0.3);
+            background: linear-gradient(135deg, rgba(255,68,68,0.95), rgba(255,107,107,0.95));
+            color: white;
+            border-color: #ff6b6b;
         }
 
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideInRight { 
+            from { transform: translateX(400px); opacity: 0; } 
+            to { transform: translateX(0); opacity: 1; } 
+        }
 
         @media (max-width: 768px) {
-            .container { padding: 16px; }
-            .stats { flex-direction: column; gap: 16px; text-align: center; }
-            .controls { flex-direction: column; align-items: stretch; }
-            .card-header { flex-direction: column; gap: 8px; }
+            .header h1 { font-size: 32px; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .controls { flex-direction: column; }
+            .tabs { width: 100%; }
+            .tab { flex: 1; }
+            .card-header { flex-direction: column; gap: 12px; }
             .actions { flex-direction: column; }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>User Management</h1>
-        <p>Manage user accounts, suspensions, and bans</p>
+        <div class="header-content">
+            <h1>User Management</h1>
+            <p>Manage user accounts, suspensions, and bans</p>
+        </div>
     </div>
 
     <div class="stats">
-        <div class="stat">
+        <div class="stat-card">
             <div class="stat-val" id="total">0</div>
-            <div class="stat-label">Total</div>
+            <div class="stat-label">Total Users</div>
         </div>
-        <div class="stat">
+        <div class="stat-card">
             <div class="stat-val" id="active">0</div>
             <div class="stat-label">Active</div>
         </div>
-        <div class="stat">
+        <div class="stat-card">
             <div class="stat-val" id="suspended">0</div>
             <div class="stat-label">Suspended</div>
         </div>
-        <div class="stat">
+        <div class="stat-card">
             <div class="stat-val" id="banned">0</div>
             <div class="stat-label">Banned</div>
         </div>
@@ -352,17 +465,17 @@
     <div class="container">
         <div class="controls">
             <div class="tabs">
-                <button class="tab active" onclick="filter('all')">All</button>
-                <button class="tab" onclick="filter('active')">Active</button>
-                <button class="tab" onclick="filter('suspended')">Suspended</button>
-                <button class="tab" onclick="filter('banned')">Banned</button>
+                <button class="tab active" onclick="filterUsers('all')">All</button>
+                <button class="tab" onclick="filterUsers('active')">Active</button>
+                <button class="tab" onclick="filterUsers('suspended')">Suspended</button>
+                <button class="tab" onclick="filterUsers('banned')">Banned</button>
             </div>
-            <input type="text" class="search" placeholder="Search users..." id="search" oninput="search()">
+            <input type="text" class="search" placeholder="Search users..." id="search" oninput="searchUsers()">
             <button class="btn-refresh" onclick="refresh()">Refresh</button>
         </div>
 
         <div id="grid" class="grid">
-            <div class="loading">Loading users...</div>
+            <div class="loading">Loading users</div>
         </div>
     </div>
 
@@ -376,138 +489,91 @@
         const db = getDatabase(app);
         const auth = getAuth(app);
 
-        let users = {};
-        let filter = 'all';
-        let search = '';
-        let admin = null;
-
+        let users = {}, filter = 'all', search = '', admin = null;
         const $ = id => document.getElementById(id);
-        const fmt = d => new Date(d).toLocaleString();
+        const fmt = d => new Date(d).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
         const stats = () => {
-            const list = Object.values(users);
-            const act = list.filter(u => !u.status || (u.status !== 'suspended' && u.status !== 'banned'));
-            const sus = list.filter(u => u.status === 'suspended');
-            const ban = list.filter(u => u.status === 'banned');
-            
-            $('total').textContent = list.length;
-            $('active').textContent = act.length;
-            $('suspended').textContent = sus.length;
-            $('banned').textContent = ban.length;
+            const l = Object.values(users);
+            const a = l.filter(u => !u.status || (u.status !== 'suspended' && u.status !== 'banned'));
+            const s = l.filter(u => u.status === 'suspended');
+            const b = l.filter(u => u.status === 'banned');
+            $('total').textContent = l.length;
+            $('active').textContent = a.length;
+            $('suspended').textContent = s.length;
+            $('banned').textContent = b.length;
         };
 
-        window.filter = (f) => {
+        window.filterUsers = f => {
             filter = f;
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
             render();
         };
 
-        window.search = () => {
-            search = $('search').value.toLowerCase();
-            render();
-        };
+        window.searchUsers = () => { search = $('search').value.toLowerCase(); render(); };
 
         const render = () => {
             let list = Object.entries(users);
-
-            if (filter !== 'all') {
-                list = list.filter(([_, u]) => (u.status || 'active') === filter);
-            }
-
-            if (search) {
-                list = list.filter(([_, u]) => 
-                    (u.name || '').toLowerCase().includes(search) ||
-                    (u.email || '').toLowerCase().includes(search) ||
-                    _.toLowerCase().includes(search)
-                );
-            }
+            if (filter !== 'all') list = list.filter(([_, u]) => (u.status || 'active') === filter);
+            if (search) list = list.filter(([id, u]) => (u.name || '').toLowerCase().includes(search) || (u.email || '').toLowerCase().includes(search) || id.toLowerCase().includes(search));
 
             const grid = $('grid');
             if (!list.length) {
-                grid.innerHTML = `<div class="empty"><h3>No ${filter} users</h3></div>`;
+                grid.innerHTML = `<div class="empty"><h3>No ${filter === 'all' ? '' : filter} users found</h3><p>Try adjusting your search or filters</p></div>`;
                 return;
             }
 
-            grid.innerHTML = list
-                .sort(([,a], [,b]) => new Date(b.joinDate || 0) - new Date(a.joinDate || 0))
-                .map(([id, u]) => {
-                    const st = u.status || 'active';
-                    const bal = u.wallet?.usdBalance || 0;
-                    
-                    return `
-                        <div class="card ${st}">
-                            <div class="card-header">
-                                <div class="card-title">
-                                    <h3>${u.name || 'Unknown'}</h3>
-                                    <p>${u.email || 'No email'}</p>
-                                    <p>Joined: ${u.joinDate ? fmt(u.joinDate) : 'Unknown'}</p>
-                                </div>
-                                <span class="badge badge-${st}">${st}</span>
-                            </div>
-
-                            <div class="details">
-                                <div class="detail-row">
-                                    <span class="detail-label">ID:</span>
-                                    <span>${id.substring(0, 12)}...</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Balance:</span>
-                                    <span>$${bal.toFixed(2)}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Last Login:</span>
-                                    <span>${u.lastLogin ? fmt(u.lastLogin) : 'Never'}</span>
-                                </div>
-                                ${u.suspendedUntil ? `<div class="detail-row"><span class="detail-label">Suspended:</span><span>${fmt(u.suspendedUntil)}</span></div>` : ''}
-                                ${u.bannedDate ? `<div class="detail-row"><span class="detail-label">Banned:</span><span>${fmt(u.bannedDate)}</span></div>` : ''}
-                                ${u.actionReason ? `<div class="detail-row"><span class="detail-label">Reason:</span><span>${u.actionReason}</span></div>` : ''}
-                            </div>
-
-                            <div class="actions">
-                                ${st === 'active' ? `
-                                    <button class="btn btn-suspend" onclick="suspend('${id}', '${u.name}')">Suspend</button>
-                                    <button class="btn btn-ban" onclick="ban('${id}', '${u.name}')">Ban</button>
-                                ` : ''}
-                                ${st === 'suspended' ? `
-                                    <button class="btn btn-unban" onclick="unban('${id}', '${u.name}')">Unsuspend</button>
-                                    <button class="btn btn-ban" onclick="ban('${id}', '${u.name}')">Ban</button>
-                                ` : ''}
-                                ${st === 'banned' ? `
-                                    <button class="btn btn-unban" onclick="unban('${id}', '${u.name}')">Unban</button>
-                                ` : ''}
-                            </div>
+            grid.innerHTML = list.sort(([,a], [,b]) => new Date(b.joinDate || 0) - new Date(a.joinDate || 0)).map(([id, u], i) => {
+                const st = u.status || 'active';
+                const bal = u.wallet?.usdBalance || 0;
+                return `<div class="card ${st}" style="animation-delay:${i*0.05}s">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h3>${u.name || 'Unknown User'}</h3>
+                            <p>${u.email || 'No email'}</p>
+                            <p>${u.joinDate ? 'Joined ' + fmt(u.joinDate) : 'Join date unknown'}</p>
                         </div>
-                    `;
-                }).join('');
+                        <span class="badge badge-${st}">${st}</span>
+                    </div>
+                    <div class="details">
+                        <div class="detail-row"><span class="detail-label">User ID</span><span class="detail-value">${id.substring(0,16)}...</span></div>
+                        <div class="detail-row"><span class="detail-label">Balance</span><span class="detail-value">$${bal.toFixed(2)}</span></div>
+                        <div class="detail-row"><span class="detail-label">Last Login</span><span class="detail-value">${u.lastLogin ? fmt(u.lastLogin) : 'Never'}</span></div>
+                        ${u.suspendedUntil ? `<div class="detail-row"><span class="detail-label">Suspended Until</span><span class="detail-value">${fmt(u.suspendedUntil)}</span></div>` : ''}
+                        ${u.bannedDate ? `<div class="detail-row"><span class="detail-label">Banned On</span><span class="detail-value">${fmt(u.bannedDate)}</span></div>` : ''}
+                        ${u.actionReason ? `<div class="detail-row"><span class="detail-label">Reason</span><span class="detail-value">${u.actionReason}</span></div>` : ''}
+                    </div>
+                    <div class="actions">
+                        ${st === 'active' ? `<button class="btn btn-suspend" onclick="suspendUser('${id}','${u.name||'User'}')">Suspend</button><button class="btn btn-ban" onclick="banUser('${id}','${u.name||'User'}')">Ban</button>` : ''}
+                        ${st === 'suspended' ? `<button class="btn btn-unban" onclick="unbanUser('${id}','${u.name||'User'}')">Unsuspend</button><button class="btn btn-ban" onclick="banUser('${id}','${u.name||'User'}')">Ban</button>` : ''}
+                        ${st === 'banned' ? `<button class="btn btn-unban" onclick="unbanUser('${id}','${u.name||'User'}')">Unban</button>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
         };
 
-        window.suspend = async (id, name) => {
+         window.suspendUser = async (id, name) => {
             const reason = prompt(`Reason for suspending ${name}:`);
             if (!reason) return;
-            const days = prompt('Days to suspend?', '7');
+            const days = prompt('Days to suspend:', '7');
             if (!days || isNaN(days)) return;
             if (!confirm(`Suspend ${name} for ${days} days?`)) return;
-
             try {
-                const until = new Date(Date.now() + days * 86400000).toISOString();
                 await update(ref(db), {
                     [`users/${id}/status`]: 'suspended',
-                    [`users/${id}/suspendedUntil`]: until,
+                    [`users/${id}/suspendedUntil`]: new Date(Date.now() + days * 86400000).toISOString(),
                     [`users/${id}/actionReason`]: reason,
                     [`users/${id}/actionDate`]: new Date().toISOString(),
                     [`users/${id}/actionBy`]: admin.email
                 });
-                alert(`${name} suspended!`, 'success');
-            } catch (err) {
-                alert('Failed to suspend');
-            }
+                alert(`${name} suspended`, 'success');
+            } catch { alert('Failed to suspend', 'error'); }
         };
 
-        window.ban = async (id, name) => {
+        window.banUser = async (id, name) => {
             const reason = prompt(`Reason for banning ${name}:`);
             if (!reason || !confirm(`Ban ${name} permanently?`)) return;
-
             try {
                 await update(ref(db), {
                     [`users/${id}/status`]: 'banned',
@@ -517,15 +583,12 @@
                     [`users/${id}/actionBy`]: admin.email,
                     [`users/${id}/suspendedUntil`]: null
                 });
-                alert(`${name} banned!`, 'success');
-            } catch (err) {
-                alert('Failed to ban');
-            }
+                alert(`${name} banned`, 'success');
+            } catch { alert('Failed to ban', 'error'); }
         };
 
-        window.unban = async (id, name) => {
+        window.unbanUser = async (id, name) => {
             if (!confirm(`Remove all restrictions from ${name}?`)) return;
-
             try {
                 await update(ref(db), {
                     [`users/${id}/status`]: null,
@@ -535,16 +598,11 @@
                     [`users/${id}/unbannedDate`]: new Date().toISOString(),
                     [`users/${id}/unbannedBy`]: admin.email
                 });
-                alert(`${name} unbanned!`, 'success');
-            } catch (err) {
-                alert('Failed to unban');
-            }
+                alert(`${name} unbanned`, 'success');
+            } catch { alert('Failed to unban', 'error'); }
         };
 
-        window.refresh = () => {
-            $('grid').innerHTML = '<div class="loading">Refreshing...</div>';
-            render();
-        };
+        window.refresh = () => { $('grid').innerHTML = '<div class="loading">Refreshing</div>'; render(); };
 
         const alert = (msg, type = 'error') => {
             const div = document.createElement('div');
@@ -554,15 +612,8 @@
             setTimeout(() => div.remove(), 3000);
         };
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) admin = user;
-        });
-
-        onValue(ref(db, 'users'), (snap) => {
-            users = snap.val() || {};
-            stats();
-            render();
-        });
+        onAuthStateChanged(auth, user => { if (user) admin = user; });
+        onValue(ref(db, 'users'), snap => { users = snap.val() || {}; stats(); render(); });
     </script>
 </body>
-        </html>
+</html>
