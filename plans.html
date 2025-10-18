@@ -166,7 +166,7 @@
                         Total Returns
                     </div>
                     <div class="daily-income">
-                        <i class="fas fa-coins"></i>~$${dailyOn500.toFixed(2)}/day on $500 investment
+                        <i class="fas fa-coins"></i>$${dailyOn500.toFixed(2)}/day on $500 investment
                     </div>
                     <div class="plan-duration">
                         <i class="fas fa-clock"></i>${durationText} investment period
@@ -193,12 +193,12 @@
         window.openModal=name=>{
             selectedPlan=plans.find(p=>p.name===name);
             const displayName=selectedPlan.display||selectedPlan.name;
-            const dailyIncome=(selectedPlan.min*selectedPlan.returns/100)/selectedPlan.duration;
-            const totalReturns=selectedPlan.min*selectedPlan.returns/100;
+            const dailyIncome=(500*selectedPlan.returns/100)/selectedPlan.duration;
+            const totalReturns=500*selectedPlan.returns/100;
             const durationText=`${selectedPlan.duration} day${selectedPlan.duration>1?'s':''}`;
             
             document.getElementById('modalTitle').textContent=`Confirm ${displayName}`;
-            document.getElementById('confirmAmount').textContent=`$${selectedPlan.min.toFixed(2)}`;
+            document.getElementById('confirmAmount').textContent='$500.00';
             document.getElementById('sPlan').textContent=displayName;
             document.getElementById('sDaily').textContent=`$${dailyIncome.toFixed(2)}/day`;
             document.getElementById('sReturns').textContent=`$${totalReturns.toFixed(2)} (${selectedPlan.returns}% ROI)`;
