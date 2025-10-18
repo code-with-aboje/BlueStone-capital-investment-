@@ -4,83 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investment Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #fafafa; min-height: 100vh; padding: 60px 20px 100px 20px; }
-        .container { max-width: 500px; margin: 0 auto; padding-bottom: 200px; }
-
-        .dashboard-card { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 24px; padding: 24px; box-shadow: 0 8px 32px rgba(16, 185, 129, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1); position: relative; overflow: hidden; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.2); }
-        .dashboard-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, transparent 40%, rgba(255, 255, 255, 0.25) 50%, transparent 60%, transparent); animation: shine 3s infinite; }
-        @keyframes shine { 0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); } 100% { transform: translateX(100%) translateY(100%) rotate(45deg); } }
-        .card-content { position: relative; z-index: 1; }
-        .top-section { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
-        .user-name { color: white; font-size: 18px; font-weight: 600; flex: 1; }
-        .balance-section { margin-top: 8px; }
-        .balance-label { color: rgba(255, 255, 255, 0.85); font-size: 13px; font-weight: 500; margin-bottom: 6px; }
-        .balance-amount { color: white; font-size: 36px; font-weight: 700; margin-bottom: 6px; }
-        .balance-change { color: rgba(255, 255, 255, 0.95); font-size: 14px; font-weight: 600; }
-        .button-row { display: flex; gap: 10px; margin-top: 16px; }
-        .action-button { flex: 1; background: white; color: #10b981; border: none; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
-        .action-button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
-
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-        .stat-card { background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); }
-        .stat-label { color: #64748b; font-size: 12px; font-weight: 500; margin-bottom: 6px; text-transform: uppercase; }
-        .stat-value { color: #0f172a; font-size: 20px; font-weight: 700; }
-        .stat-trend { color: #10b981; font-size: 11px; font-weight: 600; margin-top: 4px; }
-
-        .pending-section { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); margin-bottom: 20px; }
-        .pending-title { font-size: 14px; font-weight: 600; color: #0f172a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-        .pending-amount { text-align: center; padding: 20px; background: #fef3c7; border-radius: 12px; margin-bottom: 16px; }
-        .pending-label { color: #92400e; font-size: 12px; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; }
-        .pending-value { color: #f59e0b; font-size: 32px; font-weight: 700; }
-        .claim-all-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; }
-
-        .plans-section { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); margin-bottom: 20px; }
-        .plans-title { font-size: 14px; font-weight: 600; color: #0f172a; margin-bottom: 14px; }
-        .plan-item { background: #f8fafc; border-left: 4px solid #10b981; border-radius: 8px; padding: 14px; margin-bottom: 12px; }
-        .plan-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .plan-info h4 { color: #0f172a; font-size: 14px; margin-bottom: 4px; font-weight: 600; }
-        .plan-status { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; background: #dcfce7; color: #059669; }
-        .claim-btn { width: 100%; padding: 10px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; }
-
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); }
-        .modal-content { background: white; margin: 10% auto; padding: 30px; border-radius: 20px; max-width: 450px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-title { font-size: 20px; font-weight: 700; color: #0f172a; }
-        .close-btn { background: none; border: none; font-size: 28px; color: #64748b; cursor: pointer; }
-        .wallet-info { background: #f1f5f9; padding: 16px; border-radius: 12px; margin: 20px 0; }
-        .wallet-label { font-size: 12px; color: #64748b; margin-bottom: 8px; font-weight: 600; }
-        .wallet-address { font-size: 14px; color: #0f172a; font-weight: 600; word-break: break-all; display: flex; justify-content: space-between; align-items: center; }
-        .copy-btn { background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-left: 8px; }
-        .input-group { margin: 20px 0; }
-        .input-label { font-size: 13px; color: #64748b; margin-bottom: 8px; font-weight: 600; display: block; }
-        .input-field { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; }
-        .submit-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px; }
-        .submit-btn:hover { opacity: 0.9; }
-        .warning { background: #fef3c7; color: #92400e; padding: 12px; border-radius: 8px; font-size: 13px; margin: 16px 0; }
-
-        .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid #e0e0e0; border-top-color: #10b981; border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:#fafafa;min-height:100vh;padding:60px 20px 100px}
+        .container{max-width:500px;margin:0 auto;padding-bottom:200px}
+        .dashboard-card{background:linear-gradient(135deg,#10b981,#059669);border-radius:24px;padding:24px;box-shadow:0 8px 32px rgba(16,185,129,.25);position:relative;overflow:hidden;margin-bottom:20px;border:1px solid rgba(255,255,255,.2)}
+        .dashboard-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent,transparent 40%,rgba(255,255,255,.25) 50%,transparent 60%,transparent);animation:shine 3s infinite}
+        @keyframes shine{0%{transform:translateX(-100%) translateY(-100%) rotate(45deg)}100%{transform:translateX(100%) translateY(100%) rotate(45deg)}}
+        .card-content{position:relative;z-index:1}
+        .user-name{color:white;font-size:18px;font-weight:600;margin-bottom:8px}
+        .balance-label{color:rgba(255,255,255,.85);font-size:13px;margin-bottom:6px}
+        .balance-amount{color:white;font-size:36px;font-weight:700;margin-bottom:6px}
+        .balance-change{color:rgba(255,255,255,.95);font-size:14px;font-weight:600}
+        .button-row{display:flex;gap:10px;margin-top:16px}
+        .action-button{flex:1;background:white;color:#10b981;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;transition:transform .3s}
+        .action-button:hover{transform:translateY(-2px)}
+        .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+        .stat-card{background:white;border-radius:16px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+        .stat-label{color:#64748b;font-size:12px;font-weight:500;margin-bottom:6px;text-transform:uppercase}
+        .stat-value{color:#0f172a;font-size:20px;font-weight:700}
+        .stat-trend{color:#10b981;font-size:11px;font-weight:600;margin-top:4px}
+        .section{background:white;border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:20px}
+        .section-title{font-size:14px;font-weight:600;color:#0f172a;margin-bottom:16px}
+        .pending-amount{text-align:center;padding:20px;background:#fef3c7;border-radius:12px;margin-bottom:16px}
+        .pending-label{color:#92400e;font-size:12px;font-weight:600;margin-bottom:8px;text-transform:uppercase}
+        .pending-value{color:#f59e0b;font-size:32px;font-weight:700}
+        .plan-item{background:#f8fafc;border-left:4px solid #10b981;border-radius:8px;padding:14px;margin-bottom:12px}
+        .plan-header{display:flex;justify-content:space-between;margin-bottom:10px}
+        .plan-info h4{color:#0f172a;font-size:14px;margin-bottom:4px;font-weight:600}
+        .plan-status{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;background:#dcfce7;color:#059669}
+        .btn{width:100%;padding:14px;background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer}
+        .btn:hover{opacity:.9}
+        .btn-sm{padding:10px;font-size:13px;font-weight:600;margin-top:10px}
+        .modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.7)}
+        .modal-content{background:white;margin:10% auto;padding:30px;border-radius:20px;max-width:450px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+        .modal-title{font-size:20px;font-weight:700;color:#0f172a}
+        .close-btn{background:none;border:none;font-size:28px;color:#64748b;cursor:pointer}
+        .input-group{margin:20px 0}
+        .input-label{font-size:13px;color:#64748b;margin-bottom:8px;font-weight:600;display:block}
+        .input-field{width:100%;padding:12px;border:2px solid #e2e8f0;border-radius:10px;font-size:16px}
+        .warning{background:#fef3c7;color:#92400e;padding:12px;border-radius:8px;font-size:13px;margin:16px 0}
+        .spinner{display:inline-block;width:12px;height:12px;border:2px solid #e0e0e0;border-top-color:#10b981;border-radius:50%;animation:spin .8s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
     </style>
 </head>
 <body>
     <div class="container">
         <div class="dashboard-card">
             <div class="card-content">
-                <div class="top-section">
-                    <div class="user-name" id="userName"><span class="spinner"></span> Loading...</div>
-                </div>
-                <div class="balance-section">
-                    <div class="balance-label">Total Balance</div>
-                    <div class="balance-amount" id="totalBalance"><span class="spinner"></span></div>
-                    <div class="balance-change" id="balanceChange"><span class="spinner"></span></div>
-                </div>
+                <div class="user-name" id="userName"><span class="spinner"></span> Loading...</div>
+                <div class="balance-label">Total Balance</div>
+                <div class="balance-amount" id="totalBalance"><span class="spinner"></span></div>
+                <div class="balance-change" id="balanceChange"><span class="spinner"></span></div>
                 <div class="button-row">
-                    <button class="action-button" onclick="openFundModal()"><i class="fas fa-wallet"></i> Fund</button>
-                    <button class="action-button" onclick="goToPlans()"><i class="fas fa-chart-line"></i> Invest</button>
+                    <button class="action-button" onclick="openModal()"><i class="fas fa-wallet"></i> Fund</button>
+                    <button class="action-button" onclick="location.href='/plans.html'"><i class="fas fa-chart-line"></i> Invest</button>
                 </div>
             </div>
         </div>
@@ -108,18 +89,18 @@
             </div>
         </div>
 
-        <div class="pending-section" id="pendingSection" style="display: none;">
-            <div class="pending-title"><i class="fas fa-hand-holding-usd"></i>Pending Claims</div>
+        <div class="section" id="pendingSection" style="display:none">
+            <div class="section-title"><i class="fas fa-hand-holding-usd"></i> Pending Claims</div>
             <div class="pending-amount">
                 <div class="pending-label">Total Claimable</div>
                 <div class="pending-value" id="totalPending">$0.00</div>
             </div>
-            <button class="claim-all-btn" onclick="claimAll()">Claim All Earnings</button>
+            <button class="btn" onclick="claimAll()">Claim All Earnings</button>
         </div>
 
-        <div class="plans-section">
-            <div class="plans-title"><i class="fas fa-chart-line"></i>Active Investment Plans</div>
-            <div id="plansList"><div style="text-align: center; padding: 20px; color: #94a3b8;">No active plans</div></div>
+        <div class="section">
+            <div class="section-title"><i class="fas fa-chart-line"></i> Active Investment Plans</div>
+            <div id="plansList"><div style="text-align:center;padding:20px;color:#94a3b8">No active plans</div></div>
         </div>
     </div>
 
@@ -127,224 +108,158 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Fund Your Account</h2>
-                <button class="close-btn" onclick="closeFundModal()">&times;</button>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
-            
-            <div class="wallet-info">
-                <div class="wallet-label">Send BTC to this address:</div>
-                <div class="wallet-address">
-                    <span id="btcAddress">bc1q8273939idbek</span>
-                    <button class="copy-btn" onclick="copyAddress()">Copy</button>
-                </div>
-            </div>
-
-            <div class="warning">
-                <strong>⚠️ Important:</strong> Only send Bitcoin (BTC) to this address. Other cryptocurrencies will be lost.
-            </div>
-
             <div class="input-group">
-                <label class="input-label">Amount Sent (USD)</label>
+                <label class="input-label">Select Payment Method</label>
+                <select id="paymentMethod" class="input-field">
+                    <option value="">Choose payment method...</option>
+                    <option value="Revolut">Revolut</option>
+                    <option value="PayPal">PayPal</option>
+                    <option value="Cash App">Cash App</option>
+                    <option value="Venmo">Venmo</option>
+                    <option value="Chime">Chime</option>
+                    <option value="IBAN">IBAN</option>
+                    <option value="Western Union">Western Union</option>
+                    <option value="MoneyGram">MoneyGram</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label class="input-label">Amount to Fund (USD)</label>
                 <input type="number" id="amountSent" class="input-field" placeholder="Enter amount in USD" min="1" step="0.01">
             </div>
-
-            <button class="submit-btn" onclick="submitFunding()">Submit Funding Request</button>
+            <div class="warning"><strong>ℹ️ Next Step:</strong> After clicking continue, you'll be redirected to WhatsApp to complete your funding request.</div>
+            <button class="btn" onclick="submitFunding()">Continue to WhatsApp</button>
         </div>
     </div>
 
     <script type="module">
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-        import { getDatabase, ref, get, update, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-        import { auth, database } from "./lib/firebase.js";
+        import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import{getDatabase,ref,get,update,push,onValue}from"https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+        import{auth,database}from"./lib/firebase.js";
 
-        let currentUser = null;
-        let allPlans = {};
+        let user,plans={};
 
-        window.goToPlans = () => window.location.href = '/plans.html';
+        window.openModal=()=>document.getElementById('fundModal').style.display='block';
+        window.closeModal=()=>{document.getElementById('fundModal').style.display='none';document.getElementById('amountSent').value='';document.getElementById('paymentMethod').value=''};
 
-        window.openFundModal = () => {
-            document.getElementById('fundModal').style.display = 'block';
-        };
-
-        window.closeFundModal = () => {
-            document.getElementById('fundModal').style.display = 'none';
-            document.getElementById('amountSent').value = '';
-        };
-
-        window.copyAddress = () => {
-            const address = document.getElementById('btcAddress').textContent;
-            navigator.clipboard.writeText(address).then(() => {
-                alert('✅ Address copied to clipboard!');
-            });
-        };
-
-        window.submitFunding = async () => {
-            if (!currentUser) return;
-            const amount = parseFloat(document.getElementById('amountSent').value);
-            
-            if (!amount || amount <= 0) {
-                alert('Please enter a valid amount');
-                return;
-            }
-
-            try {
-                const fundingRef = ref(database, 'fundingRequests');
-                await push(fundingRef, {
-                    userId: currentUser.uid,
-                    userEmail: currentUser.email,
-                    amount: amount,
-                    status: 'pending',
-                    btcAddress: 'bc1q8273939idbek',
-                    createdAt: new Date().toISOString(),
-                    timestamp: Date.now()
+        window.submitFunding=async()=>{
+            if(!user)return;
+            const method=document.getElementById('paymentMethod').value;
+            const amt=parseFloat(document.getElementById('amountSent').value);
+            if(!method)return alert('Please select a payment method');
+            if(!amt||amt<=0)return alert('Please enter a valid amount');
+            try{
+                await push(ref(database,'fundingRequests'),{
+                    userId:user.uid,
+                    userEmail:user.email,
+                    userName:user.displayName||user.email,
+                    amount:amt,
+                    paymentMethod:method,
+                    status:'pending',
+                    createdAt:new Date().toISOString(),
+                    timestamp:Date.now()
                 });
-
-                alert('✅ Funding request submitted! Admin will approve within 24 hours.');
-                closeFundModal();
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to submit request. Please try again.');
-            }
+                const msg=`Hello! I would like to fund my investment account.\n\n*Account Details:*\nEmail: ${user.email}\n\n*Funding Request:*\nPayment Method: ${method}\nAmount: $${amt.toFixed(2)} USD\n\nPlease provide payment instructions. Thank you!`;
+                window.open(`https://wa.me/447940228929?text=${encodeURIComponent(msg)}`,'_blank');
+                closeModal();
+                alert('✅ Request saved! Opening WhatsApp...');
+            }catch(e){alert('Failed to submit. Please try again.')}
         };
 
-        function calculatePendingEarnings(plan) {
-            const now = Date.now();
-            if (now >= plan.endDate) {
-                return Math.max(0, plan.totalReturns - (plan.claimedAmount || 0));
-            }
-            const elapsed = now - plan.startDate;
-            const shouldHaveEarned = (plan.totalReturns * elapsed) / (plan.endDate - plan.startDate);
-            return Math.max(0, shouldHaveEarned - (plan.claimedAmount || 0));
-        }
+        const calcPending=p=>{
+            const now=Date.now();
+            if(now>=p.endDate)return Math.max(0,p.totalReturns-(p.claimedAmount||0));
+            const elapsed=now-p.startDate;
+            const earned=(p.totalReturns*elapsed)/(p.endDate-p.startDate);
+            return Math.max(0,earned-(p.claimedAmount||0));
+        };
 
-        window.claimEarnings = async (planId) => {
-            if (!currentUser) return;
-            const plan = allPlans[planId];
-            if (!plan) return;
-
-            const amount = calculatePendingEarnings(plan);
-            if (amount < 0.01) return;
-
-            const userRef = ref(database, `users/${currentUser.uid}`);
-            try {
-                const snap = await get(userRef);
-                const userData = snap.val();
-                const claimedAmount = (plan.claimedAmount || 0) + amount;
-
-                await update(userRef, {
-                    available: (userData.available || 0) + amount,
-                    totalBalance: (userData.totalBalance || 0) + amount,
-                    totalClaimed: (userData.totalClaimed || 0) + amount,
-                    [`activePlans/${planId}/claimedAmount`]: claimedAmount,
-                    [`activePlans/${planId}/lastClaim`]: Date.now(),
-                    updatedAt: new Date().toISOString()
+        window.claimEarnings=async id=>{
+            if(!user)return;
+            const p=plans[id];
+            if(!p)return;
+            const amt=calcPending(p);
+            if(amt<.01)return;
+            try{
+                const snap=await get(ref(database,`users/${user.uid}`));
+                const d=snap.val();
+                const claimed=(p.claimedAmount||0)+amt;
+                await update(ref(database,`users/${user.uid}`),{
+                    available:(d.available||0)+amt,
+                    totalBalance:(d.totalBalance||0)+amt,
+                    totalClaimed:(d.totalClaimed||0)+amt,
+                    [`activePlans/${id}/claimedAmount`]:claimed,
+                    [`activePlans/${id}/lastClaim`]:Date.now(),
+                    updatedAt:new Date().toISOString()
                 });
-
-                alert(`✅ Successfully claimed $${amount.toFixed(2)}!`);
-            } catch (error) {
-                alert('Failed to claim. Please try again.');
-            }
+                alert(`✅ Successfully claimed $${amt.toFixed(2)}!`);
+            }catch(e){alert('Failed to claim. Try again.')}
         };
 
-        window.claimAll = async () => {
-            if (!currentUser || !allPlans) return;
-            
-            let totalToClaim = 0;
-            const updates = {};
-
-            Object.entries(allPlans).forEach(([planId, plan]) => {
-                if (!plan.isActive) return;
-                const pending = calculatePendingEarnings(plan);
-                if (pending >= 0.01) {
-                    totalToClaim += pending;
-                    const claimedAmount = (plan.claimedAmount || 0) + pending;
-                    updates[`activePlans/${planId}/claimedAmount`] = claimedAmount;
-                    updates[`activePlans/${planId}/lastClaim`] = Date.now();
+        window.claimAll=async()=>{
+            if(!user||!plans)return;
+            let total=0;
+            const updates={};
+            Object.entries(plans).forEach(([id,p])=>{
+                if(!p.isActive)return;
+                const pending=calcPending(p);
+                if(pending>=.01){
+                    total+=pending;
+                    const claimed=(p.claimedAmount||0)+pending;
+                    updates[`activePlans/${id}/claimedAmount`]=claimed;
+                    updates[`activePlans/${id}/lastClaim`]=Date.now();
                 }
             });
-
-            if (totalToClaim < 0.01) {
-                alert('No earnings to claim yet');
-                return;
-            }
-
-            const userRef = ref(database, `users/${currentUser.uid}`);
-            try {
-                const snap = await get(userRef);
-                const userData = snap.val();
-
-                await update(userRef, {
+            if(total<.01)return alert('No earnings to claim yet');
+            try{
+                const snap=await get(ref(database,`users/${user.uid}`));
+                const d=snap.val();
+                await update(ref(database,`users/${user.uid}`),{
                     ...updates,
-                    available: (userData.available || 0) + totalToClaim,
-                    totalBalance: (userData.totalBalance || 0) + totalToClaim,
-                    totalClaimed: (userData.totalClaimed || 0) + totalToClaim,
-                    updatedAt: new Date().toISOString()
+                    available:(d.available||0)+total,
+                    totalBalance:(d.totalBalance||0)+total,
+                    totalClaimed:(d.totalClaimed||0)+total,
+                    updatedAt:new Date().toISOString()
                 });
+                alert(`✅ Successfully claimed $${total.toFixed(2)}!`);
+            }catch(e){alert('Failed to claim. Try again.')}
+        };
 
-                alert(`✅ Successfully claimed $${totalToClaim.toFixed(2)}!`);
-            } catch (error) {
-                alert('Failed to claim. Please try again.');
+        const updateUI=d=>{
+            document.getElementById('userName').textContent=d.fullName||d.email?.split('@')[0]||'Investor';
+            document.getElementById('totalBalance').textContent=`$${(d.totalBalance||0).toFixed(2)}`;
+            document.getElementById('balanceChange').textContent=`$${(d.available||0).toFixed(2)} Available`;
+            document.getElementById('invested').textContent=`$${(d.invested||0).toFixed(2)}`;
+            document.getElementById('available').textContent=`$${(d.available||0).toFixed(2)}`;
+            document.getElementById('totalClaimed').textContent=`$${(d.totalClaimed||0).toFixed(2)}`;
+            const roi=d.invested>0?((d.totalClaimed||0)/d.invested*100):0;
+            document.getElementById('totalROI').textContent=`${roi.toFixed(2)}%`;
+            
+            plans=d.activePlans||{};
+            const arr=Object.entries(plans).map(([id,p])=>({id,...p}));
+            let totalPending=0;
+            
+            if(arr.length>0){
+                document.getElementById('plansList').innerHTML=arr.map(p=>{
+                    const pending=calcPending(p);
+                    if(p.isActive)totalPending+=pending;
+                    return`<div class="plan-item"><div class="plan-header"><div class="plan-info"><h4>${p.type} Plan</h4><span class="plan-status">${p.isActive?'● Active':'✓ Completed'}</span></div><div>$${p.amount.toFixed(2)}</div></div>${p.isActive?`<button class="btn btn-sm"${pending<.01?' disabled':''} onclick="claimEarnings('${p.id}')">${pending>=.01?`💰 Claim $${pending.toFixed(2)}`:'Nothing to Claim Yet'}</button>`:''}</div>`;
+                }).join('');
+                if(totalPending>=.01){
+                    document.getElementById('pendingSection').style.display='block';
+                    document.getElementById('totalPending').textContent=`$${totalPending.toFixed(2)}`;
+                }
             }
         };
 
-        function updateDashboard(userData) {
-            document.getElementById('userName').textContent = userData.fullName || userData.email?.split('@')[0] || 'Investor';
-            document.getElementById('totalBalance').textContent = `$${(userData.totalBalance || 0).toFixed(2)}`;
-            document.getElementById('balanceChange').textContent = `$${(userData.available || 0).toFixed(2)} Available`;
-            document.getElementById('invested').textContent = `$${(userData.invested || 0).toFixed(2)}`;
-            document.getElementById('available').textContent = `$${(userData.available || 0).toFixed(2)}`;
-            document.getElementById('totalClaimed').textContent = `$${(userData.totalClaimed || 0).toFixed(2)}`;
-
-            const invested = userData.invested || 0;
-            const totalClaimed = userData.totalClaimed || 0;
-            const totalROI = invested > 0 ? ((totalClaimed / invested) * 100) : 0;
-            document.getElementById('totalROI').textContent = `${totalROI.toFixed(2)}%`;
-
-            allPlans = userData.activePlans || {};
-            const plansArray = Object.entries(allPlans).map(([id, plan]) => ({ id, ...plan }));
-            
-            let totalPending = 0;
-            const plansList = document.getElementById('plansList');
-            
-            if (plansArray.length > 0) {
-                plansList.innerHTML = plansArray.map(plan => {
-                    const pending = calculatePendingEarnings(plan);
-                    if (plan.isActive) totalPending += pending;
-                    
-                    return `
-                        <div class="plan-item">
-                            <div class="plan-header">
-                                <div class="plan-info">
-                                    <h4>${plan.type} Plan</h4>
-                                    <span class="plan-status">${plan.isActive ? '● Active' : '✓ Completed'}</span>
-                                </div>
-                                <div>$${plan.amount.toFixed(2)}</div>
-                            </div>
-                            ${plan.isActive ? `
-                                <button class="claim-btn" ${pending < 0.01 ? 'disabled' : ''} onclick="claimEarnings('${plan.id}')">
-                                    ${pending >= 0.01 ? `💰 Claim $${pending.toFixed(2)}` : 'Nothing to Claim Yet'}
-                                </button>
-                            ` : ''}
-                        </div>
-                    `;
-                }).join('');
-
-                if (totalPending >= 0.01) {
-                    document.getElementById('pendingSection').style.display = 'block';
-                    document.getElementById('totalPending').textContent = `$${totalPending.toFixed(2)}`;
-                }
-            }
-        }
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                onValue(ref(database, `users/${user.uid}`), (snap) => {
-                    if (snap.exists()) updateDashboard(snap.val());
-                });
-            } else {
-                window.location.href = '/login.html';
-            }
+        onAuthStateChanged(auth,u=>{
+            if(u){
+                user=u;
+                onValue(ref(database,`users/${u.uid}`),s=>{if(s.exists())updateUI(s.val())});
+            }else location.href='/login.html';
         });
     </script>
 </body>
-                        </html>
+    </html>
