@@ -4,104 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investment Plans</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #fafafa; min-height: 100vh; padding: 40px 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        
-        .header { text-align: center; margin-bottom: 32px; }
-        .header h1 { font-size: 32px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
-        .header p { font-size: 16px; color: #64748b; }
-        
-        .balance-display { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 20px; border-radius: 16px; text-align: center; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25); position: relative; overflow: hidden; }
-        .balance-display::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, transparent 40%, rgba(255, 255, 255, 0.15) 50%, transparent 60%, transparent); animation: shine 3s infinite; }
-        @keyframes shine { 0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); } 100% { transform: translateX(100%) translateY(100%) rotate(45deg); } }
-        .balance-content { position: relative; z-index: 1; }
-        .balance-label { font-size: 14px; opacity: 0.9; margin-bottom: 8px; font-weight: 500; }
-        .balance-amount { font-size: 36px; font-weight: 700; }
-
-        .info-note { background: #dbeafe; border: 2px solid #3b82f6; color: #1e40af; padding: 14px; border-radius: 12px; margin-bottom: 24px; font-size: 13px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .info-note i { font-size: 18px; }
-        .info-note strong { font-weight: 700; }
-
-        .claim-info { background: #fef3c7; border: 2px solid #f59e0b; color: #92400e; padding: 14px; border-radius: 12px; margin-bottom: 24px; font-size: 13px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .claim-info i { font-size: 18px; }
-
-        .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-        .plan-card { background: white; border-radius: 20px; padding: 24px; box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08); transition: all 0.3s; position: relative; border: 2px solid transparent; }
-        .plan-card:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15); border-color: #10b981; }
-        .plan-card.featured { border-color: #10b981; background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); }
-        .featured-badge { position: absolute; top: 16px; right: 16px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); }
-        
-        .plan-header { text-align: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 2px solid #e2e8f0; }
-        .plan-icon { width: 56px; height: 56px; margin: 0 auto 14px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
-        .plan-name { font-size: 20px; color: #0f172a; font-weight: 700; margin-bottom: 6px; }
-        .plan-period { color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        .plan-price { text-align: center; margin: 20px 0; padding: 16px; background: #f8fafc; border-radius: 12px; }
-        .price-label { color: #64748b; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; }
-        .price-amount { font-size: 36px; color: #0f172a; font-weight: 700; }
-        .price-amount span { font-size: 18px; color: #10b981; }
-        .min-investment { color: #64748b; font-size: 11px; margin-top: 6px; }
-        
-        .plan-interest { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 12px; border-radius: 12px; text-align: center; margin: 16px 0; font-size: 14px; font-weight: 700; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25); }
-        .plan-interest .percentage { font-size: 24px; display: block; margin-bottom: 4px; }
-        
-        .daily-income { background: #f0fdf4; border: 2px solid #10b981; color: #059669; padding: 10px; border-radius: 10px; text-align: center; margin: 12px 0; font-size: 13px; font-weight: 600; }
-        .daily-income i { margin-right: 6px; }
-        
-        .plan-duration { background: #e0f2fe; border: 2px solid #0284c7; color: #075985; padding: 10px; border-radius: 10px; text-align: center; margin: 12px 0; font-size: 13px; font-weight: 600; }
-        .plan-duration i { margin-right: 6px; }
-        
-        .plan-features { list-style: none; margin: 16px 0; }
-        .plan-features li { padding: 8px 0; color: #475569; display: flex; align-items: center; font-size: 13px; }
-        .plan-features li i { color: #10b981; font-size: 14px; margin-right: 10px; flex-shrink: 0; }
-        
-        .claim-method { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; border-radius: 8px; margin: 16px 0; font-size: 12px; color: #92400e; }
-        .claim-method strong { display: block; margin-bottom: 4px; font-size: 13px; }
-        
-        .purchase-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.3s; text-transform: uppercase; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25); }
-        .purchase-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
-        .purchase-btn:disabled { opacity: 0.6; cursor: not-allowed; background: #94a3b8; }
-
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-        .modal.active { display: flex; }
-        .modal-content { background: white; border-radius: 20px; padding: 28px; max-width: 480px; width: 90%; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
-        .modal h3 { font-size: 22px; color: #0f172a; margin-bottom: 20px; text-align: center; font-weight: 700; }
-        
-        .confirm-amount { background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid #10b981; border-radius: 16px; padding: 24px; text-align: center; margin: 20px 0; }
-        .confirm-label { color: #059669; font-size: 13px; font-weight: 600; text-transform: uppercase; margin-bottom: 10px; }
-        .confirm-value { color: #10b981; font-size: 40px; font-weight: 700; }
-        
-        .summary { background: #f8fafc; padding: 16px; border-radius: 12px; margin: 16px 0; }
-        .summary-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
-        .summary-row span { color: #64748b; }
-        .summary-row strong { color: #0f172a; font-weight: 600; }
-        
-        .claim-notice { background: #fef3c7; border: 2px solid #f59e0b; color: #92400e; padding: 12px; border-radius: 10px; margin: 16px 0; font-size: 12px; text-align: center; }
-        .claim-notice i { margin-right: 6px; }
-        
-        .modal-actions { display: flex; gap: 12px; margin-top: 20px; }
-        .modal-btn { flex: 1; padding: 14px; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; transition: all 0.3s; }
-        .modal-btn.cancel { background: #f1f5f9; color: #475569; }
-        .modal-btn.cancel:hover { background: #e2e8f0; }
-        .modal-btn.confirm { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25); }
-        .modal-btn.confirm:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
-        .modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        
-        .error { background: #fee2e2; border: 2px solid #dc2626; color: #dc2626; padding: 12px; border-radius: 10px; font-size: 13px; margin-top: 12px; display: none; }
-        .error.show { display: block; }
-        .error i { margin-right: 6px; }
-
-        .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #e0e0e0; border-top-color: #10b981; border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        @media (max-width: 768px) {
-            body { padding: 20px 16px; }
-            .header h1 { font-size: 24px; }
-            .plans-grid { grid-template-columns: 1fr; }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:#fafafa;min-height:100vh;padding:40px 20px}
+        .container{max-width:1200px;margin:0 auto}
+        .header{text-align:center;margin-bottom:32px}
+        .header h1{font-size:32px;font-weight:700;color:#0f172a;margin-bottom:8px}
+        .header p{font-size:16px;color:#64748b}
+        .balance-display{background:linear-gradient(135deg,#10b981,#059669);color:white;padding:20px;border-radius:16px;text-align:center;margin-bottom:24px;box-shadow:0 4px 20px rgba(16,185,129,.25);position:relative;overflow:hidden}
+        .balance-display::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent,transparent 40%,rgba(255,255,255,.15) 50%,transparent 60%,transparent);animation:shine 3s infinite}
+        @keyframes shine{0%{transform:translateX(-100%) translateY(-100%) rotate(45deg)}100%{transform:translateX(100%) translateY(100%) rotate(45deg)}}
+        .balance-content{position:relative;z-index:1}
+        .balance-label{font-size:14px;opacity:.9;margin-bottom:8px;font-weight:500}
+        .balance-amount{font-size:36px;font-weight:700}
+        .info-note{background:#dbeafe;border:2px solid #3b82f6;color:#1e40af;padding:14px;border-radius:12px;margin-bottom:24px;font-size:13px;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px}
+        .info-note i{font-size:18px}
+        .claim-info{background:#fef3c7;border:2px solid #f59e0b;color:#92400e;padding:14px;border-radius:12px;margin-bottom:24px;font-size:13px;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px}
+        .claim-info i{font-size:18px}
+        .plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+        .plan-card{background:white;border-radius:20px;padding:24px;box-shadow:0 2px 16px rgba(0,0,0,.08);transition:all .3s;position:relative;border:2px solid transparent}
+        .plan-card:hover{transform:translateY(-6px);box-shadow:0 12px 32px rgba(0,0,0,.15);border-color:#10b981}
+        .plan-card.featured{border-color:#10b981;background:linear-gradient(135deg,#fff 0%,#f0fdf4 100%)}
+        .featured-badge{position:absolute;top:16px;right:16px;background:linear-gradient(135deg,#10b981,#059669);color:white;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;box-shadow:0 2px 8px rgba(16,185,129,.3)}
+        .plan-header{text-align:center;margin-bottom:20px;padding-bottom:20px;border-bottom:2px solid #e2e8f0}
+        .plan-icon{width:56px;height:56px;margin:0 auto 14px;background:linear-gradient(135deg,#10b981,#059669);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;color:white;box-shadow:0 4px 12px rgba(16,185,129,.25)}
+        .plan-name{font-size:20px;color:#0f172a;font-weight:700;margin-bottom:6px}
+        .plan-period{color:#64748b;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+        .plan-price{text-align:center;margin:20px 0;padding:16px;background:#f8fafc;border-radius:12px}
+        .price-label{color:#64748b;font-size:11px;font-weight:600;text-transform:uppercase;margin-bottom:8px}
+        .price-amount{font-size:36px;color:#0f172a;font-weight:700}
+        .price-amount span{font-size:18px;color:#10b981}
+        .min-investment{color:#64748b;font-size:11px;margin-top:6px}
+        .plan-interest{background:linear-gradient(135deg,#10b981,#059669);color:white;padding:12px;border-radius:12px;text-align:center;margin:16px 0;font-size:14px;font-weight:700;box-shadow:0 2px 8px rgba(16,185,129,.25)}
+        .plan-interest .percentage{font-size:24px;display:block;margin-bottom:4px}
+        .daily-income{background:#f0fdf4;border:2px solid #10b981;color:#059669;padding:10px;border-radius:10px;text-align:center;margin:12px 0;font-size:13px;font-weight:600}
+        .plan-duration{background:#e0f2fe;border:2px solid #0284c7;color:#075985;padding:10px;border-radius:10px;text-align:center;margin:12px 0;font-size:13px;font-weight:600}
+        .plan-features{list-style:none;margin:16px 0}
+        .plan-features li{padding:8px 0;color:#475569;display:flex;align-items:center;font-size:13px}
+        .plan-features li i{color:#10b981;font-size:14px;margin-right:10px;flex-shrink:0}
+        .claim-method{background:#fef3c7;border-left:4px solid #f59e0b;padding:12px;border-radius:8px;margin:16px 0;font-size:12px;color:#92400e}
+        .claim-method strong{display:block;margin-bottom:4px;font-size:13px}
+        .purchase-btn{width:100%;padding:14px;background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;text-transform:uppercase;box-shadow:0 2px 8px rgba(16,185,129,.25)}
+        .purchase-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 20px rgba(16,185,129,.4)}
+        .purchase-btn:disabled{opacity:.6;cursor:not-allowed;background:#94a3b8}
+        .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+        .modal.active{display:flex}
+        .modal-content{background:white;border-radius:20px;padding:28px;max-width:480px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+        .modal h3{font-size:22px;color:#0f172a;margin-bottom:20px;text-align:center;font-weight:700}
+        .confirm-amount{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2px solid #10b981;border-radius:16px;padding:24px;text-align:center;margin:20px 0}
+        .confirm-label{color:#059669;font-size:13px;font-weight:600;text-transform:uppercase;margin-bottom:10px}
+        .confirm-value{color:#10b981;font-size:40px;font-weight:700}
+        .summary{background:#f8fafc;padding:16px;border-radius:12px;margin:16px 0}
+        .summary-row{display:flex;justify-content:space-between;padding:8px 0;font-size:14px}
+        .summary-row span{color:#64748b}
+        .summary-row strong{color:#0f172a;font-weight:600}
+        .claim-notice{background:#fef3c7;border:2px solid #f59e0b;color:#92400e;padding:12px;border-radius:10px;margin:16px 0;font-size:12px;text-align:center}
+        .modal-actions{display:flex;gap:12px;margin-top:20px}
+        .modal-btn{flex:1;padding:14px;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;text-transform:uppercase;transition:all .3s}
+        .modal-btn.cancel{background:#f1f5f9;color:#475569}
+        .modal-btn.cancel:hover{background:#e2e8f0}
+        .modal-btn.confirm{background:linear-gradient(135deg,#10b981,#059669);color:white;box-shadow:0 2px 8px rgba(16,185,129,.25)}
+        .modal-btn.confirm:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 20px rgba(16,185,129,.4)}
+        .modal-btn:disabled{opacity:.6;cursor:not-allowed}
+        .error{background:#fee2e2;border:2px solid #dc2626;color:#dc2626;padding:12px;border-radius:10px;font-size:13px;margin-top:12px;display:none}
+        .error.show{display:block}
+        .spinner{display:inline-block;width:14px;height:14px;border:2px solid #e0e0e0;border-top-color:#10b981;border-radius:50%;animation:spin .8s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @media(max-width:768px){
+            body{padding:20px 16px}
+            .header h1{font-size:24px}
+            .plans-grid{grid-template-columns:1fr}
         }
     </style>
 </head>
@@ -164,219 +138,161 @@
     </div>
 
     <script type="module">
-       import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-        import { auth, database } from "./lib/firebase.js";
+        import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import{getDatabase,ref,get,update}from"https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+        import{auth,database}from"./lib/firebase.js";
 
-        const plans = [
-            { 
-                name: 'Weekly', 
-                icon: 'calendar-week', 
-                period: 'Short Term', 
-                min: 100, 
-                returns: 20, 
-                daily: 14.30, 
-                badge: 'Testing - 7 Minutes', 
-                featured: true, 
-                duration: 7,
-                durationInMs: 7 * 60 * 1000 // 7 minutes for testing
-            },
-            { 
-                name: 'Monthly-10.5', 
-                display: 'Monthly Standard', 
-                icon: 'calendar-alt', 
-                period: 'Medium Term', 
-                min: 500, 
-                returns: 10.5, 
-                daily: 1.75, 
-                duration: 7,
-                durationInMs: 7 * 24 * 60 * 60 * 1000 // 7 days
-            },
-            { 
-                name: 'Monthly-11.5', 
-                display: 'Monthly Premium', 
-                icon: 'calendar-check', 
-                period: 'Medium Term', 
-                min: 500, 
-                returns: 11.5, 
-                daily: 1.92, 
-                badge: 'Most Popular', 
-                featured: true, 
-                duration: 7,
-                durationInMs: 7 * 24 * 60 * 60 * 1000 // 7 days
-            },
-            { 
-                name: 'Yearly', 
-                icon: 'calendar', 
-                period: 'Long Term', 
-                min: 500, 
-                returns: 130, 
-                daily: 1.78, 
-                duration: 7, 
-                badge: 'Best Value',
-                durationInMs: 7 * 24 * 60 * 60 * 1000 // 7 days
-            }
+        const plans=[
+            {name:'Weekly',icon:'calendar-week',period:'Short Term',min:100,returns:20,daily:14.30,badge:'Popular',featured:true,duration:7,durationInMs:7*24*60*60*1000},
+            {name:'Monthly-10.5',display:'Monthly Standard',icon:'calendar-alt',period:'Medium Term',min:500,returns:10.5,daily:1.75,duration:30,durationInMs:30*24*60*60*1000},
+            {name:'Monthly-11.5',display:'Monthly Premium',icon:'calendar-check',period:'Medium Term',min:500,returns:11.5,daily:1.92,badge:'Most Popular',featured:true,duration:30,durationInMs:30*24*60*60*1000},
+            {name:'Yearly',icon:'calendar',period:'Long Term',min:500,returns:130,daily:1.78,duration:365,badge:'Best Value',durationInMs:365*24*60*60*1000}
         ];
 
-        let currentUser = null;
-        let userBalance = 0;
-        let selectedPlan = null;
+        let user,balance=0,selectedPlan=null;
 
-        const plansGrid = document.getElementById('plansGrid');
-        plans.forEach(plan => {
-            const dailyOn500 = (500 * plan.returns / 100) / plan.duration;
-            const durationText = plan.name === 'Weekly' ? '7 minutes (testing)' : '7 days';
+        const grid=document.getElementById('plansGrid');
+        plans.forEach(p=>{
+            const dailyOn500=(500*p.returns/100)/p.duration;
+            const durationText=`${p.duration} day${p.duration>1?'s':''}`;
             
-            plansGrid.innerHTML += `
-                <div class="plan-card ${plan.featured ? 'featured' : ''}">
-                    ${plan.badge ? `<span class="featured-badge">${plan.badge}</span>` : ''}
-                    
+            grid.innerHTML+=`
+                <div class="plan-card ${p.featured?'featured':''}">
+                    ${p.badge?`<span class="featured-badge">${p.badge}</span>`:''}
                     <div class="plan-header">
-                        <div class="plan-icon"><i class="fas fa-${plan.icon}"></i></div>
-                        <div class="plan-name">${plan.display || plan.name}</div>
-                        <div class="plan-period">${plan.period}</div>
+                        <div class="plan-icon"><i class="fas fa-${p.icon}"></i></div>
+                        <div class="plan-name">${p.display||p.name}</div>
+                        <div class="plan-period">${p.period}</div>
                     </div>
-                    
                     <div class="plan-price">
                         <div class="price-label">Minimum Investment</div>
-                        <div class="price-amount">$${plan.min}<span>+</span></div>
-                        <div class="min-investment">Start with $${plan.min} or more</div>
+                        <div class="price-amount">$${p.min}<span>+</span></div>
+                        <div class="min-investment">Start with $${p.min} or more</div>
                     </div>
-                    
                     <div class="plan-interest">
-                        <span class="percentage">${plan.returns}%</span>
+                        <span class="percentage">${p.returns}%</span>
                         Total Returns
                     </div>
-                    
                     <div class="daily-income">
                         <i class="fas fa-coins"></i>~$${dailyOn500.toFixed(2)}/day on $500 investment
                     </div>
-                    
                     <div class="plan-duration">
                         <i class="fas fa-clock"></i>${durationText} investment period
                     </div>
-                    
                     <div class="claim-method">
                         <strong><i class="fas fa-hand-holding-usd"></i> Manual Claim System</strong>
-                        Earnings accumulate ${plan.name === 'Weekly' ? 'per minute' : 'daily'}. Visit your dashboard to claim anytime! Plan completes when duration ends.
+                        Earnings accumulate daily. Visit your dashboard to claim anytime! Plan completes when duration ends.
                     </div>
-                    
                     <ul class="plan-features">
-                        <li><i class="fas fa-check-circle"></i> ${durationText} to maturity</li>
-                        <li><i class="fas fa-check-circle"></i> Claim earnings anytime</li>
-                        <li><i class="fas fa-check-circle"></i> Real-time earnings tracking</li>
-                        <li><i class="fas fa-check-circle"></i> Auto-completes at maturity</li>
-                        <li><i class="fas fa-check-circle"></i> Reinvest after completion</li>
-                        <li><i class="fas fa-check-circle"></i> 24/7 Priority support</li>
+                        <li><i class="fas fa-check-circle"></i>${durationText} to maturity</li>
+                        <li><i class="fas fa-check-circle"></i>Claim earnings anytime</li>
+                        <li><i class="fas fa-check-circle"></i>Real-time earnings tracking</li>
+                        <li><i class="fas fa-check-circle"></i>Auto-completes at maturity</li>
+                        <li><i class="fas fa-check-circle"></i>Reinvest after completion</li>
+                        <li><i class="fas fa-check-circle"></i>24/7 Priority support</li>
                     </ul>
-                    
-                    <button class="purchase-btn" onclick="openModal('${plan.name}')">
+                    <button class="purchase-btn" onclick="openModal('${p.name}')">
                         <i class="fas fa-rocket"></i> Start Investing
                     </button>
                 </div>
             `;
         });
 
-        window.openModal = (name) => {
-            selectedPlan = plans.find(p => p.name === name);
-            const displayName = selectedPlan.display || selectedPlan.name;
-            const dailyIncome = (selectedPlan.min * selectedPlan.returns / 100) / selectedPlan.duration;
-            const durationText = selectedPlan.name === 'Weekly' ? '7 minutes (testing)' : '7 days';
+        window.openModal=name=>{
+            selectedPlan=plans.find(p=>p.name===name);
+            const displayName=selectedPlan.display||selectedPlan.name;
+            const dailyIncome=(selectedPlan.min*selectedPlan.returns/100)/selectedPlan.duration;
+            const durationText=`${selectedPlan.duration} day${selectedPlan.duration>1?'s':''}`;
             
-            document.getElementById('modalTitle').textContent = `Confirm ${displayName} Investment`;
-            document.getElementById('confirmAmount').textContent = `$${selectedPlan.min.toFixed(2)}`;
-            document.getElementById('sPlan').textContent = displayName;
-            document.getElementById('sDaily').textContent = `$${dailyIncome.toFixed(2)}/${selectedPlan.name === 'Weekly' ? 'min' : 'day'}`;
-            document.getElementById('sReturns').textContent = `$${(selectedPlan.min * selectedPlan.returns / 100).toFixed(2)}`;
-            document.getElementById('sDuration').textContent = durationText;
-            document.getElementById('sROI').textContent = `${selectedPlan.returns}%`;
+            document.getElementById('modalTitle').textContent=`Confirm ${displayName} Investment`;
+            document.getElementById('confirmAmount').textContent=`$${selectedPlan.min.toFixed(2)}`;
+            document.getElementById('sPlan').textContent=displayName;
+            document.getElementById('sDaily').textContent=`$${dailyIncome.toFixed(2)}/day`;
+            document.getElementById('sReturns').textContent=`$${(selectedPlan.min*selectedPlan.returns/100).toFixed(2)}`;
+            document.getElementById('sDuration').textContent=durationText;
+            document.getElementById('sROI').textContent=`${selectedPlan.returns}%`;
             document.getElementById('modal').classList.add('active');
             document.getElementById('error').classList.remove('show');
         };
 
-        window.closeModal = () => {
+        window.closeModal=()=>{
             document.getElementById('modal').classList.remove('active');
-            selectedPlan = null;
+            selectedPlan=null;
         };
 
-        window.confirmPurchase = async () => {
-            if (!currentUser || !selectedPlan) return;
+        window.confirmPurchase=async()=>{
+            if(!user||!selectedPlan)return;
 
-            const amount = selectedPlan.min;
-            if (userBalance < amount) {
-                const errorEl = document.getElementById('error');
-                errorEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Insufficient balance. Please fund your account first.';
-                errorEl.classList.add('show');
+            const amt=selectedPlan.min;
+            if(balance<amt){
+                const e=document.getElementById('error');
+                e.innerHTML='<i class="fas fa-exclamation-circle"></i> Insufficient balance. Please fund your account first.';
+                e.classList.add('show');
                 return;
             }
 
-            const confirmBtn = document.getElementById('confirmBtn');
-            confirmBtn.disabled = true;
-            confirmBtn.innerHTML = '<span class="spinner"></span> Processing...';
+            const btn=document.getElementById('confirmBtn');
+            btn.disabled=true;
+            btn.innerHTML='<span class="spinner"></span> Processing...';
 
-            try {
-                const userRef = ref(database, `users/${currentUser.uid}`);
-                const snap = await get(userRef);
-                const userData = snap.val();
+            try{
+                const snap=await get(ref(database,`users/${user.uid}`));
+                const data=snap.val();
 
-                const now = Date.now();
-                const endDate = now + selectedPlan.durationInMs;
-                const totalReturns = amount * (selectedPlan.returns / 100);
-                const dailyIncome = totalReturns / selectedPlan.duration;
+                const now=Date.now();
+                const endDate=now+selectedPlan.durationInMs;
+                const totalReturns=amt*(selectedPlan.returns/100);
+                const dailyIncome=totalReturns/selectedPlan.duration;
 
-                const planId = `plan_${Date.now()}`;
-                const newPlan = {
-                    id: planId,
-                    type: selectedPlan.name,
-                    amount: amount,
-                    returnRate: selectedPlan.returns,
-                    dailyIncome: dailyIncome,
-                    totalReturns: totalReturns,
-                    startDate: now,
-                    endDate: endDate,
-                    duration: selectedPlan.duration,
-                    durationInMs: selectedPlan.durationInMs,
-                    isActive: true,
-                    claimedAmount: 0,
-                    lastClaim: now,
-                    createdAt: new Date().toISOString()
+                const planId=`plan_${Date.now()}`;
+                const newPlan={
+                    id:planId,
+                    type:selectedPlan.name,
+                    amount:amt,
+                    returnRate:selectedPlan.returns,
+                    dailyIncome:dailyIncome,
+                    totalReturns:totalReturns,
+                    startDate:now,
+                    endDate:endDate,
+                    duration:selectedPlan.duration,
+                    durationInMs:selectedPlan.durationInMs,
+                    isActive:true,
+                    claimedAmount:0,
+                    lastClaim:now,
+                    createdAt:new Date().toISOString()
                 };
 
-                await update(userRef, {
-                    available: (userData.available || 0) - amount,
-                    invested: (userData.invested || 0) + amount,
-                    totalBalance: (userData.totalBalance || 0) - amount,
-                    [`activePlans/${planId}`]: newPlan,
-                    updatedAt: new Date().toISOString()
+                await update(ref(database,`users/${user.uid}`),{
+                    available:(data.available||0)-amt,
+                    invested:(data.invested||0)+amt,
+                    totalBalance:(data.totalBalance||0)-amt,
+                    [`activePlans/${planId}`]:newPlan,
+                    updatedAt:new Date().toISOString()
                 });
 
-                alert(`✅ Successfully invested $${amount.toFixed(2)} in ${displayName || selectedPlan.name}!\n\n💰 Go to your dashboard to track and claim earnings.\n\n⏰ Plan matures in ${selectedPlan.name === 'Weekly' ? '7 minutes' : '7 days'}.`);
-                window.location.href = '/dashboard.html';
-            } catch (error) {
-                console.error('Purchase error:', error);
-                const errorEl = document.getElementById('error');
-                errorEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Purchase failed. Please try again.';
-                errorEl.classList.add('show');
-                confirmBtn.disabled = false;
-                confirmBtn.textContent = 'Confirm Investment';
+                alert(`✅ Successfully invested $${amt.toFixed(2)} in ${selectedPlan.display||selectedPlan.name}!\n\n💰 Go to your dashboard to track and claim earnings.\n\n⏰ Plan matures in ${selectedPlan.duration} day${selectedPlan.duration>1?'s':''}.`);
+                location.href='/dashboard.html';
+            }catch(err){
+                console.error(err);
+                const e=document.getElementById('error');
+                e.innerHTML='<i class="fas fa-exclamation-circle"></i> Purchase failed. Please try again.';
+                e.classList.add('show');
+                btn.disabled=false;
+                btn.textContent='Confirm Investment';
             }
         };
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                const userRef = ref(database, `users/${user.uid}`);
-                const snap = await get(userRef);
-                
-                if (snap.exists()) {
-                    const userData = snap.val();
-                    userBalance = userData.available || 0;
-                    document.getElementById('userBalance').textContent = `$${userBalance.toFixed(2)}`;
+        onAuthStateChanged(auth,async u=>{
+            if(u){
+                user=u;
+                const snap=await get(ref(database,`users/${u.uid}`));
+                if(snap.exists()){
+                    const data=snap.val();
+                    balance=data.available||0;
+                    document.getElementById('userBalance').textContent=`$${balance.toFixed(2)}`;
                 }
-            } else {
-                window.location.href = '/login.html';
-            }
+            }else location.href='/login.html';
         });
     </script>
 </body>
-</html>
+    </html>
