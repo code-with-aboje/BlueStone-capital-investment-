@@ -51,24 +51,22 @@
         .purchase-btn:disabled{opacity:.6;cursor:not-allowed;background:#94a3b8}
         .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
         .modal.active{display:flex}
-        .modal-content{background:white;border-radius:20px;padding:28px;max-width:480px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-        .modal h3{font-size:22px;color:#0f172a;margin-bottom:20px;text-align:center;font-weight:700}
-        .confirm-amount{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2px solid #10b981;border-radius:16px;padding:24px;text-align:center;margin:20px 0}
-        .confirm-label{color:#059669;font-size:13px;font-weight:600;text-transform:uppercase;margin-bottom:10px}
-        .confirm-value{color:#10b981;font-size:40px;font-weight:700}
-        .summary{background:#f8fafc;padding:16px;border-radius:12px;margin:16px 0}
-        .summary-row{display:flex;justify-content:space-between;padding:8px 0;font-size:14px}
+        .modal-content{background:white;border-radius:12px;padding:24px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+        .modal h3{font-size:18px;color:#0f172a;margin-bottom:16px;text-align:center;font-weight:700}
+        .confirm-amount{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2px solid #10b981;border-radius:8px;padding:16px;text-align:center;margin-bottom:16px}
+        .confirm-label{color:#059669;font-size:12px;font-weight:600;margin-bottom:6px}
+        .confirm-value{color:#10b981;font-size:32px;font-weight:700}
+        .summary{background:#f8fafc;padding:12px;border-radius:8px;margin-bottom:12px}
+        .summary-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px}
         .summary-row span{color:#64748b}
         .summary-row strong{color:#0f172a;font-weight:600}
-        .claim-notice{background:#fef3c7;border:2px solid #f59e0b;color:#92400e;padding:12px;border-radius:10px;margin:16px 0;font-size:12px;text-align:center}
-        .modal-actions{display:flex;gap:12px;margin-top:20px}
-        .modal-btn{flex:1;padding:14px;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;text-transform:uppercase;transition:all .3s}
+        .modal-actions{display:flex;gap:10px;margin-top:16px}
+        .modal-btn{flex:1;padding:12px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:all .3s}
         .modal-btn.cancel{background:#f1f5f9;color:#475569}
-        .modal-btn.cancel:hover{background:#e2e8f0}
-        .modal-btn.confirm{background:linear-gradient(135deg,#10b981,#059669);color:white;box-shadow:0 2px 8px rgba(16,185,129,.25)}
-        .modal-btn.confirm:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 20px rgba(16,185,129,.4)}
+        .modal-btn.confirm{background:linear-gradient(135deg,#10b981,#059669);color:white}
+        .modal-btn.confirm:hover:not(:disabled){transform:translateY(-2px)}
         .modal-btn:disabled{opacity:.6;cursor:not-allowed}
-        .error{background:#fee2e2;border:2px solid #dc2626;color:#dc2626;padding:12px;border-radius:10px;font-size:13px;margin-top:12px;display:none}
+        .error{background:#fee2e2;border:1px solid #dc2626;color:#dc2626;padding:10px;border-radius:8px;font-size:12px;margin-top:10px;display:none}
         .error.show{display:block}
         .spinner{display:inline-block;width:14px;height:14px;border:2px solid #e0e0e0;border-top-color:#10b981;border-radius:50%;animation:spin .8s linear infinite}
         @keyframes spin{to{transform:rotate(360deg)}}
@@ -117,22 +115,16 @@
 
             <div class="summary">
                 <div class="summary-row"><span>Plan:</span><strong id="sPlan">-</strong></div>
-                <div class="summary-row"><span>Daily Income:</span><strong id="sDaily">-</strong></div>
-                <div class="summary-row"><span>Total Returns:</span><strong id="sReturns">-</strong></div>
+                <div class="summary-row"><span>Daily:</span><strong id="sDaily">-</strong></div>
+                <div class="summary-row"><span>Returns:</span><strong id="sReturns">-</strong></div>
                 <div class="summary-row"><span>Duration:</span><strong id="sDuration">-</strong></div>
-                <div class="summary-row"><span>ROI:</span><strong id="sROI">-</strong></div>
-            </div>
-
-            <div class="claim-notice">
-                <i class="fas fa-info-circle"></i>
-                <strong>After investing, go to your dashboard to claim earnings anytime! Plan completes when duration ends.</strong>
             </div>
 
             <div class="error" id="error"></div>
 
             <div class="modal-actions">
                 <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
-                <button class="modal-btn confirm" id="confirmBtn" onclick="confirmPurchase()">Confirm Investment</button>
+                <button class="modal-btn confirm" id="confirmBtn" onclick="confirmPurchase()">Invest Now</button>
             </div>
         </div>
     </div>
@@ -204,13 +196,12 @@
             const dailyIncome=(selectedPlan.min*selectedPlan.returns/100)/selectedPlan.duration;
             const durationText=`${selectedPlan.duration} day${selectedPlan.duration>1?'s':''}`;
             
-            document.getElementById('modalTitle').textContent=`Confirm ${displayName} Investment`;
+            document.getElementById('modalTitle').textContent=`Confirm ${displayName}`;
             document.getElementById('confirmAmount').textContent=`$${selectedPlan.min.toFixed(2)}`;
             document.getElementById('sPlan').textContent=displayName;
-            document.getElementById('sDaily').textContent=`$${dailyIncome.toFixed(2)}/day`;
+            document.getElementById('sDaily').textContent=`$${dailyIncome.toFixed(2)}`;
             document.getElementById('sReturns').textContent=`$${(selectedPlan.min*selectedPlan.returns/100).toFixed(2)}`;
             document.getElementById('sDuration').textContent=durationText;
-            document.getElementById('sROI').textContent=`${selectedPlan.returns}%`;
             document.getElementById('modal').classList.add('active');
             document.getElementById('error').classList.remove('show');
         };
