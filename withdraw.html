@@ -6,536 +6,97 @@
     <title>Withdraw - BluStone</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #fafafa;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding-bottom: 80px;
-        }
-
-        .page-header {
-            margin-bottom: 32px;
-        }
-
-        .page-header h1 {
-            font-size: 28px;
-            color: #0f172a;
-            margin-bottom: 8px;
-        }
-
-        .page-header p {
-            color: #64748b;
-            font-size: 15px;
-        }
-
-        .content-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e5e7eb;
-        }
-
-        .card-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #64748b;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .card-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: #10b981;
-            margin-bottom: 12px;
-        }
-
-        .card-meta {
-            font-size: 13px;
-            color: #94a3b8;
-        }
-
-        .withdraw-section {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e5e7eb;
-            margin-bottom: 24px;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .section-title i {
-            color: #10b981;
-            font-size: 20px;
-        }
-
-        .withdraw-button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-
-        .withdraw-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
-        }
-
-        .withdraw-button:active {
-            transform: translateY(0);
-        }
-
-        .withdraw-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .history-section {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e5e7eb;
-            overflow: hidden;
-        }
-
-        .history-wrapper {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            margin: 0 -24px;
-            padding: 0 24px;
-        }
-
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 500px;
-        }
-
-        .history-table thead {
-            background: #f8fafc;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        .history-table th {
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-            color: #475569;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .history-table td {
-            padding: 14px 12px;
-            border-bottom: 1px solid #e5e7eb;
-            font-size: 14px;
-            color: #334155;
-        }
-
-        .history-table tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: capitalize;
-        }
-
-        .status-pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-completed {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-rejected {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #94a3b8;
-        }
-
-        .empty-state-icon {
-            font-size: 48px;
-            color: #cbd5e1;
-            margin-bottom: 16px;
-        }
-
-        .empty-state p {
-            font-size: 15px;
-        }
-
-        .info-box {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 24px;
-            font-size: 14px;
-            color: #0c4a6e;
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-        }
-
-        .info-box i {
-            color: #0284c7;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        /* Modal - Centered */
-        .withdraw-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100%;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 10000;
-            animation: fadeIn 0.3s ease;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .withdraw-modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes scaleIn {
-            from { 
-                transform: scale(0.9);
-                opacity: 0;
-            }
-            to { 
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .withdraw-modal-content {
-            width: 100%;
-            max-width: 480px;
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            animation: scaleIn 0.3s ease;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            position: relative;
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #0f172a;
-        }
-
-        .modal-close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: #64748b;
-            cursor: pointer;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            transition: background 0.3s ease;
-            line-height: 1;
-        }
-
-        .modal-close-btn:hover {
-            background: #f1f5f9;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #334155;
-            margin-bottom: 6px;
-        }
-
-        .form-input, .form-select {
-            width: 100%;
-            padding: 10px 12px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 13px;
-            font-family: inherit;
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: #10b981;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-        }
-
-        .form-input::placeholder {
-            color: #cbd5e1;
-        }
-
-        .amount-info {
-            background: #f0fdf4;
-            border: 1px solid #dcfce7;
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 16px;
-            font-size: 13px;
-            color: #166534;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 4px 0;
-        }
-
-        .info-label {
-            font-weight: 500;
-            font-size: 12px;
-        }
-
-        .info-value {
-            font-weight: 700;
-            color: #15803d;
-            font-size: 13px;
-        }
-
-        .fee-warning {
-            background: #fef3c7;
-            border: 1px solid #fde68a;
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 16px;
-            font-size: 12px;
-            color: #92400e;
-            display: none;
-        }
-
-        .fee-warning.show {
-            display: block;
-        }
-
-        .error-message {
-            background: #fee2e2;
-            border: 1px solid #fecaca;
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 16px;
-            color: #991b1b;
-            font-size: 13px;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-        }
-
-        .success-message {
-            background: #f0fdf4;
-            border: 1px solid #86efac;
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 16px;
-            color: #166534;
-            font-size: 13px;
-            display: none;
-        }
-
-        .success-message.show {
-            display: block;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 11px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-cancel {
-            background: #f1f5f9;
-            color: #475569;
-        }
-
-        .btn-cancel:active {
-            background: #e2e8f0;
-        }
-
-        .btn-withdraw {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-withdraw:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-withdraw:active:not(:disabled) {
-            transform: translateY(0);
-        }
-
-        .btn-withdraw:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        @media (max-width: 768px) {
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .page-header h1 {
-                font-size: 24px;
-            }
-
-            .card-value {
-                font-size: 28px;
-            }
-
-            .withdraw-section {
-                display: none;
-            }
-
-            .history-table {
-                font-size: 12px;
-            }
-
-            .history-table th,
-            .history-table td {
-                padding: 10px 8px;
-            }
-
-            .withdraw-button {
-                width: 100%;
-                margin-bottom: 24px;
-                display: block;
-            }
-
-            .withdraw-modal {
-                padding: 10px;
-            }
-
-            .withdraw-modal-content {
-                max-width: 100%;
-                padding: 16px;
-            }
-        }
-
-        @media (min-width: 769px) {
-            .withdraw-button {
-                display: none;
-            }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',-apple-system,sans-serif;background:#fafafa;padding:20px}
+        .container{max-width:900px;margin:0 auto;padding-bottom:80px}
+        .page-header{margin-bottom:32px}
+        .page-header h1{font-size:28px;color:#0f172a;margin-bottom:8px}
+        .page-header p{color:#64748b;font-size:15px}
+        .content-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px}
+        .card{background:white;border-radius:12px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.05);border:1px solid #e5e7eb}
+        .card-title{font-size:14px;font-weight:600;color:#64748b;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+        .card-value{font-size:32px;font-weight:700;color:#10b981;margin-bottom:12px}
+        .card-meta{font-size:13px;color:#94a3b8}
+        .section{background:white;border-radius:12px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.05);border:1px solid #e5e7eb;margin-bottom:32px}
+        .section-title{font-size:18px;font-weight:700;color:#0f172a;margin-bottom:24px;display:flex;align-items:center;gap:12px}
+        .section-title i{color:#10b981;font-size:20px}
+        .btn-withdraw{width:100%;padding:14px;background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:all .3s;box-shadow:0 4px 12px rgba(16,185,129,.3)}
+        .btn-withdraw:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(16,185,129,.4)}
+        .btn-withdraw:active{transform:translateY(0)}
+        .btn-withdraw:disabled{opacity:.6;cursor:not-allowed}
+        .history-wrapper{overflow-x:auto;margin:0 -24px;padding:0 24px}
+        .history-table{width:100%;border-collapse:collapse;min-width:500px}
+        .history-table thead{background:#f8fafc;border-bottom:2px solid #e2e8f0}
+        .history-table th{padding:12px;text-align:left;font-weight:600;color:#475569;font-size:13px;text-transform:uppercase;letter-spacing:.5px}
+        .history-table td{padding:14px 12px;border-bottom:1px solid #e5e7eb;font-size:14px;color:#334155}
+        .history-table tbody tr:hover{background:#f8fafc}
+        .status-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;text-transform:capitalize}
+        .status-pending{background:#fef3c7;color:#92400e}
+        .status-completed{background:#d1fae5;color:#065f46}
+        .status-rejected{background:#fee2e2;color:#991b1b}
+        .empty-state{text-align:center;padding:40px 20px;color:#94a3b8}
+        .empty-state-icon{font-size:48px;color:#cbd5e1;margin-bottom:16px}
+        .info-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:14px;margin-bottom:24px;font-size:14px;color:#0c4a6e;display:flex;gap:12px;align-items:flex-start}
+        .info-box i{color:#0284c7;flex-shrink:0;margin-top:2px}
+        .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100vh;background:rgba(0,0,0,.6);z-index:10000;padding:20px;overflow-y:auto}
+        .modal.active{display:flex;align-items:center;justify-content:center;animation:fadeIn .3s}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        @keyframes scaleIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+        .modal-content{width:100%;max-width:480px;background:white;border-radius:16px;padding:20px;animation:scaleIn .3s;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:85vh;overflow-y:auto}
+        .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #e5e7eb}
+        .modal-title{font-size:18px;font-weight:700;color:#0f172a}
+        .close-btn{background:none;border:none;font-size:24px;color:#64748b;cursor:pointer;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:background .3s;line-height:1}
+        .close-btn:hover{background:#f1f5f9}
+        .form-group{margin-bottom:16px}
+        .form-label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:6px}
+        .form-input,.form-select{width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;transition:all .3s}
+        .form-input:focus,.form-select:focus{outline:none;border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.1)}
+        .amount-info{background:#f0fdf4;border:1px solid #dcfce7;border-radius:8px;padding:10px;margin-bottom:16px;font-size:13px;color:#166534}
+        .info-row{display:flex;justify-content:space-between;padding:4px 0}
+        .info-label{font-weight:500;font-size:12px}
+        .info-value{font-weight:700;color:#15803d;font-size:13px}
+        .fee-warning{background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:10px;margin-bottom:16px;font-size:12px;color:#92400e;display:none}
+        .fee-warning.show{display:block}
+        .message{border-radius:8px;padding:10px;margin-bottom:16px;font-size:13px;display:none}
+        .message.show{display:block}
+        .error{background:#fee2e2;border:1px solid #fecaca;color:#991b1b}
+        .success{background:#f0fdf4;border:1px solid #86efac;color:#166534}
+        .button-group{display:flex;gap:10px;margin-top:20px}
+        .btn{flex:1;padding:11px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .3s}
+        .btn-cancel{background:#f1f5f9;color:#475569}
+        .btn-submit{background:linear-gradient(135deg,#10b981,#059669);color:white;box-shadow:0 4px 12px rgba(16,185,129,.3)}
+        .btn-submit:hover:not(:disabled){transform:translateY(-2px)}
+        .btn-submit:disabled{opacity:.6;cursor:not-allowed}
+        @media(max-width:768px){
+            .content-grid{grid-template-columns:1fr}
+            .page-header h1{font-size:24px}
+            .card-value{font-size:28px}
+            .section.desktop{display:none}
+            .btn-withdraw.mobile{display:block;margin-bottom:32px}
+            .modal{padding:10px}
+            .modal-content{padding:16px}
+        }
+        @media(min-width:769px){
+            .btn-withdraw.mobile{display:none}
+        }
+        @media(max-width:768px){
+            .section.desktop{display:none}
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Page Header -->
         <div class="page-header">
             <h1>Withdraw Funds</h1>
             <p>Request a withdrawal from your investment account</p>
         </div>
 
-        <!-- Stats Cards -->
         <div class="content-grid">
             <div class="card">
                 <div class="card-title">Available Balance</div>
                 <div class="card-value" id="availableAmount">$0.00</div>
                 <div class="card-meta">Total funds available to withdraw</div>
             </div>
-
             <div class="card">
                 <div class="card-title">Total Withdrawn</div>
                 <div class="card-value" id="totalWithdrawn">$0.00</div>
@@ -543,387 +104,276 @@
             </div>
         </div>
 
-        <!-- Info Box -->
         <div class="info-box">
             <i class="fas fa-info-circle"></i>
-            <div>
-                <strong>Processing:</strong> Withdrawals are processed within 2-5 business days. A 2.5% processing fee applies to all withdrawals.
-            </div>
+            <div><strong>Processing:</strong> Withdrawals are processed within 2-5 business days. A 2.5% processing fee applies to all withdrawals.</div>
         </div>
 
-        <!-- Mobile Withdraw Button -->
-        <button class="withdraw-button" id="withdrawBtn">
-            <i class="fas fa-arrow-down"></i> Request Withdrawal
-        </button>
+        <button class="btn-withdraw mobile" onclick="openModal()"><i class="fas fa-arrow-down"></i> Request Withdrawal</button>
 
-        <!-- Withdraw Section (Desktop) -->
-        <div class="withdraw-section">
-            <div class="section-title">
-                <i class="fas fa-wallet"></i>
-                Request Withdrawal
-            </div>
-
-            <button class="withdraw-button" id="openWithdrawModal">
-                <i class="fas fa-arrow-down"></i> Request Withdrawal
-            </button>
+        <div class="section desktop">
+            <div class="section-title"><i class="fas fa-wallet"></i>Request Withdrawal</div>
+            <button class="btn-withdraw" onclick="openModal()"><i class="fas fa-arrow-down"></i> Request Withdrawal</button>
         </div>
 
-        <!-- Withdrawal History -->
-        <div class="history-section">
-            <div class="section-title">
-                <i class="fas fa-history"></i>
-                Withdrawal History
-            </div>
-
+        <div class="section">
+            <div class="section-title"><i class="fas fa-history"></i>Withdrawal History</div>
             <div class="history-wrapper">
                 <table class="history-table">
                     <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Amount</th>
-                            <th>Method</th>
-                            <th>Status</th>
-                            <th>Fee</th>
-                        </tr>
+                        <tr><th>Date</th><th>Amount</th><th>Method</th><th>Status</th><th>Fee</th></tr>
                     </thead>
-                    <tbody id="historyBody">
-                    </tbody>
+                    <tbody id="historyBody"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="withdraw-modal" id="withdrawModal">
-        <div class="withdraw-modal-content">
+    <div class="modal" id="modal">
+        <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Request Withdrawal</h2>
-                <button class="modal-close-btn" id="withdrawCloseBtn">✕</button>
+                <button class="close-btn" onclick="closeModal()">✕</button>
             </div>
 
-            <div class="error-message" id="errorMessage"></div>
-            <div class="success-message" id="successMessage"></div>
+            <div class="message error" id="error"></div>
+            <div class="message success" id="success"></div>
 
-            <form id="withdrawForm">
+            <form id="form">
                 <div class="form-group">
                     <label class="form-label">Available Balance</label>
                     <div class="amount-info">
                         <div class="info-row">
                             <span class="info-label">Total Available:</span>
-                            <span class="info-value" id="availableBalance">Loading...</span>
+                            <span class="info-value" id="balance">Loading...</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
+                    <label class="form-label">Select Payment Method</label>
+                    <select id="method" class="form-select" required>
+                        <option value="">Choose payment method...</option>
+                        <option value="Revolut">Revolut</option>
+                        <option value="PayPal">PayPal</option>
+                        <option value="Cash App">Cash App</option>
+                        <option value="Venmo">Venmo</option>
+                        <option value="Chime">Chime</option>
+                        <option value="IBAN">IBAN</option>
+                        <option value="Western Union">Western Union</option>
+                        <option value="MoneyGram">MoneyGram</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label class="form-label">Withdrawal Amount</label>
-                    <input 
-                        type="number" 
-                        class="form-input" 
-                        id="withdrawAmount" 
-                        placeholder="Enter amount" 
-                        step="0.01"
-                        min="10"
-                        required
-                    >
+                    <input type="number" class="form-input" id="amount" placeholder="Enter amount" step="0.01" min="10" required>
                 </div>
 
                 <div class="fee-warning" id="feeWarning">
                     <strong>Processing Fee:</strong> <span id="feeAmount">$0.00</span> (2.5%)
                 </div>
 
-            
-
-                <div class="form-group">
-                    <label class="form-label">Wallet Address</label>
-                    <input 
-                        type="text" 
-                        class="form-input" 
-                        id="withdrawAccount" 
-                        placeholder="Enter wallet address"
-                        required
-                    >
+                <div class="info-box" style="margin:16px 0">
+                    <i class="fas fa-info-circle"></i>
+                    <div><strong>ℹ️ Next Step:</strong> After clicking continue, you'll be redirected to WhatsApp to complete your withdrawal request.</div>
                 </div>
 
-                
                 <div class="button-group">
-                    <button type="button" class="btn btn-cancel" id="withdrawCancelBtn">Cancel</button>
-                    <button type="submit" class="btn btn-withdraw" id="submitWithdrawBtn">Request Withdrawal</button>
+                    <button type="button" class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-submit" id="submitBtn">Continue to WhatsApp</button>
                 </div>
             </form>
         </div>
     </div>
+
     <script type="module">
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-        import { getDatabase, ref, get, set, push, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-        import { auth, database } from "./lib/firebase.js";
+        import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import{getDatabase,ref,get,set,push,update}from"https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+        import{auth,database}from"./lib/firebase.js";
 
-        const withdrawBtn = document.getElementById('withdrawBtn');
-        const openWithdrawModal = document.getElementById('openWithdrawModal');
-        const availableAmount = document.getElementById('availableAmount');
-        const totalWithdrawn = document.getElementById('totalWithdrawn');
-        const historyBody = document.getElementById('historyBody');
-        const withdrawModal = document.getElementById('withdrawModal');
-        const withdrawCloseBtn = document.getElementById('withdrawCloseBtn');
-        const withdrawCancelBtn = document.getElementById('withdrawCancelBtn');
-        const withdrawForm = document.getElementById('withdrawForm');
+        let user,userData;
+        const modal=document.getElementById('modal');
+        const form=document.getElementById('form');
+        const error=document.getElementById('error');
+        const success=document.getElementById('success');
 
-        let currentUser = null;
-        let userData = null;
+        window.openModal=async()=>{
+            modal.classList.add('active');
+            document.body.style.overflow='hidden';
+            await loadBalance();
+        };
 
-        const closeModal = () => {
-            withdrawModal.classList.remove('active');
-            document.body.style.overflow = '';
-            withdrawForm.reset();
-            document.getElementById('errorMessage').classList.remove('show');
-            document.getElementById('successMessage').classList.remove('show');
+        window.closeModal=()=>{
+            modal.classList.remove('active');
+            document.body.style.overflow='';
+            form.reset();
+            error.classList.remove('show');
+            success.classList.remove('show');
             document.getElementById('feeWarning').classList.remove('show');
         };
 
-        // Open modal
-        withdrawBtn.addEventListener('click', async () => {
-            withdrawModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            await loadUserBalance();
-        });
+        modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
 
-        openWithdrawModal.addEventListener('click', async () => {
-            withdrawModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            await loadUserBalance();
-        });
-
-        withdrawCloseBtn.addEventListener('click', closeModal);
-        withdrawCancelBtn.addEventListener('click', closeModal);
-        withdrawModal.addEventListener('click', (e) => {
-            if (e.target === withdrawModal) closeModal();
-        });
-
-        // Load user data
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                try {
-                    const userRef = ref(database, `users/${user.uid}`);
-                    const snapshot = await get(userRef);
-                    
-                    if (snapshot.exists()) {
-                        userData = snapshot.val();
-                        availableAmount.textContent = `$${(userData.available || 0).toFixed(2)}`;
-                        loadWithdrawalHistory(user.uid);
+        onAuthStateChanged(auth,async u=>{
+            if(u){
+                user=u;
+                try{
+                    const snap=await get(ref(database,`users/${u.uid}`));
+                    if(snap.exists()){
+                        userData=snap.val();
+                        document.getElementById('availableAmount').textContent=`$${(userData.available||0).toFixed(2)}`;
+                        loadHistory(u.uid);
                     }
-                } catch (error) {
-                    console.error('Error loading user data:', error);
-                }
-            } else {
-                window.location.href = '/login';
-            }
+                }catch(e){console.error(e)}
+            }else location.href='/login';
         });
 
-        // Load user balance
-        async function loadUserBalance() {
-            try {
-                const user = auth.currentUser;
-                if (!user) {
-                    document.getElementById('availableBalance').textContent = '$0.00';
-                    return;
-                }
-
-                const userRef = ref(database, `users/${user.uid}`);
-                const snapshot = await get(userRef);
-                
-                if (snapshot.exists()) {
-                    userData = snapshot.val();
-                    const balance = userData.available || 0;
-                    document.getElementById('availableBalance').textContent = `$${balance.toFixed(2)}`;
-                } else {
-                    document.getElementById('availableBalance').textContent = '$0.00';
-                }
-            } catch (error) {
-                console.error('Error loading balance:', error);
-                document.getElementById('availableBalance').textContent = '$0.00';
-            }
+        async function loadBalance(){
+            try{
+                if(!user)return document.getElementById('balance').textContent='$0.00';
+                const snap=await get(ref(database,`users/${user.uid}`));
+                if(snap.exists()){
+                    userData=snap.val();
+                    document.getElementById('balance').textContent=`$${(userData.available||0).toFixed(2)}`;
+                }else document.getElementById('balance').textContent='$0.00';
+            }catch(e){document.getElementById('balance').textContent='$0.00'}
         }
 
-        // Fee calculation
-        document.getElementById('withdrawAmount').addEventListener('input', function() {
-            const amount = parseFloat(this.value) || 0;
-            if (amount > 0) {
-                const fee = amount * 0.025;
-                document.getElementById('feeAmount').textContent = `$${fee.toFixed(2)}`;
+        document.getElementById('amount').addEventListener('input',function(){
+            const amt=parseFloat(this.value)||0;
+            if(amt>0){
+                const fee=amt*.025;
+                document.getElementById('feeAmount').textContent=`$${fee.toFixed(2)}`;
                 document.getElementById('feeWarning').classList.add('show');
-            } else {
-                document.getElementById('feeWarning').classList.remove('show');
-            }
+            }else document.getElementById('feeWarning').classList.remove('show');
         });
 
-        // Form submission
-        withdrawForm.addEventListener('submit', async (e) => {
+        form.addEventListener('submit',async e=>{
             e.preventDefault();
+            const method=document.getElementById('method').value;
+            const amt=parseFloat(document.getElementById('amount').value);
+            const submitBtn=document.getElementById('submitBtn');
 
-            const amount = parseFloat(document.getElementById('withdrawAmount').value);
-            const method = document.getElementById('withdrawMethod').value;
-            const account = document.getElementById('withdrawAccount').value;
-            const notes = document.getElementById('withdrawNotes').value;
-            const errorMessage = document.getElementById('errorMessage');
-            const successMessage = document.getElementById('successMessage');
-            const submitBtn = document.getElementById('submitWithdrawBtn');
+            error.classList.remove('show');
+            success.classList.remove('show');
 
-            errorMessage.classList.remove('show');
-            successMessage.classList.remove('show');
-
-            if (amount < 10) {
-                errorMessage.textContent = 'Minimum withdrawal amount is $10';
-                errorMessage.classList.add('show');
+            if(!method){
+                error.textContent='Please select a payment method';
+                error.classList.add('show');
                 return;
             }
 
-            if (!userData || amount > (userData.available || 0)) {
-                errorMessage.textContent = 'Insufficient balance';
-                errorMessage.classList.add('show');
+            if(amt<10){
+                error.textContent='Minimum withdrawal amount is $10';
+                error.classList.add('show');
                 return;
             }
 
-            if (!method || !account) {
-                errorMessage.textContent = 'Please fill in all required fields';
-                errorMessage.classList.add('show');
+            if(!userData||amt>(userData.available||0)){
+                error.textContent='Insufficient balance';
+                error.classList.add('show');
                 return;
             }
 
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Processing...';
+            submitBtn.disabled=true;
+            submitBtn.textContent='Processing...';
 
-            try {
-                const user = auth.currentUser;
-                if (!user) throw new Error('User not authenticated');
+            try{
+                if(!user)throw new Error('User not authenticated');
 
-                const fee = amount * 0.025;
-                const ts = new Date().toISOString();
+                const fee=amt*.025;
+                const ts=new Date().toISOString();
                 
-                const withdrawalData = {
-                    userId: user.uid,
-                    userName: userData.name || 'User',
-                    userEmail: user.email || '',
-                    amount: amount,
-                    fee: fee,
-                    method: method,
-                    btcAddress: account,
-                    notes: notes,
-                    status: 'pending',
-                    requestDate: ts
+                const withdrawalData={
+                    userId:user.uid,
+                    userName:userData.name||userData.fullName||'User',
+                    userEmail:user.email||'',
+                    amount:amt,
+                    fee:fee,
+                    method:method,
+                    status:'pending',
+                    requestDate:ts,
+                    timestamp:Date.now()
                 };
 
-                const withdrawalsRef = ref(database, 'pendingWithdrawals');
-                const newWithdrawalRef = push(withdrawalsRef);
-                const withdrawalId = newWithdrawalRef.key;
+                const withdrawalsRef=ref(database,'pendingWithdrawals');
+                const newRef=push(withdrawalsRef);
+                const id=newRef.key;
                 
-                await set(newWithdrawalRef, withdrawalData);
+                await set(newRef,withdrawalData);
 
-                const transactionData = {
-                    type: 'withdrawal',
-                    amount: amount,
-                    fee: fee,
-                    status: 'pending',
-                    btcAddress: account,
-                    method: method,
-                    requestDate: ts
+                const transactionData={
+                    type:'withdrawal',
+                    amount:amt,
+                    fee:fee,
+                    status:'pending',
+                    method:method,
+                    requestDate:ts
                 };
 
-                const userRef = ref(database, `users/${user.uid}`);
-                const userSnapshot = await get(userRef);
-                const currentAvailable = userSnapshot.val().available || 0;
-                const currentTotalBalance = userSnapshot.val().totalBalance || 0;
+                const snap=await get(ref(database,`users/${user.uid}`));
+                const avail=snap.val().available||0;
+                const total=snap.val().totalBalance||0;
                 
-                const updates = {};
-                updates[`users/${user.uid}/available`] = Math.max(0, currentAvailable - amount);
-                updates[`users/${user.uid}/totalBalance`] = Math.max(0, currentTotalBalance - amount);
-                updates[`users/${user.uid}/transactions/${withdrawalId}`] = transactionData;
+                const updates={};
+                updates[`users/${user.uid}/available`]=Math.max(0,avail-amt);
+                updates[`users/${user.uid}/totalBalance`]=Math.max(0,total-amt);
+                updates[`users/${user.uid}/transactions/${id}`]=transactionData;
                 
-                await update(ref(database), updates);
+                await update(ref(database),updates);
 
-                successMessage.textContent = 'Withdrawal request submitted successfully!';
-                successMessage.classList.add('show');
+                userData.available=Math.max(0,avail-amt);
+                document.getElementById('availableAmount').textContent=`$${userData.available.toFixed(2)}`;
 
-                userData.available = Math.max(0, currentAvailable - amount);
-                availableAmount.textContent = `$${userData.available.toFixed(2)}`;
+                await loadHistory(user.uid);
 
-                await loadWithdrawalHistory(user.uid);
+                const msg=`Hello! I would like to withdraw from my investment account.\n\n*Account Details:*\nEmail: ${user.email}\n\n*Withdrawal Request:*\nPayment Method: ${method}\nAmount: $${amt.toFixed(2)} USD\nProcessing Fee: $${fee.toFixed(2)}\n\nPlease provide payment instructions. Thank you!`;
+                window.open(`https://wa.me/447940228929?text=${encodeURIComponent(msg)}`,'_blank');
+                
+                closeModal();
+                alert('✅ Request saved! Opening WhatsApp to complete your withdrawal request.');
 
-                setTimeout(() => {
-                    closeModal();
-                }, 2000);
-
-            } catch (error) {
-                console.error('Withdrawal error:', error);
-                errorMessage.textContent = error.message || 'An error occurred';
-                errorMessage.classList.add('show');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Request Withdrawal';
+            }catch(e){
+                console.error(e);
+                error.textContent=e.message||'An error occurred';
+                error.classList.add('show');
+            }finally{
+                submitBtn.disabled=false;
+                submitBtn.textContent='Continue to WhatsApp';
             }
         });
 
-        // Load withdrawal history
-        async function loadWithdrawalHistory(userId) {
-            try {
-                const userRef = ref(database, `users/${userId}`);
-                const snapshot = await get(userRef);
-                
-                if (snapshot.exists()) {
-                    const userData = snapshot.val();
-                    const transactions = userData.transactions || {};
-                    const withdrawals = Object.values(transactions)
-                        .filter(t => t.type === 'withdrawal')
-                        .sort((a, b) => new Date(b.requestDate) - new Date(a.requestDate));
+        async function loadHistory(uid){
+            try{
+                const snap=await get(ref(database,`users/${uid}`));
+                if(snap.exists()){
+                    const data=snap.val();
+                    const txs=data.transactions||{};
+                    const withdrawals=Object.values(txs).filter(t=>t.type==='withdrawal').sort((a,b)=>new Date(b.requestDate)-new Date(a.requestDate));
 
-                    if (withdrawals.length > 0) {
-                        historyBody.innerHTML = withdrawals.map(w => `
+                    if(withdrawals.length>0){
+                        document.getElementById('historyBody').innerHTML=withdrawals.map(w=>`
                             <tr>
                                 <td>${new Date(w.requestDate).toLocaleDateString()}</td>
                                 <td>$${w.amount.toFixed(2)}</td>
-                                <td>${w.method === 'btc' ? 'BTC' : w.method.charAt(0).toUpperCase() + w.method.slice(1)}</td>
-                                <td>
-                                    <span class="status-badge status-${w.status}">
-                                        ${w.status}
-                                    </span>
-                                </td>
+                                <td>${w.method}</td>
+                                <td><span class="status-badge status-${w.status}">${w.status}</span></td>
                                 <td>$${w.fee.toFixed(2)}</td>
                             </tr>
                         `).join('');
 
-                        const total = withdrawals
-                            .filter(w => w.status === 'completed')
-                            .reduce((sum, w) => sum + w.amount, 0);
-                        totalWithdrawn.textContent = `$${total.toFixed(2)}`;
-                    } else {
-                        historyBody.innerHTML = `
-                            <tr>
-                                <td colspan="5">
-                                    <div class="empty-state">
-                                        <div class="empty-state-icon">
-                                            <i class="fas fa-inbox"></i>
-                                        </div>
-                                        <p>No withdrawal history yet</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
+                        const total=withdrawals.filter(w=>w.status==='completed').reduce((sum,w)=>sum+w.amount,0);
+                        document.getElementById('totalWithdrawn').textContent=`$${total.toFixed(2)}`;
+                    }else{
+                        document.getElementById('historyBody').innerHTML=`<tr><td colspan="5"><div class="empty-state"><div class="empty-state-icon"><i class="fas fa-inbox"></i></div><p>No withdrawal history yet</p></div></td></tr>`;
                     }
-                } else {
-                    historyBody.innerHTML = `
-                        <tr>
-                            <td colspan="5">
-                                <div class="empty-state">
-                                    <p>Unable to load history</p>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
+                }else{
+                    document.getElementById('historyBody').innerHTML=`<tr><td colspan="5"><div class="empty-state"><p>Unable to load history</p></div></td></tr>`;
                 }
-            } catch (error) {
-                console.error('Error loading withdrawal history:', error);
-            }
+            }catch(e){console.error(e)}
         }
     </script>
 </body>
-</html>
+                </html>
