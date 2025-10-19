@@ -53,6 +53,11 @@
         .modal.active{display:block}
         .modal-content{background:white;border-radius:12px;padding:24px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);margin:60px auto;position:relative}
         .modal h3{font-size:18px;color:#0f172a;margin-bottom:16px;text-align:center;font-weight:700}
+        .form-group{margin-bottom:16px}
+        .form-label{display:block;color:#0f172a;font-size:13px;font-weight:600;margin-bottom:8px}
+        .form-input,.form-select{width:100%;padding:10px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Inter',sans-serif}
+        .form-input:focus,.form-select:focus{outline:none;border-color:#10b981}
+        .form-input{color:#0f172a}
         .confirm-amount{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2px solid #10b981;border-radius:8px;padding:16px;text-align:center;margin-bottom:16px}
         .confirm-label{color:#059669;font-size:12px;font-weight:600;margin-bottom:6px}
         .confirm-value{color:#10b981;font-size:32px;font-weight:700}
@@ -108,16 +113,40 @@
         <div class="modal-content">
             <h3 id="modalTitle">Confirm Investment</h3>
             
-            <div class="confirm-amount">
-                <div class="confirm-label">Investment Amount</div>
-                <div class="confirm-value" id="confirmAmount">$0.00</div>
+            <div id="customPlanForm" style="display:none">
+                <div class="form-group">
+                    <label class="form-label">Investment Amount (Min $100)</label>
+                    <input type="number" id="customAmount" class="form-input" placeholder="Enter amount" min="100" step="1">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Select Plan Duration</label>
+                    <select id="customPlanType" class="form-select">
+                        <option value="">Choose a plan...</option>
+                        <option value="Weekly">Weekly (7 days)</option>
+                        <option value="Monthly-10.5">Monthly Standard (30 days)</option>
+                        <option value="Monthly-11.5">Monthly Premium (30 days)</option>
+                        <option value="Yearly">Yearly (365 days)</option>
+                    </select>
+                </div>
+                <div id="customSummary" class="summary" style="display:none">
+                    <div class="summary-row"><span>Daily Income:</span><strong id="customDaily">-</strong></div>
+                    <div class="summary-row"><span>Total Returns:</span><strong id="customReturns">-</strong></div>
+                    <div class="summary-row"><span>Duration:</span><strong id="customDuration">-</strong></div>
+                </div>
             </div>
 
-            <div class="summary">
-                <div class="summary-row"><span>Plan:</span><strong id="sPlan">-</strong></div>
-                <div class="summary-row"><span>Daily:</span><strong id="sDaily">-</strong></div>
-                <div class="summary-row"><span>Returns:</span><strong id="sReturns">-</strong></div>
-                <div class="summary-row"><span>Duration:</span><strong id="sDuration">-</strong></div>
+            <div id="regularPlanSummary">
+                <div class="confirm-amount">
+                    <div class="confirm-label">Investment Amount</div>
+                    <div class="confirm-value" id="confirmAmount">$0.00</div>
+                </div>
+
+                <div class="summary">
+                    <div class="summary-row"><span>Plan:</span><strong id="sPlan">-</strong></div>
+                    <div class="summary-row"><span>Daily:</span><strong id="sDaily">-</strong></div>
+                    <div class="summary-row"><span>Returns:</span><strong id="sReturns">-</strong></div>
+                    <div class="summary-row"><span>Duration:</span><strong id="sDuration">-</strong></div>
+                </div>
             </div>
 
             <div class="error" id="error"></div>
@@ -141,9 +170,43 @@
             {name:'Yearly',icon:'calendar',period:'Long Term',min:500,returns:130,daily:1.78,duration:365,badge:'Best Value',durationInMs:365*24*60*60*1000}
         ];
 
-        let user,balance=0,selectedPlan=null;
+        let user,balance=0,selectedPlan=null,isCustom=false;
 
         const grid=document.getElementById('plansGrid');
+        
+        // Add custom plan first
+        grid.innerHTML=`
+            <div class="plan-card featured">
+                <span class="featured-badge">Custom</span>
+                <div class="plan-header">
+                    <div class="plan-icon"><i class="fas fa-star"></i></div>
+                    <div class="plan-name">Create Your Plan</div>
+                    <div class="plan-period">Flexible Option</div>
+                </div>
+                <div class="plan-price">
+                    <div class="price-label">Choose Your Amount</div>
+                    <div class="price-amount">$100<span>+</span></div>
+                    <div class="min-investment">Minimum $100, no maximum limit</div>
+                </div>
+                <div class="plan-interest">
+                    <span class="percentage">Custom</span>
+                    Based on Duration
+                </div>
+                <ul class="plan-features">
+                    <li><i class="fas fa-check-circle"></i>Set your own investment amount</li>
+                    <li><i class="fas fa-check-circle"></i>Choose plan duration</li>
+                    <li><i class="fas fa-check-circle"></i>Real-time earnings calculation</li>
+                    <li><i class="fas fa-check-circle"></i>See returns before investing</li>
+                    <li><i class="fas fa-check-circle"></i>Flexible investment strategy</li>
+                    <li><i class="fas fa-check-circle"></i>24/7 Priority support</li>
+                </ul>
+                <button class="purchase-btn" onclick="openCustomModal()">
+                    <i class="fas fa-plus"></i> Create Plan
+                </button>
+            </div>
+        `;
+
+        // Add regular plans
         plans.forEach(p=>{
             const dailyOn500=(500*p.returns/100)/p.duration;
             const durationText=`${p.duration} day${p.duration>1?'s':''}`;
@@ -190,13 +253,54 @@
             `;
         });
 
+        window.openCustomModal=()=>{
+            isCustom=true;
+            selectedPlan=null;
+            document.getElementById('customPlanForm').style.display='block';
+            document.getElementById('regularPlanSummary').style.display='none';
+            document.getElementById('customSummary').style.display='none';
+            document.getElementById('modalTitle').textContent='Create Your Custom Plan';
+            document.getElementById('modal').classList.add('active');
+            document.getElementById('error').classList.remove('show');
+            document.getElementById('customAmount').value='';
+            document.getElementById('customPlanType').value='';
+            
+            document.getElementById('customAmount').addEventListener('input',updateCustomCalc);
+            document.getElementById('customPlanType').addEventListener('change',updateCustomCalc);
+        };
+
+        const updateCustomCalc=()=>{
+            const amt=parseFloat(document.getElementById('customAmount').value)||0;
+            const planType=document.getElementById('customPlanType').value;
+
+            if(amt<100||!planType){
+                document.getElementById('customSummary').style.display='none';
+                return;
+            }
+
+            const plan=plans.find(p=>p.name===planType);
+            if(!plan)return;
+
+            const totalReturns=amt*(plan.returns/100);
+            const dailyIncome=totalReturns/plan.duration;
+            const durationText=`${plan.duration} day${plan.duration>1?'s':''}`;
+
+            document.getElementById('customDaily').textContent=`$${dailyIncome.toFixed(2)}/day`;
+            document.getElementById('customReturns').textContent=`$${totalReturns.toFixed(2)} (${plan.returns}%)`;
+            document.getElementById('customDuration').textContent=durationText;
+            document.getElementById('customSummary').style.display='block';
+        };
+
         window.openModal=name=>{
+            isCustom=false;
             selectedPlan=plans.find(p=>p.name===name);
             const displayName=selectedPlan.display||selectedPlan.name;
             const dailyIncome=(500*selectedPlan.returns/100)/selectedPlan.duration;
             const totalReturns=500*selectedPlan.returns/100;
             const durationText=`${selectedPlan.duration} day${selectedPlan.duration>1?'s':''}`;
             
+            document.getElementById('customPlanForm').style.display='none';
+            document.getElementById('regularPlanSummary').style.display='block';
             document.getElementById('modalTitle').textContent=`Confirm ${displayName}`;
             document.getElementById('confirmAmount').textContent='$500.00';
             document.getElementById('sPlan').textContent=displayName;
@@ -210,16 +314,36 @@
         window.closeModal=()=>{
             document.getElementById('modal').classList.remove('active');
             selectedPlan=null;
+            isCustom=false;
         };
 
         window.confirmPurchase=async()=>{
-            if(!user||!selectedPlan)return;
+            if(!user)return;
 
-            const amt=selectedPlan.min;
+            let amt,planName,plan;
+
+            if(isCustom){
+                amt=parseFloat(document.getElementById('customAmount').value)||0;
+                planName=document.getElementById('customPlanType').value;
+                plan=plans.find(p=>p.name===planName);
+
+                if(amt<100){
+                    showError('Minimum investment is $100');
+                    return;
+                }
+                if(!plan){
+                    showError('Please select a plan duration');
+                    return;
+                }
+            }else{
+                if(!selectedPlan)return;
+                amt=selectedPlan.min;
+                plan=selectedPlan;
+                planName=selectedPlan.name;
+            }
+
             if(balance<amt){
-                const e=document.getElementById('error');
-                e.innerHTML='<i class="fas fa-exclamation-circle"></i> Insufficient balance. Please fund your account first.';
-                e.classList.add('show');
+                showError('Insufficient balance. Please fund your account first.');
                 return;
             }
 
@@ -232,22 +356,22 @@
                 const data=snap.val();
 
                 const now=Date.now();
-                const endDate=now+selectedPlan.durationInMs;
-                const totalReturns=amt*(selectedPlan.returns/100);
-                const dailyIncome=totalReturns/selectedPlan.duration;
+                const endDate=now+plan.durationInMs;
+                const totalReturns=amt*(plan.returns/100);
+                const dailyIncome=totalReturns/plan.duration;
 
                 const planId=`plan_${Date.now()}`;
                 const newPlan={
                     id:planId,
-                    type:selectedPlan.name,
+                    type:planName,
                     amount:amt,
-                    returnRate:selectedPlan.returns,
+                    returnRate:plan.returns,
                     dailyIncome:dailyIncome,
                     totalReturns:totalReturns,
                     startDate:now,
                     endDate:endDate,
-                    duration:selectedPlan.duration,
-                    durationInMs:selectedPlan.durationInMs,
+                    duration:plan.duration,
+                    durationInMs:plan.durationInMs,
                     isActive:true,
                     claimedAmount:0,
                     lastClaim:now,
@@ -262,16 +386,21 @@
                     updatedAt:new Date().toISOString()
                 });
 
-                alert(`✅ Successfully invested $${amt.toFixed(2)} in ${selectedPlan.display||selectedPlan.name}!\n\n💰 Go to your dashboard to track and claim earnings.\n\n⏰ Plan matures in ${selectedPlan.duration} day${selectedPlan.duration>1?'s':''}.`);
+                const planDisplay=isCustom?`Custom ${plan.display||plan.name}`:(plan.display||plan.name);
+                alert(`✅ Successfully invested $${amt.toFixed(2)} in ${planDisplay}!\n\n💰 Go to your dashboard to track and claim earnings.\n\n⏰ Plan matures in ${plan.duration} day${plan.duration>1?'s':''}.`);
                 location.href='/dashboard.html';
             }catch(err){
                 console.error(err);
-                const e=document.getElementById('error');
-                e.innerHTML='<i class="fas fa-exclamation-circle"></i> Purchase failed. Please try again.';
-                e.classList.add('show');
+                showError('Purchase failed. Please try again.');
                 btn.disabled=false;
                 btn.textContent='Confirm Investment';
             }
+        };
+
+        const showError=msg=>{
+            const e=document.getElementById('error');
+            e.innerHTML=`<i class="fas fa-exclamation-circle"></i> ${msg}`;
+            e.classList.add('show');
         };
 
         onAuthStateChanged(auth,async u=>{
@@ -287,4 +416,4 @@
         });
     </script>
 </body>
-    </html>
+</html>
